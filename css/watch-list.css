@@ -1,0 +1,41 @@
+.padding {
+    padding: 10px; }
+
+.clubber-url {
+    font-weight: bold;
+    color: black;
+    font-size: 16px;
+    line-height: 22px;
+    text-decoration: none; }
+
+.clubber-url:hover {
+    text-decoration: underline; }
+
+.club-header {
+    padding-bottom: 5px;
+    font-family: "Verdana", arial, serif;
+    font-size: 26px;
+    background-color: #111111;
+    color: white;
+    -webkit-box-shadow: 3px 3px 3px grey; }
+
+.club-body {
+    background-color: white;
+    -webkit-box-shadow: 3px 3px 3px grey; }
+
+.clear-no-space {
+    height: 0px; }
+
+.allergies {
+    margin-left: 8px; }
+
+@media print {
+    body {
+	background-color: white;
+	margin: 20px; }
+
+    .info-bar, .menu-bar, .menu-tab-bar, .demo, .main-tab-item {
+	display: none; }
+
+    .club-header {
+	-webkit-box-shadow: 0px 0px 0px white; }}

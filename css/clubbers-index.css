@@ -1,0 +1,42 @@
+.search {
+    border: 0px solid grey;
+    border-bottom: 2px solid black;
+    background-color: #ededed; }
+
+.small-title {
+    font-size: 14px;
+    font-family: "Verdana", sans; }
+
+.sort-link {
+    margin-left: 5px;
+    text-decoration: none;
+    padding: 3px;
+    color: #888888;
+    border: 2px solid #aaaaaa;
+    -moz-border-radius: 6px;
+    border-radius: 6px; }
+
+.sort-link:hover {
+    background-color: #aaaaaa;
+    color: white; }
+
+.current-sort {
+    font-weight: bold;
+    color: white;
+    background-color: #aaaaaa; }
+
+.new-clubber {
+    color: green; }
+
+.new-clubber-symbol {
+    font-family: "Neucha", arial, serif;
+    font-size: 20px; }
+
+.clubber-url {
+    color: black;
+    font-size: 16px;
+    line-height: 22px;
+    text-decoration: none; }
+
+.clubber-url:hover {
+    text-decoration: underline; }

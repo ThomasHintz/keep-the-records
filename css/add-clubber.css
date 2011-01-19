@@ -1,0 +1,62 @@
+td {
+    margin-top: 4px; }
+
+.label {
+    margin-right: 4px;
+    font-size: 12px;
+    color: grey;
+    font-family: 'Verdana', arial, serif;
+    text-align: right;
+    vertical-align: middle; }
+
+input, select {
+    border-radius: 0px;
+    font-family: 'Vollkorn', arial, serif;
+    font-size: 18px;
+    border: 0px solid white;
+    border-bottom: 1px solid grey;
+    background-color: white; }
+
+input:hover, select:hover {
+    border-bottom: 1px solid grey; }
+
+input:focus, select:focus {
+    -webkit-box-shadow: 0px 0px 10px #ff8100; }
+
+.filled {
+    border-bottom: 1px solid white; }
+
+.name {
+    font-size: 30px; }
+
+.parent-label {
+    font-family: "Verdana", arial, sans;
+    font-size: 22px;
+    color: grey; }
+
+.create-clubber-container {
+    margin-top: 15px;
+    text-align: left; }
+
+.create-clubber {
+    width: 100%;
+    font-family: "Verdana", arial, sans;
+    font-size: 22px;
+    color: white;
+    text-shadow: 0px 0px 3px black;
+    -webkit-box-shadow: 3px 3px 3px grey;
+    padding: 10px;
+    border: 6px solid black;
+    background-color: #65e17b;
+    cursor: pointer; }
+
+.create-clubber:hover, .create-clubber:focus {
+    text-shadow: 0px 0px 3px white;
+    border-bottom: 6px solid black;
+    -webkit-box-shadow: 0px 0px 0px white; }
+
+.name-info-header {
+    margin-top: 10px; }
+
+.parent-info-header {
+    margin-top: 72px; }

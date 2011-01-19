@@ -1,0 +1,26 @@
+.sign-up {
+    padding: 10px;
+    color: white;
+    background-color: black;
+    font-family: "Tangerine", arial, serif;
+    font-weight: bold;
+    font-size: 120px; }
+
+.bottom-line {
+    height: 10px;
+    background-color: black; }
+
+.text {
+    margin-top: 10px;
+    font-size: 24px; }
+
+.subscribe {
+    font-family: "Neucha", arial, sans;
+    background-color: #ff8100;
+    font-weight: bold;
+    text-decoration: none;
+    color: white; }
+
+.subscribe:hover {
+    background-color: #ededed;
+    color: black; }

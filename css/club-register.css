@@ -1,0 +1,60 @@
+.action {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    font-family: "Vollkorn";
+    font-size: 36px; }
+
+.form-context {
+    margin-bottom: 5px;
+    margin-left: 20px;
+    font-style: italic;
+    color: grey;
+    font-size: 16px; }
+
+.text {
+    padding: 2px;
+    line-height: 32px;
+    margin-left: 20px;
+    background-color: #ededed;
+    width: 300px;
+    font-size: 24px;
+    font-family: 'Neucha', arial, serif;
+    outline: none;
+    border: 2px solid #ededed;
+    border-bottom: 2px solid black; }
+
+.text:focus {
+    -webkit-box-shadow: 0px 0px 10px blue;
+    border: 2px solid black;
+    border-radius: 6px;
+    background-color: white; }
+
+.text:hover {
+    -webkit-box-shadow: 0px 0px 5px blue;
+    border: 2px solid white;
+    border-radius: 6px;
+    background-color: #eeeeee; }
+
+.create {
+    width: 330px;
+    font-size: 24px;
+    margin-top: 20px;
+    color: white;
+    background-color: green;
+    font-family: Verdana, sans;
+    border: 1px solid grey;
+    border-radius: 20px;
+    -webkit-box-shadow: 0px 0px 10px grey; }
+
+.create:hover {
+    cursor: pointer;
+    -webkit-box-shadow: 0px 0px 25px blue; }
+
+.create:focus {
+    -webkit-box-shadow: 0px 0px 25px blue;
+    border-radius: 20px;
+    background-color: green;
+    border: 1px solid grey; }
+
+.menu-frame {
+    display: none; }

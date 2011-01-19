@@ -1,0 +1,19 @@
+.name {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 22px;
+    color: black;
+    text-decoration: none; }
+
+.name:hover {
+    text-decoration: underline; }
+
+.sig-link {
+    color: black;
+    font-family: "Verdana", sans;
+    font-size: 16px; }
+
+.sig-info {
+    margin-left: 10px;
+    color: grey;
+    font-style: italic; }

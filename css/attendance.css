@@ -1,0 +1,166 @@
+.filter {
+    font-size: 20px;
+    border-top: 2px solid grey;
+    border-right: 2px solid grey;
+    border-left: 2px solid grey;
+    border-bottom: 0px solid white;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    width: 196px; }
+
+.clubbers {
+    font-size: 20px;
+    margin-top: 0px;
+    padding-top: 0px;
+    border-bottom: 2px solid grey;
+    border-right: 2px solid grey;
+    border-left: 2px solid grey;
+    background-color: white;
+    height: 300px;
+    width: 200px; }
+
+.clubber-data {
+    visibility: hidden; }
+
+.visible {
+    visibility: visible; }
+
+.hidden {
+    visibility: hidden; }
+
+.clubber-name {
+    font-family: "Josefin Sans Std Light", arial, sans;
+    font-size: 50px; }
+
+.attendance-container {
+    font-size: 9px;
+    font-family: "Verdana", arial, sans;
+    float: left;
+    display: inline;
+    width: 460px;
+    margin-top: 15px; }
+
+.attendance-button {
+    margin-right: 5px;
+    text-align: center;
+    width: 62px;
+    float: left; }
+
+.attendance-button input {
+    background-color: white;
+    border: 2px solid white;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    height: 52px;
+    margin: 5px;
+    width: 52px;
+    box-shadow: 3px 3px 3px grey;
+    -moz-box-shadow: 3px 3px 3px grey;
+    -webkit-box-shadow: 3px 3px 3px grey; }
+
+.attendance-button input:hover {
+    box-shadow: 0px 0px 10px grey;
+    -moz-box-shadow: 0px 0px 10px grey;
+    -webkit-box-shadow: 0px 0px 10px grey;
+    cursor: pointer; }
+
+.selected {
+    font-weight: bold;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    background-color: #0c6; }
+
+.present {
+    background-image: url("/images/present.png"); }
+
+.bible {
+    background-image: url("/images/bible.png"); }
+
+.handbook {
+    background-image: url("/images/handbook.png"); }
+
+.uniform {
+    background-image: url("/images/uniform.png"); }
+
+.friend {
+    background-image: url("/images/friend.png"); }
+
+.cubbies {
+    background-color: #99CCFF; }
+
+.sparks {
+    background-color: red; }
+
+.tnt {
+    background-color: green; }
+
+.trek {
+    background-color: #00ff66; }
+
+.allergy-info {
+    padding: 10px;
+    font-family: "Verdana", sans;
+    color: white;
+    width: 405px;
+    border: 8px solid black;
+    float: left;
+    display: inline;
+    background-color: red;
+    margin-top: 20px;
+    margin-bottom: 30px; }
+
+.allergic-to-item {
+    font-size: 30px; }
+
+.attendees {
+    line-height: 24px;
+    font-size: 14px; }
+
+.attendees a {
+    color: black; }
+
+.gone {
+    display: none; }
+
+.points {
+    margin-left: 5px;
+    margin-top: 25px;
+    display: inline;
+    float: left;
+    height: 52px;
+    font-size: 24px; }
+
+.points-label {
+    margin-top: 35px;
+    font-size: 12px; }
+
+.date-input {
+    text-align: center;
+    border: 1px solid grey;
+    margin-right: 3px;
+    margin-left: 3px;
+    width: 30px; }
+
+.date-label {
+    color: grey;
+    margin-right: 5px; }
+
+.preset-date {
+    color: black;
+    margin-right: 5px;
+    margin-left: 5px; }
+
+.change-date {
+    border-radius: 4px;
+    -webkit-box-shadow: 1px 1px 1px black;
+    border: 1px solid grey;
+    background-color: #eeeeee;
+    margin-left: 10px; }
+
+.change-date:hover {
+    -webkit-box-shadow: 0px 0px 1px black;
+    cursor: pointer;
+    background-color: white; }
+
+.change-date:focus {
+    -webkit-box-shadow: 0px 0px 1px black; }

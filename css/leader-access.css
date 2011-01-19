@@ -1,0 +1,37 @@
+.context {
+    font-style: italic;
+    color: grey; }
+
+.email {
+    padding: 2px;
+    line-height: 32px;
+    background-color: white;
+    width: 300px;
+    font-size: 24px;
+    font-family: 'Neucha', arial, serif;
+    outline: none;
+    border: 2px solid white;
+    border-bottom: 2px solid black; }
+
+.email:focus {
+    -webkit-box-shadow: 0px 0px 10px blue;
+    border: 2px solid black;
+    border-radius: 6px;
+    background-color: white; }
+
+.email:hover {
+    -webkit-box-shadow: 0px 0px 5px blue;
+    border: 2px solid white;
+    border-radius: 6px;
+    background-color: #eeeeee; }
+
+.email-desc {
+    background-color: #333333;
+    color: yellow;
+    padding: 3px;
+    margin: 3px; }
+
+.leader-name {
+    font-size: 20px;
+    color: black;
+    line-height: 26px; }

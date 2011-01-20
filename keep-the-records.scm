@@ -411,13 +411,12 @@
                                                   (++ "/" club "/club-night/clubbers/register?success=true")))))))
   no-session: #t)
 
-(define (present-clubbers club)
-  (let ((today (todays-date)))
-    (filter (lambda (m-name)
-              (if (present club m-name today) #t #f)) (db:list "clubs" club "clubbers"))))
+(define (present-clubbers club date)
+  (filter (lambda (m-name)
+            (if (present club m-name date) #t #f)) (db:list "clubs" club "clubbers")))
 
-(define (attendees-html club)
-  (let ((present-clubbers (sort (present-clubbers club) string<)))
+(define (attendees-html club date)
+  (let ((present-clubbers (sort (present-clubbers club date) string<)))
     (++ "In Attendance: "
         (number->string (fold (lambda (m c) (+ c 1)) 0 present-clubbers))
         (<br>) (<br>)
@@ -451,7 +450,7 @@
                       (allergies . ,(allergies club name))
                       (club-level . ,(club-level club name))
                       (notes . ,(notes club name))
-                      (attendees-html . ,(attendees-html club)))
+                      (attendees-html . ,(attendees-html club date)))
                     '())))
             success: "loadClubberInfo(response);"
             update-targets: #t
@@ -533,7 +532,7 @@
           (<div> class: "grid_3 column-body"
               (<div> class: "tab-body padding"
                      (<div> class: "attendees" id: "attendees"
-                            (attendees-html club)))))))
+                            (attendees-html club date)))))))
   headers: (include-javascript "/js/attendance.js")
   no-ajax: #f
   css: '("/css/attendance.css?ver=2")

@@ -1,3 +1,6 @@
+html {
+    overflow-y: scroll; }
+
 body {
     background-color: #aaaaaa; }
 
@@ -126,3 +129,15 @@ body {
     -moz-box-shadow: 3px 3px 3px grey;
     -webkit-box-shadow: 3px 3px 3px grey;
     background-color: white; }
+
+.logo {
+    height: 40px;
+    float: right; }
+
+.main-logo {
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #222;
+    font-family: "Permanent Marker";
+    font-size: 26px;
+    text-shadow: white 2px 2px 2px; }

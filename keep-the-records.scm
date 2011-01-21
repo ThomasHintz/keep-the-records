@@ -65,6 +65,8 @@
                                     href: (++ "/" club "/admin/leader-access") "Admin"))
                         "")
                     (<div> class: "grid_12 main-tab-bar full-width"
+                           (<div> class: "logo"
+                                  (<a> class: "main-logo" href: "http://keeptherecords.com" "Keep The Records"))
                            (cond
                             ((eq? tab 'club-night)
                              (++ (<a> href: (++ "/" club "/club-night/attendance")
@@ -119,7 +121,8 @@
                    "http://fonts.googleapis.com/css?family=Neucha&subset=latin"
                    "http://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
                    "http://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
-                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=0") css)
+                   "http://fonts.googleapis.com/css?family=Permanent+Marker"
+                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=2") css)
     title: title
     no-session: no-session
     no-ajax: no-ajax

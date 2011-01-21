@@ -179,45 +179,24 @@
 
 ;;; user login/create
 
-(define-awana-app-page "/user/register"
-  (lambda ()
-    (let ((attempted-path ($ 'attempted-path)))
-      (++ (<h1> "Register Yourself")
-          (<form> action: "/user/create" method: "post"
-                  (if attempted-path
-                      (hidden-input 'attempted-path attempted-path)
-                      "")
-                  (<table> class: "user-register"
-                           (<tr> (<td> "Name:")
-                                 (<td> (<input> type: "text" id: "name" name: "name")))
-                           (<tr> (<td> "Email:")
-                                 (<td> (<input> type: "text" id: "email" name: "email")))
-                           (<tr> (<td> "Club:")
-                                 (<td> (<input> type: "text" id: "club" name: "club")))
-                           (<tr> (<td> "Password:")
-                                 (<td> (<input> type: "password" id: "password" name: "password"))
-                                 (<td> "Password Again:")
-                                 (<td> (<input> type: "password" id: "password-again" name: "password-again")))
-                           (<tr> (<td> (<input> type: "submit" id: "register-submit" value: "Submit"))))))))
-  css: '("/css/user-register.css")
-  no-session: #t)
-
 (define (password-matches? user password)
   (string=? (call-with-output-digest (sha512-primitive) (cut display password <>))
             (user-pw user)))
 
-(define-awana-app-page "/user/create"
-  (lambda ()
+(define-awana-app-page (regexp "/[^/]*/user/create")
+  (lambda (path)
     (let ((name ($ 'name))
           (email ($ 'email))
-          (club ($ 'club))
+          (club (get-club path))
           (password ($ 'password))
           (password-again ($ 'password-again))
           (attempted-path ($ 'attempted-path)))
       (if (string=? password password-again)
           (begin (user-name email name)
                  (user-pw email (call-with-output-digest (sha512-primitive) (cut display (->string password) <>)))
-                 (user-email email email))
+                 (user-email email email)
+                 (user-club email club)
+                 (redirect-to "/user/login"))
           (html-page
            ""
            headers: (<meta> http-equiv: "refresh"
@@ -1047,17 +1026,73 @@
     (<div> class: "grid_12" (<div> class: "padding" "Smile! I'm being built right now!")))
   tab: 'admin)
 
+(define-awana-app-page (regexp "/[^/]*/admin/leader-access/authorize/.*")
+  (lambda (path)
+    (let* ((club (get-club path))
+           (email (auth-url club path)))
+      (if (not (eq? email 'not-found))
+          (begin
+            (add-javascript "$(document).ready(function() { $('#name').focus(); });")
+            (<div> class: "grid_12"
+                   (<form> action: (++ "/" club "/user/create") method: "post"
+                           (<h1> class: "action" (club-name club))
+                           (<h1> class: "action" "Create Your Account")
+                           (<span> class: "form-context" "Name")
+                           (<br>)
+                           (<input> class: "text" type: "text" id: "name" name: "name")
+                           (<br>)
+                           (<span> class: "form-context" "Email")
+                           (<br>)
+                           (<input> class: "text" type: "text" id: "email" name: "email" value: email)
+                           (<br>)
+                           (<span> class: "form-context" "Password")
+                           (<br>)
+                           (<input> class: "text" type: "password" id: "password" name: "password")
+                           (<br>)
+                           (<span> class: "form-context" "Password Again")
+                           (<br>)
+                           (<input> class: "text" type: "password" id: "password-again" name: "password-again")
+                           (<br>)
+                           (<input> type: "submit" value: "Create Your Account" class: "create"))))
+          "Not a valid authorization url.")))
+  css: '("/css/club-register.css?v=1")
+  no-ajax: #f
+  no-session: #t
+  tab: 'none)
+
+(define-awana-app-page (regexp "/[^/]*/admin/leader-access/send-email")
+  (lambda (path)
+    (let* ((club (get-club path))
+           (email ($ 'email))
+           (link-url (++ "/" club "/admin/leader-access/authorize/"
+                         (number->string (random 999999999)) (number->string (random 999999999))
+                         (number->string (random 999999999)))))
+      (auth-url club link-url email)
+      (send-mail subject: "Authorization To Access Keep The Records - Awana Record Keeping"
+                 from: "t@keeptherecords.com"
+                 from-name: "Keep The Records"
+                 to: ($ 'email)
+                 reply-to: "t@keeptherecords.com"
+                 html: (++ (<p> "Hello,")
+                           (<p> "You have been granted access to " (club-name club) "'s Keep The Records, Awana Record Keeping, program. To finish the authorization process, click the link below (if it doesn't work, copy and paste into a new window or tab).")
+                           (<p> (<a> href: (++ "http://a.keeptherecords.com" link-url)
+                                     (++ "http://a.keeptherecords.com" link-url)))
+                           (<p> "Keep The Records is an Awana Record Keeping application that runs on the Internet. This email is just to notify you that the administrator for " (club-name club) " has granted the person with this email address access to " (club-name club) "'s Keep The Records account.")
+                           (<p> "If you think you recieved this message in error, please reply to this email, or email me at " (<a> href: "mailto:t@keeptherecors.com" "t@keeptherecords.com"))))
+      (redirect-to (++ "/" club "/admin/leader-access")))))
+
 (define-awana-app-page (regexp "/[^/]*/admin/leader-access")
   (lambda (path)
     (++ (<div> class: "grid_6"
                (<div> class: "padding column-header" "Grant Access To Leader")
                (<div> class: "padding column-body"
-                      (<span> class: "context" "Leader's Email Address")
-                      (<br>)
-                      (<input> class: "email" id: "email" name: "email")
-                      (<br>)
-                      (<div> class: "email-desc" "An email will be sent to the above address with a link that will allow this person to access this organization's Awana records. They will have full access to do anything, so be careful.")
-                      (<input> class: "send-email" type: "submit" value: "Send Access Email")))
+                      (<form> action: (++ path "/send-email") method: "GET"
+                              (<span> class: "context" "Leader's Email Address")
+                              (<br>)
+                              (<input> class: "email" id: "email" name: "email")
+                              (<br>)
+                              (<div> class: "email-desc" "An email will be sent to the above address with a link that will allow this person to access this organization's Awana records. They will have full access to do anything, so be careful.")
+                              (<input> class: "send-email" type: "submit" value: "Send Access Email"))))
         (<div> class: "grid_6"
                (<div> class: "padding column-header" "Leaders With Access")
                (<div> class: "padding column-body"

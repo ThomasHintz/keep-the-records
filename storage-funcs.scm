@@ -117,9 +117,8 @@
 (db-user user-pw "pw")
 
 ; (club-address club . address)
-;(db-club club-address "address")
-;(db-club club-church "church")
 (db-club club-name "name")
+(db-club club-users "club-users")
 
 ; (auth-url club url . email)
 (db-club-auth auth-url "email")

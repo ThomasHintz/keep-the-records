@@ -1070,17 +1070,20 @@
                          (number->string (random 999999999)) (number->string (random 999999999))
                          (number->string (random 999999999)))))
       (auth-url club link-url email)
-      (send-mail subject: "Authorization To Access Keep The Records - Awana Record Keeping"
-                 from: "t@keeptherecords.com"
-                 from-name: "Keep The Records"
-                 to: ($ 'email)
-                 reply-to: "t@keeptherecords.com"
-                 html: (++ (<p> "Hello,")
-                           (<p> "You have been granted access to " (club-name club) "'s Keep The Records, Awana Record Keeping, program. To finish the authorization process, click the link below (if it doesn't work, copy and paste into a new window or tab).")
-                           (<p> (<a> href: (++ "http://a.keeptherecords.com" link-url)
-                                     (++ "http://a.keeptherecords.com" link-url)))
-                           (<p> "Keep The Records is an Awana Record Keeping application that runs on the Internet. This email is just to notify you that the administrator for " (club-name club) " has granted the person with this email address access to " (club-name club) "'s Keep The Records account.")
-                           (<p> "If you think you recieved this message in error, please reply to this email, or email me at " (<a> href: "mailto:t@keeptherecors.com" "t@keeptherecords.com"))))
+      (handle-exceptions
+       exn
+       "There was an error sending out the email. Please go back and try again later. If this problem persists, email me at t@keeptherecords.com or call me at 906.934.6413."
+       (send-mail subject: "Authorization To Access Keep The Records - Awana Record Keeping"
+                  from: "t@keeptherecords.com"
+                  from-name: "Keep The Records"
+                  to: ($ 'email)
+                  reply-to: "t@keeptherecords.com"
+                  html: (++ (<p> "Hello,")
+                            (<p> "You have been granted access to " (club-name club) "'s Keep The Records, Awana Record Keeping, program. To finish the authorization process, click the link below (if it doesn't work, copy and paste into a new window or tab).")
+                            (<p> (<a> href: (++ "http://a.keeptherecords.com" link-url)
+                                      (++ "http://a.keeptherecords.com" link-url)))
+                            (<p> "Keep The Records is an Awana Record Keeping application that runs on the Internet. This email is just to notify you that the administrator for " (club-name club) " has granted the person with this email address access to " (club-name club) "'s Keep The Records account.")
+                            (<p> "If you think you recieved this message in error, please reply to this email, or email me at " (<a> href: "mailto:t@keeptherecors.com" "t@keeptherecords.com")))))
       (redirect-to (++ "/" club "/admin/leader-access")))))
 
 (define-awana-app-page (regexp "/[^/]*/admin/leader-access")

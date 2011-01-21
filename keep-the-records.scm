@@ -196,6 +196,7 @@
                  (user-pw email (call-with-output-digest (sha512-primitive) (cut display (->string password) <>)))
                  (user-email email email)
                  (user-club email club)
+                 (club-users club (cons email (club-users club)))
                  (redirect-to "/user/login"))
           (html-page
            ""
@@ -269,6 +270,7 @@
                  (user-club u-email club)
                  (user-email u-email u-email)
                  (user-pw u-email (call-with-output-digest (sha512-primitive) (cut display (->string u-pw) <>)))
+                 (club-users club (cons email (club-users club)))
                  (html-page
                   ""
                   headers: (<meta> http-equiv: "refresh"
@@ -1083,22 +1085,24 @@
 
 (define-awana-app-page (regexp "/[^/]*/admin/leader-access")
   (lambda (path)
-    (++ (<div> class: "grid_6"
-               (<div> class: "padding column-header" "Grant Access To Leader")
-               (<div> class: "padding column-body"
-                      (<form> action: (++ path "/send-email") method: "GET"
-                              (<span> class: "context" "Leader's Email Address")
-                              (<br>)
-                              (<input> class: "email" id: "email" name: "email")
-                              (<br>)
-                              (<div> class: "email-desc" "An email will be sent to the above address with a link that will allow this person to access this organization's Awana records. They will have full access to do anything, so be careful.")
-                              (<input> class: "send-email" type: "submit" value: "Send Access Email"))))
-        (<div> class: "grid_6"
-               (<div> class: "padding column-header" "Leaders With Access")
-               (<div> class: "padding column-body"
-                      (<div> class: "leader-name" "Joe Bixley")
-                      (<div> class: "leader-name" "John Smith")
-                      (<div> class: "leader-name" "Alice Romley")))))
+    (let ((club (get-club path)))
+      (++ (<div> class: "grid_6"
+                 (<div> class: "padding column-header" "Grant Access To Leader")
+                 (<div> class: "padding column-body"
+                        (<form> action: (++ path "/send-email") method: "GET"
+                                (<span> class: "context" "Leader's Email Address")
+                                (<br>)
+                                (<input> class: "email" id: "email" name: "email")
+                                (<br>)
+                                (<div> class: "email-desc" "An email will be sent to the above address with a link that will allow this person to access this organization's Awana records. They will have full access to do anything, so be careful.")
+                                (<input> class: "send-email" type: "submit" value: "Send Access Email"))))
+          (<div> class: "grid_6"
+                 (<div> class: "padding column-header" "Leaders With Access")
+                 (<div> class: "padding column-body"
+                        (fold (lambda (e o)
+                                (++ o (<div> class: "leader-name" (user-name e))))
+                              ""
+                              (club-users club)))))))
   css: '("/css/leader-access.css?v=0")
   tab: 'admin
   title: "Leader Access - KtR")

@@ -491,7 +491,10 @@
           (<div> class: "grid_3 column-body"
                  (<div> class: "padding"
                         (<input> type: "text" class: "filter" id: "filter")
-                        (combo-box "clubbers" (map (lambda (e) (name club e)) (db:list "clubs" club "clubbers"))
+                        (combo-box "clubbers"
+                                   (map (lambda (e)
+                                          `(,e . ,(name club e)))
+                                        (name-sort club (db:list "clubs" club "clubbers") "last"))
                                    class: "clubbers" multiple: #t)))
           (<div> class: "grid_6 column-body"
                  (<div> class: "padding"
@@ -540,8 +543,10 @@
 (define (name-sort club clubbers sort-value)
   (sort clubbers (lambda (e1 e2)
                    (if (and sort-value (string=? sort-value "last"))
-                       (string< (second (string-split (name club e1) " "))
-                                (second (string-split (name club e2) " ")))
+                       (let ((n1 (string-split (name club e1) " "))
+                             (n2 (string-split (name club e2) " ")))
+                         (string< (++ (second n1) " " (first n1))
+                                  (++ (second n2) " " (first n2))))
                        (string< e1 e2)))))
 
 (define (clubbers->names club clubbers)

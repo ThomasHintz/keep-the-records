@@ -1164,11 +1164,11 @@
                               (if (session-valid? (read-cookie (session-cookie-name)))
                                   (let ((user ($session 'user)))
                                     (newline)
-                                    (display (++ "user: " user))
+                                    (display (++ "user: " (->string user)))
                                     (newline)
-                                    (display (++ " user name: " (user-name user)))
+                                    (display (++ " user name: " (->string (user-name user))))
                                     (newline)
-                                    (display (++ " user club: " (user-club user))))
+                                    (display (++ " user club: " (->string (user-club user)))))
                                   (write ""))))
                     from: "t@keeptherecords.com"
                     from-name: "Thomas Hintz"

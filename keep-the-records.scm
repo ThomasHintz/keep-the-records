@@ -1185,3 +1185,28 @@
               (<div> style: "font-style: italic; color: grey; margin-left: 35px;" "An email has just been sent to my personal inbox detailing what went wrong and I will fix this as quickly as possible.")
               (<br>)
               (<div> style: "font-family: Rock Salt; padding-left: 10px; padding-top: 15px; padding-bottom: 15px; font-size: 30px; font-style: italic; font-weight: 700; color: #ff8100; background-color: black; text-shadow: white 1px 1px;" (<h2> "I'm sincerely sorry."))))))
+
+;;; loaders
+
+(define-page "/reload/index"
+  (lambda ()
+    (++ (<a> href: "/reload/keep-the-records" "keep-the-records.scm")
+        (<br>)
+        (<br>)
+        (<a> href: "/reload/setup" "setup.scm")))
+  no-session: #t
+  title: "Reload Pages")
+
+(define-page "/reload/keep-the-records"
+  (lambda ()
+    (load "keep-the-records.scm")
+    (redirect-to "/reload/index"))
+  title: "Reloaded keep-the-records"
+  no-session: #t)
+
+(define-page "/reload/setup"
+  (lambda ()
+    (load "setup.scm")
+    (redirect-to "/reload/index"))
+  title: "Reloaded setup"
+  no-session: #t)

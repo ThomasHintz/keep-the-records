@@ -209,7 +209,7 @@
 
 (define-login-trampoline "/login-trampoline"
   hook: (lambda (user)
-          (if (session-valid? (read-cookie (session-cookie-name)))
+          (if (and (read-cookie (session-cookie-name)) (session-valid? (read-cookie (session-cookie-name))))
               (begin ($session-set! 'user user)
                      ($session-set! 'club (user-club user)))
               #f)))

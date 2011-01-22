@@ -1,6 +1,6 @@
 ;;; WARNING user/club names should be cleaned, null and / are illegal characters
 
-(require-extension awful message-digest-port sha2 posix http-session spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session)
+(require-extension awful message-digest-port sha2 posix http-session spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18)
 
 ;;; Settings
 
@@ -122,7 +122,7 @@
                    "http://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
                    "http://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
                    "http://fonts.googleapis.com/css?family=Permanent+Marker"
-                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=2") css)
+                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=3") css)
     title: title
     no-session: no-session
     no-ajax: no-ajax
@@ -209,8 +209,10 @@
 
 (define-login-trampoline "/login-trampoline"
   hook: (lambda (user)
-          ($session-set! 'user user)
-          ($session-set! 'club (user-club user))))
+          (if (session-valid? (read-cookie (session-cookie-name)))
+              (begin ($session-set! 'user user)
+                     ($session-set! 'club (user-club user)))
+              #f)))
 
 (login-page-path "/user/login")
 (define-awana-app-page (login-page-path)
@@ -1142,3 +1144,42 @@
 
 (define-awana-app-page "/testses"
   (lambda () (++ "user: " ($session 'user))))
+
+;;; error page
+
+(page-exception-message
+ (lambda (exn)
+   (let ((c (with-output-to-string (lambda () (print-call-chain)))))
+     (thread-start!
+      (make-thread
+       (lambda ()
+         (send-mail subject: "KtR Error"
+                    text: (with-output-to-string
+                            (lambda ()
+                              (display c)
+                              (print-error-message exn)
+                              (newline)
+                              (write (uri-path (request-uri (current-request))))
+                              (newline)
+                              (if (session-valid? (read-cookie (session-cookie-name)))
+                                  (let ((user ($session 'user)))
+                                    (newline)
+                                    (display (++ "user: " user))
+                                    (newline)
+                                    (display (++ " user name: " (user-name user)))
+                                    (newline)
+                                    (display (++ " user club: " (user-club user))))
+                                  (write ""))))
+                    from: "t@keeptherecords.com"
+                    from-name: "Thomas Hintz"
+                    to: "t@thintz.com"
+                    reply-to: "t@thintz.com")))))
+   (++ "<link  href='//fonts.googleapis.com/css?family=Rock+Salt:regular' rel='stylesheet' type='text/css' >"
+       "<link  href='//fonts.googleapis.com/css?family=IM+Fell+Great+Primer:regular' rel='stylesheet' type='text/css' >"
+       (<div> class: "error-outer-div" style: "background-color: white;"
+              (<div> class: "oh-no-div" style: "background-color: black; width: 100%; height: 200px;"
+                     (<h1> class: "oh-no" style: "font-family: Rock Salt; padding-top: 50px; margin-left: 10px; font-size: 100px; font-style: italic; font-weight: 700; margin-bottom: 0px; color: #ff8100; text-shadow: blue -2px -2px, grey 3px 3px;" "Oh no!"))
+              (<div> style: "font-family: IM Fell Great Primer; font-size: 34px; margin-left: 10px; padding-top: 10px; padding-bottom: 5px;" "I messed something up!")
+              (<div> style: "font-style: italic; color: grey; margin-left: 35px;" "An email has just been sent to my personal inbox detailing what went wrong and I will fix this as quickly as possible.")
+              (<br>)
+              (<div> style: "font-family: Rock Salt; padding-left: 10px; padding-top: 15px; padding-bottom: 15px; font-size: 30px; font-style: italic; font-weight: 700; color: #ff8100; background-color: black; text-shadow: white 1px 1px;" (<h2> "I'm sincerely sorry."))))))

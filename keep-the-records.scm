@@ -84,7 +84,10 @@
                                       "Allergies")
                                  (<a> href: (++ "/" club "/club-night/release")
                                       class: (main-tab-class (is-current? (++ "/" club "/club-night/release") actual-path))
-                                      "Release")))
+                                      "Release")
+                                 (<a> href: (++ "/" club "/club-night/birthdays")
+                                      class: (main-tab-class (is-current? (++ "/" club "/club-night/birthdays") actual-path))
+                                      "Birthdays")))
                             ((eq? tab 'stats)
                              (++ (<a> href: (++ "/" club "/stats/attendance")
                                       class: (main-tab-class
@@ -858,7 +861,7 @@
       (define-pdf (++ "/" club "/club-night/release/awana-release-form-" club "-"
                       (date->string (current-date) "~m~d~y") ".pdf")
         (lambda ()
-          (pdf-release-form (map reverse-name (clubbers->names club (name-sort club (present-clubbers club) "last")))
+          (pdf-release-form (map reverse-name (clubbers->names club (name-sort club (present-clubbers club (todays-date)) "last")))
                             (++ club "-awana-release-form.pdf"))
           (insert-file (++ club "-awana-release-form.pdf"))))
       (redirect-to (++ "/" club "/club-night/release/awana-release-form-" club "-"
@@ -1079,6 +1082,26 @@
   no-ajax: #f
   headers: (include-javascript "/js/sections.js")
   tab: 'club-night)
+
+;(define (birthdays-next-week club clubbers)
+;  (let ((today (todays
+
+;(define-awana-app-page (regexp "/[^/]*/club-night/birthdays")
+;  (lambda (path)
+;    (let ((club (get-club path)))
+;      (++ (<div> class: "grid_12"
+;                 (<div> class: "padding column-header" "Birthdays in the coming week"))
+;          (<div> class: "grid_12"
+;                 (<div> class: "padding column-body"
+;                        (<table>
+;                         (fold (lambda (e o)
+;                                 (++ o
+;                                     (<tr>
+;                                      (<td> (<a> href: (++ "/" club "/club-night/clubbers/" e) (name club e)))
+;                                      (<td> (birthday club e)))))
+;                               ""
+;                               (filter birthdays-next-week (db:list "clubs" club "clubbers")))))))))
+;  tab: 'club-night)
 
 ;;; stats
 

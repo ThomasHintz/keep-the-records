@@ -479,6 +479,7 @@
                       (handbook . ,(handbook club n date))
                       (uniform . ,(uniform club n date))
                       (friend . ,(friend club n date))
+                      (extra . ,(extra club n date))
                       (points-total . ,(total-points club n))
                       (allergies . ,(allergies club n))
                       (club-level . ,(club-level club n))
@@ -514,6 +515,11 @@
               (friend club ($ 'name) date (if (string=? ($ 'friend) "false") #f #t)))
             method: 'PUT
             arguments: '((name . "$('#clubbers').val()[0]") (friend . "stringToBoolean($('#friend').val())")))
+      (ajax "save-extra" 'extra 'click
+            (lambda ()
+              (extra club ($ 'name) date (if (string=? ($ 'extra) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (extra . "stringToBoolean($('#extra').val())")))
       (++ (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
                         (<form> action: path  method: "GET"
@@ -559,6 +565,9 @@
                                              (<input> class: "uniform" type: "button" id: "uniform" value: ""))
                                       (<div> class: "attendance-button" id: "friend" "Friend"
                                              (<input> class: "friend" type: "button" id: "friend" value: ""))
+                                      (<div> class: "attendance-button" id: "extra" "Extra"
+                                             (<input> class: "extra" type: "button" id: "extra" value: "+1")))
+                               (<div> class: "points-container"
                                       (<div> class: "points" id: "points-total")
                                       (<div> class: "points points-label" " points"))
                                (<div> class: "allergy-info" id: "allergy-container"
@@ -571,7 +580,7 @@
                             (attendees-html club date)))))))
   headers: (include-javascript "/js/attendance.js")
   no-ajax: #f
-  css: '("/css/attendance.css?ver=2")
+  css: '("/css/attendance.css?ver=3")
   tab: 'club-night
   title: "Attendance - Club Night -KtR")
 

@@ -149,6 +149,7 @@
 (db-club-clubber-date handbook "handbook" #f)
 (db-club-clubber-date uniform "uniform" #f)
 (db-club-clubber-date friend "friend" #f)
+(db-club-clubber-date extra "extra" #f)
 
 ; (clubber-section club clubber book chapter section . date)
 (db-club-clubber-section clubber-section #f)

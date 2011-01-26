@@ -42,6 +42,10 @@ $(document).ready(function() {
 	if ($('#uniform').val() == "true") { $('#uniform').val("false"); pointsMinus(); }
 	else { $('#uniform').val("true"); pointsPlus(); }
 	$('#uniform').toggleClass('selected'); });
+    $('#extra').click(function() {
+	if ($('#extra').val() == "true") { $('#extra').val("false"); pointsMinus(); }
+	else { $('#extra').val("true"); pointsPlus(); }
+	$('#extra').toggleClass('selected'); });
     $('#friend').click(function() {
 	if ($('#friend').val() == "true") { $('#friend').val("false"); pointsMinus(); }
 	else { $('#friend').val("true"); pointsPlus(); }
@@ -62,6 +66,8 @@ function loadClubberInfo(response) {
 			     else { $('#uniform').addClass('selected'); $('#uniform').val("true"); }}
 	else if (id == "friend") { if (html == false) { $('#friend').removeClass('selected'); $('#friend').val("false"); }
 			     else { $('#friend').addClass('selected'); $('#friend').val("true"); }}
+	else if (id == "extra") { if (html == false) { $('#extra').removeClass('selected'); $('#extra').val("false"); }
+			     else { $('#extra').addClass('selected'); $('#extra').val("true"); }}
 	else if (id == "club-level") {
 	    switch (html) {
 	    case "Cubbies": { $('#clubber-name-container').addClass('cubbies'); break; }

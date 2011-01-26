@@ -122,16 +122,22 @@
 .gone {
     display: none; }
 
+.points-container {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: inline;
+    float: left; }
+
 .points {
-    margin-left: 5px;
-    margin-top: 25px;
     display: inline;
     float: left;
     height: 52px;
     font-size: 24px; }
 
 .points-label {
-    margin-top: 35px;
+    margin-left: 5px;
+    display: inline;
+    float: left;
     font-size: 12px; }
 
 .date-input {

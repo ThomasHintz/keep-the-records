@@ -32,11 +32,11 @@
 
 (define-syntax db-user
   (syntax-rules ()
-    ((db-user prop file)
+    ((db-user prop file default)
      (define (prop user . prop)
        (if (store? prop)
            (db:store (car prop) "users" user file)
-           (db:read "users" user file))))))
+           (with-default (db:read "users" user file) default))))))
 
 (define-syntax db-club
   (syntax-rules ()
@@ -116,13 +116,13 @@
 ;;; database functions
 
 ; (user-name user . name)
-(db-user user-name "name")
-(db-user user-club "club")
-(db-user user-email "email")
-(db-user user-phone "phone")
-(db-user user-birthday "birthday")
-(db-user user-address "address")
-(db-user user-pw "pw")
+(db-user user-name "name" 'not-found)
+(db-user user-club "club" 'not-found)
+(db-user user-email "email" 'not-found)
+(db-user user-phone "phone" "")
+(db-user user-birthday "birthday" "")
+(db-user user-address "address" "")
+(db-user user-pw "pw" 'not-found)
 
 ; (club-address club . address)
 (db-club club-name "name" 'not-found)

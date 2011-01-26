@@ -1,0 +1,38 @@
+.new-leader {
+    font-family: "Verdana", sans;
+    font-size: 14px;
+    color: green; }
+
+.new-leader-symbol {
+    font-family: "Neucha", arial, serif;
+    font-size: 20px; }
+
+.cell-name {
+    width: 175px; }
+
+.cell-email {
+    width: 200px; }
+
+.cell-phone {
+    width: 125px; }
+
+.name {
+    color: black;
+    font-size: 16px;
+    line-height: 22px;
+    text-decoration: none; }
+
+.name:hover {
+    text-decoration: underline; }
+
+td {
+    padding: 3px; }
+
+tr:hover {
+    background-color: #ff8100;
+    font-weight: bold;
+    color: white; }
+
+tr:hover .name {
+    font-weight: bold;
+    color: white; }

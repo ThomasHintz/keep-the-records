@@ -62,7 +62,7 @@
                                (<a> class: (++ "main-menu-item" (if (eq? tab 'stats) " main-menu-item-current" ""))
                                     href: (++ "/" club "/stats/attendance") "Stats")
                                (<a> class: (++ "main-menu-item" (if (eq? tab 'admin) " main-menu-item-current" ""))
-                                    href: (++ "/" club "/admin/leader-access") "Admin"))
+                                    href: (++ "/" club "/admin/leaders") "Admin"))
                         "")
                     (<div> class: "grid_12 main-tab-bar full-width"
                            (<div> class: "logo"
@@ -103,10 +103,10 @@
                                               (is-current? (++ "/" club "/stats/club") actual-path))
                                       "Club")))
                             ((eq? tab 'admin)
-                             (++ (<a> href: (++ "/" club "/admin/leader-access")
+                             (++ (<a> href: (++ "/" club "/admin/leaders")
                                       class: (main-tab-class
-                                              (is-current? (++ "/" club "/admin/leader-access") actual-path))
-                                      "Leader Access")
+                                              (is-current? (++ "/" club "/admin/leaders") actual-path))
+                                      "Leaders")
                                  (<a> href: (++ "/" club "/admin/club")
                                       class: (main-tab-class
                                               (is-current? (++ "/" club "/admin/club") actual-path))
@@ -1084,6 +1084,32 @@
   (lambda (path)
     (<div> class: "grid_12" (<div> class: "padding" "Smile! I'm being built right now!")))
   tab: 'admin)
+
+(define-awana-app-page (regexp "/[^/]*/admin/leaders")
+  (lambda (path)
+    (let ((club (get-club path)))
+      (++ (<div> class: "grid_12"
+                 (<div> class: "padding column-body"
+                        (<span> class: "new-leader-symbol" "+") " "
+                        (<a> class: "new-leader" href: (++ "/" club "/admin/leader-access") "Give Access To Leader")))
+          (<div> class: "clear")
+          (<div> class: "grid_12"
+                 (<div> class: "padding column-header" "Leader Info"))
+          (<div> class: "grid_12"
+                 (<div> class: "padding column-body"
+                        (<table>
+                         (fold (lambda (e o)
+                                 (++ o
+                                     (<tr>
+                                      (<td> class: "cell-name"
+                                            (<a> class: "name" href: (++ "/" club "/admin/leaders/" e) (user-name e)))
+                                      (<td> class: "cell-email" (user-email e))
+                                      (<td> class: "cell-phone" (user-phone e)))))
+                               ""
+                               (club-users club))))))))
+  css: '("/css/leaders.css?ver=1")
+  tab: 'admin
+  title: "Leaders - KtR")
 
 (define-awana-app-page (regexp "/[^/]*/admin/leader-access/authorize/.*")
   (lambda (path)

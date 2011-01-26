@@ -119,6 +119,9 @@
 (db-user user-name "name")
 (db-user user-club "club")
 (db-user user-email "email")
+(db-user user-phone "phone")
+(db-user user-birthday "birthday")
+(db-user user-address "address")
 (db-user user-pw "pw")
 
 ; (club-address club . address)

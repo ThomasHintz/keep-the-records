@@ -379,6 +379,7 @@
       (club-level club m-name ($ 'club-level))
       (allergies club m-name ($ 'allergies))
       (primary-parent club m-name ($ 'parent-name-1))
+      (db:update-list (name->id m-name) "clubs" club "clubbers")
       (let ((p-name ($ 'parent-name-1)))
         (parent-name club p-name p-name)
         (parent-spouse club p-name ($ 'parent-name-2))
@@ -390,7 +391,16 @@
         (parent-children club p-name (let ((children (parent-children club p-name)))
                                        (if (eq? children 'not-found)
                                            `(,($ 'name))
-                                           (cons ($ 'name) children)))))
+                                           (cons ($ 'name) children))))
+        (db:update-list "name" "clubs" club "parents" p-name)
+        (db:update-list "spouse" "clubs" club "parents" p-name)
+        (db:update-list "email" "clubs" club "parents" p-name)
+        (db:update-list "phone-1" "clubs" club "parents" p-name)
+        (db:update-list "phone-2" "clubs" club "parents" p-name)
+        (db:update-list "address" "clubs" club "parents" p-name)
+        (db:update-list "release" "clubs" club "parents" p-name)
+        (db:update-list "children" "clubs" club "parents" p-name)
+        (db:update-list (name->id p-name) "clubs" club "parents"))
       (html-page
        ""
        headers: (<meta> http-equiv: "refresh"

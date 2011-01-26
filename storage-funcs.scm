@@ -68,7 +68,12 @@
      (define (prop club mem date . prop-v)
        (if (store? prop-v)
            (begin (update-points (lambda (c n d) (prop c n d)) (car prop-v) club mem date)
-                  (db:store (car prop-v) "clubs" club "clubbers" mem "attendance" date file))
+                  (let ((d-l (string-split date (db:sep))))
+                  (db:update-list (first d-l) "clubs" club "clubbers" mem "attendance")
+                  (db:update-list (second d-l) "clubs" club "clubbers" mem "attendance" (first d-l))
+                  (db:update-list (third d-l) "clubs" club "clubbers" mem "attendance" (first d-l) (second d-l))
+                  (db:update-list file "clubs" club "clubbers" mem "attendance" date)
+                  (db:store (car prop-v) "clubs" club "clubbers" mem "attendance" date file)))
            (with-default (db:read "clubs" club "clubbers" mem "attendance" date file) default))))))
 
 (define-syntax db-club-clubber-section

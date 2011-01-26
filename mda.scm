@@ -1,4 +1,4 @@
-(require-extension srfi-1 srfi-13 srfi-18 srfi-69 sdbm spiffy-cookies)
+(require-extension srfi-1 srfi-13 srfi-18 srfi-69 sdbm)
 
 ;;; utils
 
@@ -38,6 +38,8 @@
       (set! *sep* (first val))
       *sep*))
 
+(define db:list-index (make-parameter "the-list-index"))
+
 (define *db-write-mutex* (make-mutex 'db-write-mutex))
 
 ;;; permissions
@@ -54,6 +56,9 @@
 (define (db:allowed? sid path-list)
   (let ((v (hash-table-ref/default *perms* sid #f)))
     (and v (v path-list))))
+
+(define (contains? l e)
+  (not (eq? (filter (lambda (le) (string=? le e)) l) '())))
 
 ;;; macros
 
@@ -105,7 +110,7 @@
 (define (db:read . path-list)
   (with-db path-list #t (sdbm-read (db:db) path-list)))
 
-(define (db:list . path-list)
+(define (db:list-old . path-list)
   (with-db
    path-list #t
    (let* ((s-form (list->path path-list))
@@ -118,6 +123,22 @@
                                          kvs))
                                    '())
                         string=))))
+
+(define (db:update-list data . path-list)
+  (with-db
+   path-list #t
+   (let* ((p (append path-list `(,(db:list-index))))
+          (l (sdbm-read (db:db) p))
+          (ls (if (eq? l 'not-found) '() l)))
+     (or (contains? ls data) (sdbm-store (db:db) (cons data ls) p)))))
+
+(define (db:list . path-list)
+  (with-db
+   path-list #t
+   (let ((r (sdbm-read (db:db) (append path-list `(,(db:list-index))))))
+     (if (eq? r 'not-found)
+         '()
+         r))))
 
 (define (db:delete . path-list)
   (with-db path-list #f (sdbm-delete (db:db) path-list)))

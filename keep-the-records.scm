@@ -172,7 +172,7 @@
                    (<span> class: "form-context" "Password Again") (<br>)
                    (<input> class: "text" type: "password" id: "password-again" name: "password-again") (<br>)
                    (<input> type: "submit" value: "Create Club" class: "create"))))
-  css: '("/css/club-register.css?v=1")
+  css: '("/css/club-register.css?v=2")
   no-ajax: #f
   no-session: #t
   tab: 'none)
@@ -237,7 +237,17 @@
 (login-page-path "/user/login")
 (define-awana-app-page (login-page-path)
   (lambda ()
-    (login-form))
+    (add-javascript "$(document).ready(function() { $('#user').focus(); });")
+    (<div> class: "grid_12"
+           (<form> action: "/login-trampoline" method: "POST"
+                   (<h1> class: "action" "Login to Keep the Records")
+                   (<span> class: "form-context" "Email") (<br>)
+                   (<input> class: "text" type: "text" id: "user" name: "user") (<br>)
+                   (<span> class: "form-context" "Password") (<br>)
+                   (<input> class: "text" type: "password" id: "password" name: "password") (<br>)
+                   (<input> class: "create" type: "submit" value: "Enjoy KtR!"))))
+  no-ajax: #f
+  css: '("/css/club-register.css?ver=2")
   no-session: #t)
 
 (define-page (regexp "/sign-out")
@@ -1102,7 +1112,7 @@
                            (<input> class: "text" type: "password" id: "password-again" name: "password-again") (<br>)
                            (<input> type: "submit" value: "Create Your Account" class: "create"))))
           "Not a valid authorization url.")))
-  css: '("/css/club-register.css?v=1")
+  css: '("/css/club-register.css?v=2")
   no-ajax: #f
   no-session: #t
   tab: 'none)

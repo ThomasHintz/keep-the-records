@@ -183,6 +183,20 @@
   (string=? (call-with-output-digest (sha512-primitive) (cut display password <>))
             (user-pw user)))
 
+(define (send-welcome-email email club name)
+  (send-mail subject: "Welcome to Keep The Records - Awana Record Keeping"
+             from: "t@keeptherecords.com"
+             from-name: "Keep The Records"
+             to: email
+             reply-to: "t@keeptherecords.com"
+             html: (++ (<p> "Welcome, " name "!")
+                       (<p> "You now have access to " (club-name club) "'s Keep The Records, Awana Record Keeping program. To login and start using the program you can go to " (<a> href: "http://a.keeptherecords.com" "http://a.keeptherecords.com") ". You can also find the login link at the KtR blog - " (<a> href: "http://keeptherecords.com" "http://keeptherecords.com") ".")
+                       (<p> "If you ever have any questions or just want to give me feedback, just email Thomas Hintz at " (<a> href: "mailto:t@keeptherecords.com" "t@keeptherecords.com") " or give me a call at 906.934.6413. Also, please feel free to follow the KtR blog at " (<a> href: "http://keeptherecords.com/blog" "http://keeptherecords.com/blog") ".")
+                       (<p> "If you enjoy using KtR, than please recommend it to your friends. I want to help as many Awana clubs as I can. Taking good records and being able to see what works and what doesn't is critical to running a great Awana program.")
+                       (<p>)
+                       (<p> "Thanks and God Bless!")
+                       (<p> "Thomas Hintz - Creator of KtR"))))
+
 (define-awana-app-page (regexp "/[^/]*/user/create")
   (lambda (path)
     (let ((name ($ 'name))
@@ -203,6 +217,7 @@
                  (user-address email address)
                  (user-club email club)
                  (club-users club (cons email (club-users club)))
+                 (send-welcome-email email club name)
                  (redirect-to "/user/login"))
           (html-page
            ""
@@ -287,6 +302,7 @@
                  (user-address u-email u-address)
                  (user-pw u-email (call-with-output-digest (sha512-primitive) (cut display (->string u-pw) <>)))
                  (club-users club (cons email (club-users club)))
+                 (send-welcome-email u-email club u-name)
                  (html-page
                   ""
                   headers: (<meta> http-equiv: "refresh"

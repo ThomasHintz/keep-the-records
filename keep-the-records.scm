@@ -84,10 +84,10 @@
                                       "Allergies")
                                  (<a> href: (++ "/" club "/club-night/release")
                                       class: (main-tab-class (is-current? (++ "/" club "/club-night/release") actual-path))
-                                      "Release")
-                                 (<a> href: (++ "/" club "/club-night/birthdays")
-                                      class: (main-tab-class (is-current? (++ "/" club "/club-night/birthdays") actual-path))
-                                      "Birthdays")))
+                                      "Release")))
+                                 ;(<a> href: (++ "/" club "/club-night/birthdays")
+                                 ;     class: (main-tab-class (is-current? (++ "/" club "/club-night/birthdays") actual-path))
+                                      ;"Birthdays")))
                             ((eq? tab 'stats)
                              (++ (<a> href: (++ "/" club "/stats/attendance")
                                       class: (main-tab-class
@@ -405,6 +405,12 @@
   tab: 'club-night
   title: "Register Clubber - Club Night - KtR")
 
+(define (date->db date)
+  (date->string date "~D"))
+
+(define (db->date db-date)
+  (string->date db-date "~m/~d/~y"))
+
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/create")
   (lambda (path)
 ;;; also add security within awana-app-page or something
@@ -417,6 +423,7 @@
       (club-level club m-name ($ 'club-level))
       (allergies club m-name ($ 'allergies))
       (primary-parent club m-name ($ 'parent-name-1))
+      (date-registered club m-name (date->db (current-date)))
       (db:update-list (name->id m-name) "clubs" club "clubbers")
       (let ((p-name ($ 'parent-name-1)))
         (parent-name club p-name p-name)
@@ -738,7 +745,8 @@
                                       (club-level club clubber) (<br>)
                                       "Grade: " (id->name (grade club clubber)) (<br>)
                                       (birthday club clubber) (<br>)
-                                      (total-points club clubber) " points"))
+                                      (total-points club clubber) " points" (<br>) (<br>)
+                                      "Registered: " (date-registered club clubber)))
                         (<div> class: "grid_2 margins-right info-body"
                                (<div> class: "padding"
                                       (let ((a (allergies club clubber)))

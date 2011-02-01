@@ -1,6 +1,7 @@
 ;;; WARNING user/club names should be cleaned, null and / are illegal characters
 
-(require-extension awful message-digest-port sha2 posix http-session spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18)
+(use numbers) ;; !IMPORTANT! needs to come before other eggs, may segfault otherwise (020111)
+(use awful message-digest-port sha2 posix http-session spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18)
 
 ;;; Settings
 
@@ -84,10 +85,10 @@
                                       "Allergies")
                                  (<a> href: (++ "/" club "/club-night/release")
                                       class: (main-tab-class (is-current? (++ "/" club "/club-night/release") actual-path))
-                                      "Release")))
-                                 ;(<a> href: (++ "/" club "/club-night/birthdays")
-                                 ;     class: (main-tab-class (is-current? (++ "/" club "/club-night/birthdays") actual-path))
-                                      ;"Birthdays")))
+                                      "Release")
+                                 (<a> href: (++ "/" club "/club-night/birthdays")
+                                      class: (main-tab-class (is-current? (++ "/" club "/club-night/birthdays") actual-path))
+                                      "Birthdays")))
                             ((eq? tab 'stats)
                              (++ (<a> href: (++ "/" club "/stats/attendance")
                                       class: (main-tab-class
@@ -1089,25 +1090,42 @@
   headers: (include-javascript "/js/sections.js")
   tab: 'club-night)
 
-;(define (birthdays-next-week club clubbers)
-;  (let ((today (todays
+(define (date->date-year d yyyy)
+  (make-date 0 0 0 0 (date-day d) (date-month d) yyyy))
 
-;(define-awana-app-page (regexp "/[^/]*/club-night/birthdays")
-;  (lambda (path)
-;    (let ((club (get-club path)))
-;      (++ (<div> class: "grid_12"
-;                 (<div> class: "padding column-header" "Birthdays in the coming week"))
-;          (<div> class: "grid_12"
-;                 (<div> class: "padding column-body"
-;                        (<table>
-;                         (fold (lambda (e o)
-;                                 (++ o
-;                                     (<tr>
-;                                      (<td> (<a> href: (++ "/" club "/club-night/clubbers/" e) (name club e)))
-;                                      (<td> (birthday club e)))))
-;                               ""
-;                               (filter birthdays-next-week (db:list "clubs" club "clubbers")))))))))
-;  tab: 'club-night)
+(define (within-next-week? d1 d2)
+   ; (* 60 60 24 7) (* m h d w)
+  (let ((diff (- (time-second (date->time-utc d1)) (time-second (date->time-utc d2)))))
+    (and (>= diff 0) (< diff 605800))))
+
+(define (birthdays-next-week club clubbers)
+  ;; use a manual make-date instead of current-date to keep the days time at 0
+  (let ((t (make-date 0 0 0 0 (string->number (todays-dd)) (string->number (todays-mm)) (string->number (todays-yyyy)))))
+    (filter (lambda (c)
+              (within-next-week? (date->date-year (db->date (birthday club c)) (string->number (todays-yyyy))) t))
+            clubbers)))
+
+(define-awana-app-page (regexp "/[^/]*/club-night/birthdays")
+  (lambda (path)
+    (let ((club (get-club path)))
+      (++ (<div> class: "grid_12"
+                 (<div> class: "padding column-header" "Birthdays in the coming week"))
+          (<div> class: "grid_12"
+                 (<div> class: "padding column-body"
+                        (<table>
+                         (fold (lambda (e o)
+                                 (++ o
+                                     (<tr> class: "clubber-row"
+                                           (<td> class: "clubber-name-cell"
+                                                 (<a> class: "clubber-name"
+                                                      href: (++ "/" club "/club-night/clubbers/" e) (name club e)))
+                                           (<td> class: "clubber-birthday-cell"
+                                                 (birthday club e)))))
+                               ""
+                               (birthdays-next-week club (db:list "clubs" club "clubbers")))))))))
+  tab: 'club-night
+  title: "Birthdays - KtR"
+  css: '("/css/birthdays.css?ver=0"))
 
 ;;; stats
 

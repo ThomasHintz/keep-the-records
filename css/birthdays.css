@@ -1,0 +1,14 @@
+.clubber-row {
+    font-family: "Verdana", sans; }
+
+.clubber-name-cell {
+    padding-top: 22px;
+    padding-right: 10px; }
+
+.clubber-name {
+    font-weight: bold;
+    color: black;
+    text-decoration: none; }
+
+.clubber-name:hover {
+    text-decoration: underline; }

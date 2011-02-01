@@ -1,5 +1,5 @@
 ;;; utilities
-(use srfi-19 http-session spiffy-cookies)
+(use srfi-19 http-session spiffy-cookies http-session spiffy-cookies)
 
 (define (todays-date)
   (date->string (current-date) "~Y/~m/~d"))

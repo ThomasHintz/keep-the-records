@@ -110,10 +110,10 @@
                                       class: (main-tab-class
                                               (is-current? (++ "/" club "/admin/leaders") actual-path))
                                       "Leaders")
-                                 (<a> href: (++ "/" club "/admin/club")
-                                      class: (main-tab-class
-                                              (is-current? (++ "/" club "/admin/club") actual-path))
-                                      "Club")
+                                 ;(<a> href: (++ "/" club "/admin/club")
+                                 ;     class: (main-tab-class
+                                 ;             (is-current? (++ "/" club "/admin/club") actual-path))
+                                 ;     "Club")
                                  (<a> href: (++ "/" club "/admin/clubbers")
                                       class: (main-tab-class
                                               (is-current? (++ "/" club "/admin/clubbers") actual-path))
@@ -230,12 +230,10 @@
 
 (define-login-trampoline "/login-trampoline"
   hook: (lambda (user)
-          ;(if (and (read-cookie (session-cookie-name)) (session-valid? (read-cookie (session-cookie-name))))
-          ;    (begin ($session-set! 'user user)
-          ;           ($session-set! 'club (user-club user)))
-          ;    #f)))
-          ($session-set! 'user user)
-          ($session-set! 'club (user-club user))))
+          (if (sid)
+              (begin ($session-set! 'user user)
+                     ($session-set! 'club (user-club user)))
+              #f)))
 
 (login-page-path "/user/login")
 (define-awana-app-page (login-page-path)

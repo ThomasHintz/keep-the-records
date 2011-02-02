@@ -408,7 +408,13 @@
   (date->string date "~D"))
 
 (define (db->date db-date)
-  (string->date db-date "~m/~d/~y"))
+  (handle-exceptions
+   exn
+   (handle-exceptions
+    exn
+    #f
+    (string->date db-date "~m/~d/~Y"))
+   (string->date db-date "~m/~d/~y")))
 
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/create")
   (lambda (path)
@@ -1093,16 +1099,18 @@
 (define (date->date-year d yyyy)
   (make-date 0 0 0 0 (date-day d) (date-month d) yyyy))
 
-(define (within-next-week? d1 d2)
+(define (within-this-week? d1 d2)
    ; (* 60 60 24 7) (* m h d w)
   (let ((diff (- (time-second (date->time-utc d1)) (time-second (date->time-utc d2)))))
     (and (>= diff 0) (< diff 605800))))
 
-(define (birthdays-next-week club clubbers)
+(define (birthdays-this-week club clubbers)
   ;; use a manual make-date instead of current-date to keep the days time at 0
   (let ((t (make-date 0 0 0 0 (string->number (todays-dd)) (string->number (todays-mm)) (string->number (todays-yyyy)))))
     (filter (lambda (c)
-              (within-next-week? (date->date-year (db->date (birthday club c)) (string->number (todays-yyyy))) t))
+              (let ((c-b (db->date (birthday club c))))
+                (and c-b
+                     (within-next-week? (date->date-year c-b (string->number (todays-yyyy))) t))))
             clubbers)))
 
 (define-awana-app-page (regexp "/[^/]*/club-night/birthdays")

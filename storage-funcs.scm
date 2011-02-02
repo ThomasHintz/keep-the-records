@@ -143,6 +143,7 @@
 (db-club-clubber book "book" 0)
 (db-club-clubber last-section "last-section" '(1 0))
 (db-club-clubber date-registered "date-registered" "09/01/10") ; mm/dd/yy
+(db-club-clubber thank-you "thank-you" #f)
 
 ; (present club clubber-name date . present)
 (db-club-clubber-date present "present" #f)

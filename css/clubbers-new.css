@@ -1,0 +1,22 @@
+td {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    min-width: 120px; }
+
+tr:hover {
+    background-color: #ff8100; }
+
+.col-head {
+    font-weight: bold;
+    font-family: "Verdana", sans; }
+
+.no {
+    border: 2px solid #111111;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    text-align: center; }
+
+.no:hover {
+    background-color: black;
+    color: white;
+    cursor: pointer; }

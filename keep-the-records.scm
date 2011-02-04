@@ -198,7 +198,8 @@
                        (<p> "Thanks and God Bless!")
                        (<p> "Thomas Hintz - Creator of KtR"))))
 
-(define-awana-app-page (regexp "/[^/]*/user/create")
+;;; !!! NEEDS PERMISSIONS FIXED ASAP
+(define-page (regexp "/[^/]*/user/create")
   (lambda (path)
     (let ((name ($ 'name))
           (email ($ 'email))
@@ -722,7 +723,7 @@
   title: "Clubbers - Club Night - KtR")
 
 (define (get-clubber path)
-  (fourth (string-split path "/")))
+  (fifth (string-split path "/")))
 
 (define (list-years club clubber)
   (db:list "clubs" club "clubbers" clubber "attendance"))
@@ -861,7 +862,7 @@
                                (sort (db:list "clubs" club "clubbers") (make-registration-sort club)))))))))
   no-ajax: #f
   tab: 'club-night
-  css: '("/css/clubbers-index.css" "/css/clubbers-new.css")
+  css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-new.css?ver=0")
   title: "New Clubbers - Club Night - KtR")
 
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/missed")
@@ -869,7 +870,7 @@
     (let ((club (get-club path)))
       (++ (clubbers-menu-html club 'missed))))
   tab: 'club-night
-  css: '("/css/clubbers-index.css")
+  css: '("/css/clubbers-index.css?ver=2")
   title: "Clubbers Missed - Club Night - KtR")
 
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/dues")
@@ -877,24 +878,25 @@
     (let ((club (get-club path)))
       (++ (clubbers-menu-html club 'dues))))
   tab: 'club-night
-  css: '("/css/clubbers-index.css")
+  css: '("/css/clubbers-index.css?ver=2")
   title: "Dues - Club Night - KtR")
 
 (define (date->date-year d yyyy)
   (make-date 0 0 0 0 (date-day d) (date-month d) yyyy))
 
-(define (within-next-week? d1 d2)
-   ; (* 60 60 24 7) (* m h d w)
-  (let ((diff (- (time-second (date->time-utc d1)) (time-second (date->time-utc d2)))))
-    (and (>= diff 0) (< diff 605800))))
+(define (in-week? d1 d2)
+  ; is d2 within the same week as d1
+  (let ((week-start (date-subtract-duration d1 (make-duration days: (date-week-day d1))))
+        (week-end (date-add-duration d1 (make-duration days: (- 7 (date-week-day d1))))))
+    (and (date>=? d2 week-start) (date<=? d2 week-end))))
 
-(define (birthdays-next-week club clubbers)
+(define (birthdays-this-week club clubbers)
   ;; use a manual make-date instead of current-date to keep the days time at 0
   (let ((t (make-date 0 0 0 0 (string->number (todays-dd)) (string->number (todays-mm)) (string->number (todays-yyyy)))))
     (filter (lambda (c)
               (let ((c-b (db->date (birthday club c))))
                 (and c-b
-                     (within-next-week? (date->date-year c-b (string->number (todays-yyyy))) t))))
+                     (in-week? t (date->date-year c-b (string->number (todays-yyyy)))))))
             clubbers)))
 
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/birthdays")
@@ -915,10 +917,10 @@
                                            (<td> class: "clubber-birthday-cell"
                                                  (birthday club e)))))
                                ""
-                               (birthdays-next-week club (db:list "clubs" club "clubbers")))))))))
+                               (birthdays-this-week club (db:list "clubs" club "clubbers")))))))))
   tab: 'club-night
   title: "Birthdays - Club Night - KtR"
-  css: '("/css/birthdays.css?ver=0" "/css/clubbers-index.css"))
+  css: '("/css/birthdays.css?ver=0" "/css/clubbers-index.css?ver=2"))
 
 ;;; watch list
 
@@ -1254,7 +1256,8 @@
   tab: 'admin
   title: "Leaders - KtR")
 
-(define-awana-app-page (regexp "/[^/]*/admin/leader-access/authorize/.*")
+;;; !WARNING! should maybe have better security since database access is occuring without define-awana-app-page
+(define-page (regexp "/[^/]*/admin/leader-access/authorize/.*")
   (lambda (path)
     (let* ((club (get-club path))
            (email (auth-url club path)))
@@ -1281,7 +1284,13 @@
                            (<input> class: "text" type: "password" id: "password-again" name: "password-again") (<br>)
                            (<input> type: "submit" value: "Create Your Account" class: "create"))))
           "Not a valid authorization url.")))
-  css: '("/css/club-register.css?v=2")
+  css: '("/css/club-register.css?v=2"
+         "http://fonts.googleapis.com/css?family=Tangerine:regular,bold&subset=latin"
+         "http://fonts.googleapis.com/css?family=Neucha&subset=latin"
+         "http://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
+         "http://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
+         "http://fonts.googleapis.com/css?family=Permanent+Marker"
+         "/css/reset.css" "/css/960.css" "/css/master.css?ver=3")
   no-ajax: #f
   no-session: #t
   tab: 'none)

@@ -9,9 +9,11 @@
 (ajax-library "http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
 (enable-session #t)
 (enable-web-repl "/web-repl")
-(web-repl-access-control
- (lambda ()
-   (string=? ($session 'user) "t@thintz.com")))
+
+(define (developer-access?)
+  (or (development-mode?) (string=? ($session 'user) "t@thintz.com")))
+
+(web-repl-access-control developer-access?)
 
 (valid-password?
  (lambda (user password)
@@ -139,18 +141,10 @@
 
 (define-page "/reloadme"
   (lambda ()
-    ;(ajax "reloadme" 'reloadme 'click
-    ;      (lambda ()
-    ;        (load-apps (awful-apps))
-    ;        "Reloaded")
-    ;      target: "result-div"
-    ;      no-session: #t)
-    ;(++ (<input> id: "reloadme" type: "button" value: "Reload Apps")
-    ;    (<div> id: "result-div")))
-    (load-apps (awful-apps))
-    "Reloaded")
-  no-session: #t
-  no-ajax: #f)
+    (when (developer-access?)
+      (load-apps (awful-apps))
+      "Reloaded"))
+  no-session: #t)
 
 ;;; club/user create
 
@@ -1438,23 +1432,26 @@
 
 (define-page "/reload/index"
   (lambda ()
-    (++ (<a> href: "/reload/keep-the-records" "keep-the-records.scm")
-        (<br>)
-        (<br>)
-        (<a> href: "/reload/setup" "setup.scm")))
+    (when (developer-access?)
+      (++ (<a> href: "/reload/keep-the-records" "keep-the-records.scm")
+          (<br>)
+          (<br>)
+          (<a> href: "/reload/setup" "setup.scm"))))
   no-session: #t
   title: "Reload Pages")
 
 (define-page "/reload/keep-the-records"
   (lambda ()
-    (load "keep-the-records.scm")
-    (redirect-to "/reload/index"))
+    (when (developer-access?)
+      (load "keep-the-records.scm")
+      (redirect-to "/reload/index")))
   title: "Reloaded keep-the-records"
   no-session: #t)
 
 (define-page "/reload/setup"
   (lambda ()
-    (load "setup.scm")
-    (redirect-to "/reload/index"))
+    (when (developer-access?)
+      (load "setup.scm")
+      (redirect-to "/reload/index")))
   title: "Reloaded setup"
   no-session: #t)

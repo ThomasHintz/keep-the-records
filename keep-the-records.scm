@@ -123,7 +123,7 @@
                    "http://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
                    "http://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
                    "http://fonts.googleapis.com/css?family=Permanent+Marker"
-                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=3") css)
+                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=4") css)
     title: title
     no-session: no-session
     no-ajax: no-ajax
@@ -197,35 +197,6 @@
                        (<p>)
                        (<p> "Thanks and God Bless!")
                        (<p> "Thomas Hintz - Creator of KtR"))))
-
-;;; !!! NEEDS PERMISSIONS FIXED ASAP
-(define-page (regexp "/[^/]*/user/create")
-  (lambda (path)
-    (let ((name ($ 'name))
-          (email ($ 'email))
-          (club (get-club path))
-          (phone ($ 'phone))
-          (birthday ($ 'birthday))
-          (address ($ 'address))
-          (password ($ 'password))
-          (password-again ($ 'password-again))
-          (attempted-path ($ 'attempted-path)))
-      (if (string=? password password-again)
-          (begin (user-name email name)
-                 (user-pw email (call-with-output-digest (sha512-primitive) (cut display (->string password) <>)))
-                 (user-email email email)
-                 (user-phone email phone)
-                 (user-birthday email birthday)
-                 (user-address email address)
-                 (user-club email club)
-                 (club-users club (cons email (club-users club)))
-                 (send-welcome-email email club name)
-                 (redirect-to "/user/login"))
-          (html-page
-           ""
-           headers: (<meta> http-equiv: "refresh"
-                            content: (++ "0;url=/user/register?reason=passwords-dont-match&user=" email))))))
-  no-session: #t)
 
 (define-login-trampoline "/login-trampoline"
   hook: (lambda (user)
@@ -1256,7 +1227,6 @@
   tab: 'admin
   title: "Leaders - KtR")
 
-;;; !WARNING! should maybe have better security since database access is occuring without define-awana-app-page
 (define-page (regexp "/[^/]*/admin/leader-access/authorize/.*")
   (lambda (path)
     (let* ((club (get-club path))
@@ -1264,25 +1234,32 @@
       (if (not (eq? email 'not-found))
           (begin
             (add-javascript "$(document).ready(function() { $('#name').focus(); });")
-            (<div> class: "grid_12"
-                   (<form> action: (++ "/" club "/user/create") method: "post"
-                           (<h1> class: "action" (club-name club))
-                           (<h1> class: "action" "Create Your Account")
-                           (<span> class: "form-context" "Name") (<br>)
-                           (<input> class: "text" type: "text" id: "name" name: "name") (<br>)
-                           (<span> class: "form-context" "Email") (<br>)
-                           (<input> class: "text" type: "text" id: "email" name: "email" value: email) (<br>)
-                           (<span> class: "form-context" "Phone") (<br>)
-                           (<input> class: "text" type: "text" id: "phone" name: "phone") (<br>)
-                           (<span> class: "form-context" "Birthday") (<br>)
-                           (<input> class: "text" type: "text" id: "birthday" name: "birthday") (<br>)
-                           (<span> class: "form-context" "Address") (<br>)
-                           (<input> class: "text" type: "text" id: "address" name: "address") (<br>)
-                           (<span> class: "form-context" "Password") (<br>)
-                           (<input> class: "text" type: "password" id: "password" name: "password") (<br>)
-                           (<span> class: "form-context" "Password Again") (<br>)
-                           (<input> class: "text" type: "password" id: "password-again" name: "password-again") (<br>)
-                           (<input> type: "submit" value: "Create Your Account" class: "create"))))
+            (<div> class: "container_12"
+                   (<div> class: "menu-bar menu-bar-height"
+                          (<div> class: "logo"
+                                 (<a> class: "main-logo" href: "http://keeptherecords.com" "Keep The Records")))
+                   (<div> class: "grid_12 selected-tab-container"
+                          (<div> class: "padding"
+                                 (<form> action: (++ "/" club "/user/create") method: "post"
+                                         (hidden-input 'orig-email email)
+                                         (hidden-input 'auth-url path)
+                                         (<h1> class: "action" (club-name club))
+                                         (<h1> class: "action" "Create Your Account")
+                                         (<span> class: "form-context" "Name") (<br>)
+                                         (<input> class: "text" type: "text" id: "name" name: "name") (<br>)
+                                         (<span> class: "form-context" "Email") (<br>)
+                                         (<input> class: "text" type: "text" id: "email" name: "email" value: email) (<br>)
+                                         (<span> class: "form-context" "Phone") (<br>)
+                                         (<input> class: "text" type: "text" id: "phone" name: "phone") (<br>)
+                                         (<span> class: "form-context" "Birthday") (<br>)
+                                         (<input> class: "text" type: "text" id: "birthday" name: "birthday") (<br>)
+                                         (<span> class: "form-context" "Address") (<br>)
+                                         (<input> class: "text" type: "text" id: "address" name: "address") (<br>)
+                                         (<span> class: "form-context" "Password") (<br>)
+                                         (<input> class: "text" type: "password" id: "password" name: "password") (<br>)
+                                         (<span> class: "form-context" "Password Again") (<br>)
+                                         (<input> class: "text" type: "password" id: "password-again" name: "password-again") (<br>)
+                                         (<input> type: "submit" value: "Create Your Account" class: "create"))))))
           "Not a valid authorization url.")))
   css: '("/css/club-register.css?v=2"
          "http://fonts.googleapis.com/css?family=Tangerine:regular,bold&subset=latin"
@@ -1290,7 +1267,7 @@
          "http://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
          "http://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
          "http://fonts.googleapis.com/css?family=Permanent+Marker"
-         "/css/reset.css" "/css/960.css" "/css/master.css?ver=3")
+         "/css/reset.css" "/css/960.css" "/css/master.css?ver=4")
   no-ajax: #f
   no-session: #t
   tab: 'none)
@@ -1342,6 +1319,34 @@
   css: '("/css/leader-access.css?v=0")
   tab: 'admin
   title: "Leader Access - KtR")
+
+(define-page (regexp "/[^/]*/user/create")
+  (lambda (path)
+    (let ((name ($ 'name))
+          (email ($ 'email))
+          (club (get-club path))
+          (phone ($ 'phone))
+          (birthday ($ 'birthday))
+          (address ($ 'address))
+          (password ($ 'password))
+          (password-again ($ 'password-again))
+          (attempted-path ($ 'attempted-path))
+          (incoming-url ($ 'auth-url)))
+      (when (not (and (auth-url club incoming-url) (string=? (auth-url club incoming-url) email)))
+        (abort 'permission-denied))
+      (if (string=? password password-again)
+          (begin (user-name email name)
+                 (user-pw email (call-with-output-digest (sha512-primitive) (cut display (->string password) <>)))
+                 (user-email email email)
+                 (user-phone email phone)
+                 (user-birthday email birthday)
+                 (user-address email address)
+                 (user-club email club)
+                 (club-users club (cons email (club-users club)))
+                 (send-welcome-email email club name)
+                 (redirect-to "/user/login"))
+          (redirect-to (++ incoming-url "?reason=passwords-dont-match")))))
+  no-session: #t)
 
 ;;; sign up!
 

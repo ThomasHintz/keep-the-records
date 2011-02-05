@@ -48,11 +48,11 @@
 
 (define-syntax db-club-auth
   (syntax-rules ()
-    ((db-club-auth prop file)
+    ((db-club-auth prop file default)
      (define (prop club url . email)
        (if (store? email)
            (db:store (car email) "clubs" club "auth-urls" url file)
-           (db:read "clubs" club "auth-urls" url file))))))
+           (with-default (db:read "clubs" club "auth-urls" url file) default))))))
 
 (define-syntax db-club-clubber
   (syntax-rules ()
@@ -129,7 +129,7 @@
 (db-club club-users "club-users" '())
 
 ; (auth-url club url . email)
-(db-club-auth auth-url "email")
+(db-club-auth auth-url "email" #f)
 
 ; (grade club clubber-name . grade)
 (db-club-clubber name "name" 'not-found)

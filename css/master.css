@@ -161,5 +161,10 @@ body {
     color: #ff8100;
     text-shadow: blue -2px -2px, grey 3px 3px; }
 
-.oh-no {
-    
+.menu-bar-height {
+    margin-left: 10px;
+    margin-right: 50px;
+    padding-right: 10px;
+    height: 30px;
+    width: 930px;
+    float: left; }

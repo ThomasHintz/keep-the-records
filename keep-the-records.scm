@@ -8,6 +8,11 @@
 (enable-ajax #t)
 (ajax-library "http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
 (enable-session #t)
+(enable-web-repl "/web-repl")
+(web-repl-access-control
+ (lambda ()
+   (string=? ($session 'user) "t@thintz.com")))
+
 (valid-password?
  (lambda (user password)
    (if (eq? (user-email user) 'not-found)

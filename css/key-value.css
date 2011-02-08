@@ -1,0 +1,35 @@
+.clubber-row {
+    font-family: "Verdana", sans; }
+
+.name-cell {
+    padding-top: 22px;
+    padding-right: 10px; }
+
+.clubber-name {
+    font-weight: bold;
+    color: black;
+    text-decoration: none; }
+
+.clubber-name:hover {
+    text-decoration: underline; }
+
+@media print {
+    body {
+	background-color: white;
+	margin: 20px; }
+
+    .info-bar, .menu-bar, .menu-tab-bar, .demo, .main-tab-item {
+	display: none; }
+
+    .clubbers-menu {
+	display: none; }
+
+    .column-header {
+	-webkit-box-shadow: 0px 0px 0px white;
+	color: black; }
+
+    .column-body {
+	-webkit-box-shadow: 0px 0px 0px white; }
+
+    .club-header {
+	-webkit-box-shadow: 0px 0px 0px white; }}

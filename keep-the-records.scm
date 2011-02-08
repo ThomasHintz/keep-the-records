@@ -377,14 +377,21 @@
 (define (date->db date)
   (date->string date "~D"))
 
+(define (short-year? date-string)
+  (let ((s (string-split date-string "/")))
+    (if (> (length s) 2)
+        (if (> (string-length (third s)) 2)
+            #f
+            #t)
+        #f)))
+
 (define (db->date db-date)
-  (handle-exceptions
-   exn
    (handle-exceptions
     exn
     #f
-    (string->date db-date "~m/~d/~Y"))
-   (string->date db-date "~m/~d/~y")))
+    (if (short-year? date-string)
+        (string->date db-date "~m/~d/~y")
+        (string->date db-date "~m/~d/~Y"))))
 
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/create")
   (lambda (path)
@@ -605,7 +612,7 @@
         clubbers))
 
 (define (clubbers-menu-html club tab)
-  (<div> class: "padding"
+  (<div> class: "padding clubbers-menu"
          (<a> class: (++ "clubber-lists" (if (eq? tab 'find) " highlight" ""))
               href: (++ "/" club "/club-night/clubbers") "Find")
          (<a> class: (++ "clubber-lists" (if (eq? tab 'add) " highlight" ""))
@@ -617,7 +624,9 @@
          (<a> class: (++ "clubber-lists" (if (eq? tab 'dues) " highlight" ""))
               href: (++ "/" club "/club-night/clubbers/dues") "Dues")
          (<a> class: (++ "clubber-lists" (if (eq? tab 'birthdays) " highlight" ""))
-              href: (++ "/" club "/club-night/clubbers/birthdays") "Birthdays")))
+              href: (++ "/" club "/club-night/clubbers/birthdays") "Birthdays")
+         (<a> class: (++ "clubber-lists" (if (eq? tab 'points) " highlight" ""))
+              href: (++ "/" club "/club-night/clubbers/points") "Points")))
 
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers")
   (lambda (path)
@@ -881,16 +890,40 @@
                          (fold (lambda (e o)
                                  (++ o
                                      (<tr> class: "clubber-row"
-                                           (<td> class: "clubber-name-cell"
+                                           (<td> class: "name-cell"
                                                  (<a> class: "clubber-name"
                                                       href: (++ "/" club "/club-night/clubbers/info/" e) (name club e)))
-                                           (<td> class: "clubber-birthday-cell"
+                                           (<td> class: "aux-cell"
                                                  (birthday club e)))))
                                ""
                                (birthdays-this-week club (db:list "clubs" club "clubbers")))))))))
   tab: 'club-night
   title: "Birthdays - Club Night - KtR"
-  css: '("/css/birthdays.css?ver=0" "/css/clubbers-index.css?ver=2"))
+  css: '("/css/key-value.css?ver=1" "/css/clubbers-index.css?ver=2"))
+
+(define-awana-app-page (regexp "/[^/]*/club-night/clubbers/points")
+  (lambda (path)
+    (let ((club (get-club path)))
+      (++ (clubbers-menu-html club 'points)
+          (<div> class: "grid_12" (<div> class: "padding column-header" "Clubber Points"))
+          (<div> class: "grid_12"
+                 (<div> class: "padding column-body"
+                        (<table>
+                         (fold (lambda (c o)
+                                 (++ o
+                                     (<tr> class: "clubber-row"
+                                           (<td> class: "name-cell"
+                                                 (<a> class: "clubber-name"
+                                                      href: (++ "/" club "/club-night/clubbers/" c) (name club c)))
+                                           (<td> class: "aux-cell" (total-points club c)))))
+                               ""
+                               (sort (db:list "clubs" club "clubbers")
+                                     (lambda (c1 c2)
+                                       (< (total-points club c2)
+                                          (total-points club c1)))))))))))
+  css: '("/css/key-value.css?ver=1" "/css/clubbers-index.css?ver=2")
+  title: "Points - Club Night - KtR"
+  tab: 'club-night)
 
 ;;; watch list
 

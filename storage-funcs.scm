@@ -68,6 +68,9 @@
      (define (prop club mem date . prop-v)
        (if (store? prop-v)
            (begin (update-points (lambda (c n d) (prop c n d)) (car prop-v) club mem date)
+                  (if (string=? "present" file)
+                      (update-meeting-date club date (if (present club mem date) -1 1))
+                      #f)
                   (let ((d-l (string-split date (db:sep))))
                   (db:update-list (first d-l) "clubs" club "clubbers" mem "attendance")
                   (db:update-list (second d-l) "clubs" club "clubbers" mem "attendance" (first d-l))
@@ -97,16 +100,23 @@
 
 (define (update-points func new-val club name date)
   (cond ((and (func club name date) (not new-val))
-         ;(day-points club name date (- (day-points club name date) 1))
          (total-points club name (- (total-points club name) 1)))
         ((and (not (func club name date)) new-val)
-         ;(day-points club name date (+ (day-points club name date) 1))
          (total-points club name (+ (total-points club name) 1)))))
 
 (define (secondary-parent club name . parent)
   (if (store? parent)
       (db:store (car parent) "clubs" club "parents" (primary-parent name) "spouse-name")
       (with-default (db:read "clubs" club "parents" (primary-parent name) "spouse-name") "")))
+
+(define (update-meeting-date club date change)
+  (let* ((c-meetings (club-meetings club))
+         (meeting (assoc date c-meetings)))
+    (if meeting
+        (club-meetings club (alist-cons date (+ (cdr meeting) change) (alist-delete date c-meetings)))
+        (if (> change 0)
+            (club-meetings club (alist-cons date 1 c-meetings))
+            #f))))
 
 ;(define (day-points club name date . points)
 ;  (if (store? points)
@@ -127,6 +137,7 @@
 ; (club-address club . address)
 (db-club club-name "name" 'not-found)
 (db-club club-users "club-users" '())
+(db-club club-meetings "club-meetings" '())
 
 ; (auth-url club url . email)
 (db-club-auth auth-url "email" #f)

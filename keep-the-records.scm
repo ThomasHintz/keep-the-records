@@ -6,7 +6,7 @@
 ;;; Settings
 
 (enable-ajax #t)
-(ajax-library "http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
+(ajax-library "https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
 (enable-session #t)
 (enable-web-repl "/web-repl")
 
@@ -125,11 +125,11 @@
                                       "Clubbers")))
                             ((eq? tab 'none) "")))
                     (<div> class: "selected-tab-container" (if (regexp? path) (content actual-path) (content))))))))
-    css: (append '("http://fonts.googleapis.com/css?family=Tangerine:regular,bold&subset=latin"
-                   "http://fonts.googleapis.com/css?family=Neucha&subset=latin"
-                   "http://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
-                   "http://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
-                   "http://fonts.googleapis.com/css?family=Permanent+Marker"
+    css: (append '("https://fonts.googleapis.com/css?family=Tangerine:regular,bold&subset=latin"
+                   "https://fonts.googleapis.com/css?family=Neucha&subset=latin"
+                   "https://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
+                   "https://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
+                   "https://fonts.googleapis.com/css?family=Permanent+Marker"
                    "/css/reset.css" "/css/960.css" "/css/master.css?ver=4") css)
     title: title
     no-session: no-session
@@ -190,7 +190,7 @@
              to: email
              reply-to: "t@keeptherecords.com"
              html: (++ (<p> "Welcome, " name "!")
-                       (<p> "You now have access to " (club-name club) "'s Keep The Records, Awana Record Keeping program. To login and start using the program you can go to " (<a> href: "http://a.keeptherecords.com" "http://a.keeptherecords.com") ". You can also find the login link at the KtR blog - " (<a> href: "http://keeptherecords.com" "http://keeptherecords.com") ".")
+                       (<p> "You now have access to " (club-name club) "'s Keep The Records, Awana Record Keeping program. To login and start using the program you can go to " (<a> href: "https://a.keeptherecords.com" "https://a.keeptherecords.com") ". You can also find the login link at the KtR blog - " (<a> href: "http://keeptherecords.com" "http://keeptherecords.com") ".")
                        (<p> "If you ever have any questions or just want to give me feedback, just email Thomas Hintz at " (<a> href: "mailto:t@keeptherecords.com" "t@keeptherecords.com") " or give me a call at 906.934.6413. Also, please feel free to follow the KtR blog at " (<a> href: "http://keeptherecords.com/blog" "http://keeptherecords.com/blog") ".")
                        (<p> "If you enjoy using KtR, than please recommend it to your friends. I want to help as many Awana clubs as I can. Taking good records and being able to see what works and what doesn't is critical to running a great Awana program.")
                        (<p>)
@@ -389,7 +389,7 @@
    (handle-exceptions
     exn
     #f
-    (if (short-year? date-string)
+    (if (short-year? db-date)
         (string->date db-date "~m/~d/~y")
         (string->date db-date "~m/~d/~Y"))))
 
@@ -621,8 +621,8 @@
               href: (++ "/" club "/club-night/clubbers/new") "New Clubbers")
          (<a> class: (++ "clubber-lists" (if (eq? tab 'missed) " highlight" ""))
               href: (++ "/" club "/club-night/clubbers/missed") "Missed")
-         (<a> class: (++ "clubber-lists" (if (eq? tab 'dues) " highlight" ""))
-              href: (++ "/" club "/club-night/clubbers/dues") "Dues")
+         ;(<a> class: (++ "clubber-lists" (if (eq? tab 'dues) " highlight" ""))
+         ;     href: (++ "/" club "/club-night/clubbers/dues") "Dues")
          (<a> class: (++ "clubber-lists" (if (eq? tab 'birthdays) " highlight" ""))
               href: (++ "/" club "/club-night/clubbers/birthdays") "Birthdays")
          (<a> class: (++ "clubber-lists" (if (eq? tab 'points) " highlight" ""))
@@ -844,10 +844,38 @@
   css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-new.css?ver=0")
   title: "New Clubbers - Club Night - KtR")
 
+(define (last-club-meetings club num)
+  (let ((cm (club-meetings club)))
+    (take (sort (map (lambda (m) (car m)) (club-meetings club)) string>)
+          (if (< (length cm) num)
+              (length cm)
+              num))))
+
+(define (missed-clubs? club clubber club-meetings)
+  (fold (lambda (meeting missed)
+          (if missed
+              #t
+              (not (present club clubber meeting))))
+        #f
+        club-meetings))
+
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/missed")
   (lambda (path)
     (let ((club (get-club path)))
-      (++ (clubbers-menu-html club 'missed))))
+      (++ (clubbers-menu-html club 'missed)
+          (<div> class: "grid_12 column-header"
+                 (<div> class: "padding" "Clubbers who missed the last three club meetings"))
+          (<div> class: "grid_12 column-body"
+                 (<div> class: "padding"
+                        (let ((c-meetings (last-club-meetings club 3)))
+                          (fold (lambda (e o)
+                                  (++ o
+                                      (if (missed-clubs? club e c-meetings)
+                                          (++ (<a> href: (++ "/" club "/club-night/clubbers/info/" e)
+                                                   class: "clubber-url" (name club e)) (<br>))
+                                          "")))
+                                ""
+                                (db:list "clubs" club "clubbers"))))))))
   tab: 'club-night
   css: '("/css/clubbers-index.css?ver=2")
   title: "Clubbers Missed - Club Night - KtR")
@@ -914,7 +942,7 @@
                                      (<tr> class: "clubber-row"
                                            (<td> class: "name-cell"
                                                  (<a> class: "clubber-name"
-                                                      href: (++ "/" club "/club-night/clubbers/" c) (name club c)))
+                                                      href: (++ "/" club "/club-night/clubbers/info/" c) (name club c)))
                                            (<td> class: "aux-cell" (total-points club c)))))
                                ""
                                (sort (db:list "clubs" club "clubbers")
@@ -1294,11 +1322,11 @@
                                          (<input> type: "submit" value: "Create Your Account" class: "create"))))))
           "Not a valid authorization url.")))
   css: '("/css/club-register.css?v=2"
-         "http://fonts.googleapis.com/css?family=Tangerine:regular,bold&subset=latin"
-         "http://fonts.googleapis.com/css?family=Neucha&subset=latin"
-         "http://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
-         "http://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
-         "http://fonts.googleapis.com/css?family=Permanent+Marker"
+         "https://fonts.googleapis.com/css?family=Tangerine:regular,bold&subset=latin"
+         "https://fonts.googleapis.com/css?family=Neucha&subset=latin"
+         "https://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
+         "https://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
+         "https://fonts.googleapis.com/css?family=Permanent+Marker"
          "/css/reset.css" "/css/960.css" "/css/master.css?ver=4")
   no-ajax: #f
   no-session: #t
@@ -1321,9 +1349,10 @@
                   to: ($ 'email)
                   reply-to: "t@keeptherecords.com"
                   html: (++ (<p> "Hello,")
-                            (<p> "You have been granted access to " (club-name club) "'s Keep The Records, Awana Record Keeping, program. To finish the authorization process, click the link below (if it doesn't work, copy and paste into a new window or tab).")
-                            (<p> (<a> href: (++ "http://a.keeptherecords.com" link-url)
-                                      (++ "http://a.keeptherecords.com" link-url)))
+                            (<p> "You have be
+    '()en granted access to " (club-name club) "'s Keep The Records, Awana Record Keeping, program. To finish the authorization process, click the link below (if it doesn't work, copy and paste into a new window or tab).")
+                            (<p> (<a> href: (++ "https://a.keeptherecords.com" link-url)
+                                      (++ "https://a.keeptherecords.com" link-url)))
                             (<p> "Keep The Records is an Awana Record Keeping application that runs on the Internet. This email is just to notify you that the administrator for " (club-name club) " has granted the person with this email address access to " (club-name club) "'s Keep The Records account.")
                             (<p> "If you think you recieved this message in error, please reply to this email, or email me at " (<a> href: "mailto:t@keeptherecors.com" "t@keeptherecords.com")))))
       (redirect-to (++ "/" club "/admin/leader-access")))))

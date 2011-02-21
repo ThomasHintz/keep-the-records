@@ -60,7 +60,7 @@
                     (if (and (session-valid? (read-cookie "awful-cookie")) ($session 'user))
                         (<div> class: "grid_12 info-bar text-right full-width"
                            (user-name ($session 'user)) " | "
-                           (<a> href: "/account-settings" "My Info") " | "
+                           (<a> href: (++ "/" club "/account-settings") "My Info") " | "
                            (<a> href: "/sign-out" "Signout"))
                         "")
                     (if (not (eq? tab 'none))
@@ -844,9 +844,12 @@
   css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-new.css?ver=0")
   title: "New Clubbers - Club Night - KtR")
 
+(define (string->date> sd1 sd2)
+  (date>? (string->date sd1 "~Y/~m/~d") (string->date sd2 "~Y/~m/~d")))
+
 (define (last-club-meetings club num)
   (let ((cm (club-meetings club)))
-    (take (sort (map (lambda (m) (car m)) (club-meetings club)) string>)
+    (take (sort (map (lambda (m) (car m)) (club-meetings club)) string->date>)
           (if (< (length cm) num)
               (length cm)
               num))))
@@ -854,9 +857,9 @@
 (define (missed-clubs? club clubber club-meetings)
   (fold (lambda (meeting missed)
           (if missed
-              #t
-              (not (present club clubber meeting))))
-        #f
+              (not (present club clubber meeting))
+              #f))
+        #t
         club-meetings))
 
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/missed")
@@ -1489,6 +1492,72 @@
 ;  headers: (++ "<!--[if IE]><script language='javascript' type='text/javascript' src='/js/flot/excanvas.min.js'></script><![endif]-->" (include-javascript "/js/flot/jquery.flot.min.js") (include-javascript "/js/attendance-stats.js"))
 ;  no-ajax: #f
 ;  tab: 'stats)
+
+;;; personal
+
+(define-page (regexp "/[^/]*/account-settings-trampoline")
+  (lambda (path)
+    (let ((club ($session 'club))
+          (user ($session 'user))
+          (u-name ($ 'name))
+          ;(u-email ($ 'email))
+          ;(u-email-again ($ 'email-again))
+          (u-phone ($ 'phone))
+          (u-birthday ($ 'birthday))
+          (u-pw ($ 'password))
+          (u-pw-again ($ 'password-again)))
+      ;(if (string=? u-email u-email-again)
+      ;    #f
+      ;    (redirect-to (++ path "?error=emails-dont-match")))
+      (if (or (string=? u-pw "") (string=? u-pw u-pw-again))
+          #f
+          (redirect-to (++ path "?error=passwords-dont-match")))
+      (user-name user u-name)
+      ;(user-email user u-email)
+      (user-phone user u-phone)
+      (user-birthday user u-birthday)
+      (if (string=? u-pw "")
+          #f
+          (user-pw user (call-with-output-digest (sha512-primitive) (cut display (->string u-pw) <>))))
+      (redirect-to (++ "/" club "/club-night/attendance?message=account-settings-update-successful")))))
+
+(define-awana-app-page (regexp "/[^/]*/account-settings")
+  (lambda (path)
+    (let ((club (get-club path))
+          (user ($session 'user)))
+      (++ (<div> class: "grid_12 column-header"
+                 (<div> class: "padding" "My Info"))
+          (<div> class: "grid_12 column-body"
+                 (<div> class: "padding"
+                        (<form> action: (++ "/" club "/account-settings-trampoline") method: "POST"
+                                autocomplete: "off"
+                                (<span> class: "form-context" "Name") (<br>)
+                                (<input> class: "jq_watermark text name" type: "text" id: "name" name: "name"
+                                         title: "John Smith" value: (user-name user)) (<br>)
+                                ; email is more difficult to update because it is a key/id
+                                ; therefore it is not supported fully yet
+                                ;(<div> (club-name club)) (<br>) ; do we need this?
+                                ;(<span> class: "form-context" "Email") (<br>)
+                                ;(<input> class: "jq_watermark text" type: "text" id: "email" name: "email"
+                                ;         title: "email@example.com" value: user)
+                                ;(<input> class: "jq_watermark text" type: "text" id: "email-again" name: "email-again"
+                                ;         title: "email@example.com" value: user) (<br>)
+                                (<span> class: "form-context" "Phone") (<br>)
+                                (<input> class: "jq_watermark text" type: "text" id: "phone" name: "phone"
+                                         title: "123.456.7890" value: (user-phone user)) (<br>)
+                                (<span> class: "form-context" "Birthday") (<br>)
+                                (<input> class: "jq_watermark text" type: "text" id: "birthday" name: "birthday"
+                                         title: "02/21/1997" value: (user-birthday user)) (<br>)
+                                (<span> class: "form-context" "Password") (<br>)
+                                (<input> class: "jq_watermark text" type: "password" id: "password" name: "password"
+                                         title: "password")
+                                (<input> class: "jq_watermark text" type: "password" id: "password-again"
+                                         name: "password-again" title: "password again") (<br>)
+                                (<input> class: "create" type: "submit" id: "submit" name: "submit" value: "Update")))))))
+  css: '("/css/club-register.css?ver=2" "/css/account-settings.css")
+  no-ajax: #f
+  headers: (include-javascript "/js/jquery.watermark.min.js")
+  title: "Account Settings - KtR")
 
 ;;; loaders
 

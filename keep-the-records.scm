@@ -871,16 +871,32 @@
           (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
                         (let ((c-meetings (last-club-meetings club 3)))
-                          (fold (lambda (e o)
-                                  (++ o
-                                      (if (missed-clubs? club e c-meetings)
-                                          (++ (<a> href: (++ "/" club "/club-night/clubbers/info/" e)
-                                                   class: "clubber-url" (name club e)) (<br>))
-                                          "")))
-                                ""
-                                (db:list "clubs" club "clubbers"))))))))
+                          (<table>
+                           (<tr> (<td> class: "col-head" "Clubber")
+                                 (<td> class: "col-head" "Sent Miss You Card?"))
+                           (fold (lambda (e o)
+                                   (ajax (++ "update-miss-you" e)
+                                         (string->symbol (++ "miss-you" e))
+                                         'click
+                                         (lambda ()
+                                           (miss-you club e (date->db (current-date)))
+                                           (date->db (current-date)))
+                                         target: (++ "miss-you" e)
+                                         method: 'PUT)
+                                   (++ o
+                                       (if (missed-clubs? club e c-meetings)
+                                           (<tr> (<td> (<a> href: (++ "/" club "/club-night/clubbers/info/" e)
+                                                            class: "clubber-url" (name club e)))
+                                                 (<td> (let ((t (miss-you club e)))
+                                                         (if t
+                                                             (<div> class: "yes" t)
+                                                             (<div> class: "no" id: (++ "miss-you" e) "No")))))
+                                           "")))
+                                 ""
+                                 (db:list "clubs" club "clubbers")))))))))
+  no-ajax: #f
   tab: 'club-night
-  css: '("/css/clubbers-index.css?ver=2")
+  css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-new.css?ver0")
   title: "Clubbers Missed - Club Night - KtR")
 
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/dues")

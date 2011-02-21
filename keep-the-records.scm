@@ -621,8 +621,8 @@
               href: (++ "/" club "/club-night/clubbers/new") "New Clubbers")
          (<a> class: (++ "clubber-lists" (if (eq? tab 'missed) " highlight" ""))
               href: (++ "/" club "/club-night/clubbers/missed") "Missed")
-         ;(<a> class: (++ "clubber-lists" (if (eq? tab 'dues) " highlight" ""))
-         ;     href: (++ "/" club "/club-night/clubbers/dues") "Dues")
+         (<a> class: (++ "clubber-lists" (if (eq? tab 'dues) " highlight" ""))
+              href: (++ "/" club "/club-night/clubbers/dues") "Dues")
          (<a> class: (++ "clubber-lists" (if (eq? tab 'birthdays) " highlight" ""))
               href: (++ "/" club "/club-night/clubbers/birthdays") "Birthdays")
          (<a> class: (++ "clubber-lists" (if (eq? tab 'points) " highlight" ""))
@@ -902,9 +902,38 @@
 (define-awana-app-page (regexp "/[^/]*/club-night/clubbers/dues")
   (lambda (path)
     (let ((club (get-club path)))
-      (++ (clubbers-menu-html club 'dues))))
+      (++ (clubbers-menu-html club 'dues)
+          (<div> class: "grid_12 column-header"
+                 (<div> class: "padding" "Dues"))
+          (<div> class: "grid_12 column-body"
+                 (<div> class: "padding"
+                        (<table>
+                         (<tr> (<td> class: "col-head" "Clubber")
+                               (<td> class: "col-head" "Receipt Number"))
+                         (fold (lambda (e o)
+                                 (ajax (++ "dues-receipt" e)
+                                       (string->symbol (++ "dues-receipt" e))
+                                       'change
+                                       (lambda ()
+                                         (dues-receipt club e ($ 'dues-receipt)))
+                                         ;(date->db (current-date)))
+                                       ;target: (++ "dues-receipt" e)
+                                       arguments: `((dues-receipt . ,(++ "$('#dues-receipt" e "').val()")))
+                                       method: 'PUT)
+                                 (++ o
+                                     (<tr> (<td> (<a> href: (++ "/" club "/club-night/clubbers/info/" e)
+                                                      class: "clubber-url" (name club e)))
+                                           (<td> (let ((t (dues-receipt club e)))
+                                                   (if t
+                                                       (<div> class: "yes" t)
+                                                       (<div> class: "no"
+                                                              (<input> id: (++ "dues-receipt" e)))))))
+                                     ""))
+                               ""
+                               (sort (db:list "clubs" club "clubbers") string<?))))))))
+  no-ajax: #f
   tab: 'club-night
-  css: '("/css/clubbers-index.css?ver=2")
+  css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-new.css?ver0")
   title: "Dues - Club Night - KtR")
 
 (define (date->date-year d yyyy)
@@ -930,7 +959,7 @@
     (let ((club (get-club path)))
       (++ (clubbers-menu-html club 'birthdays)
           (<div> class: "grid_12"
-                 (<div> class: "padding column-header" "Birthdays in the coming week"))
+                 (<div> class: "padding column-header" "Birthdays this week (Sun - Sat)"))
           (<div> class: "grid_12"
                  (<div> class: "padding column-body"
                         (<table>

@@ -65,12 +65,14 @@
                         "")
                     (if (not (eq? tab 'none))
                         (<div> class: "grid_12 menu-bar full-width"
-                               (<a> class: (++ "main-menu-item" (if (eq? tab 'club-night) " main-menu-item-current" ""))
-                                    href: (++ "/" club "/club-night/attendance") "Club Night")
-                               (<a> class: (++ "main-menu-item" (if (eq? tab 'stats) " main-menu-item-current" ""))
-                                    href: (++ "/" club "/stats/attendance") "Stats")
-                               (<a> class: (++ "main-menu-item" (if (eq? tab 'admin) " main-menu-item-current" ""))
-                                    href: (++ "/" club "/admin/leaders") "Admin"))
+                               (<div> class: "mmi-c"
+                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'club-night)
+                                                                           " main-menu-item-current" ""))
+                                           href: (++ "/" club "/club-night/attendance") "Basic")
+                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'stats) " main-menu-item-current" ""))
+                                           href: (++ "/" club "/stats/attendance") "Stats")
+                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'admin) " main-menu-item-current" ""))
+                                           href: (++ "/" club "/admin/leaders") "Admin")))
                         "")
                     (<div> class: "grid_12 main-tab-bar full-width"
                            (<div> class: "logo"
@@ -127,10 +129,11 @@
                     (<div> class: "selected-tab-container" (if (regexp? path) (content actual-path) (content))))))))
     css: (append '("https://fonts.googleapis.com/css?family=Tangerine:regular,bold&subset=latin"
                    "https://fonts.googleapis.com/css?family=Neucha&subset=latin"
+                   ;"https://fonts.googleapis.com/css?family=Buda:light"
                    "https://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
                    "https://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
                    "https://fonts.googleapis.com/css?family=Permanent+Marker"
-                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=4") css)
+                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=5") css)
     title: title
     no-session: no-session
     no-ajax: no-ajax

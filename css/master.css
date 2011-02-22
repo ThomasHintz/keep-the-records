@@ -18,23 +18,32 @@ body {
 .text-right {
     text-align: right; }
 
+.mmi-c {
+    margin-top: 0px;
+    margin-bottom: 40px; }
+
 .menu-bar {
     background-color: #ff8100;
-    font-family: "Tangerine", arial, serif;
-    font-size: 42px; }
+    font-family: "Neucha", arial, serif;
+    font-size: 22px; }
 
 .main-menu-item {
+    padding: 3px;
+    border: 2px solid black;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
     margin-right: 20px;
     text-decoration: none;
     vertical-align: middle;
     color: #eeeeee; }
 
 .main-menu-item:hover {
+    background-color: #111111;
     text-decoration: underline; }
 
 .main-menu-item-current {
-    font-weight: bold;
-    font-size: 100px; }
+    background-color: #111111;
+    font-weight: bold; }
 
 .clear {
     height: 10px; }

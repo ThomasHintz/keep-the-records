@@ -66,9 +66,11 @@
                     (if (not (eq? tab 'none))
                         (<div> class: "grid_12 menu-bar full-width"
                                (<div> class: "mmi-c"
-                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'club-night)
+                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'clubbers)
                                                                            " main-menu-item-current" ""))
-                                           href: (++ "/" club "/club-night/attendance") "Basic")
+                                           href: (++ "/" club "/clubbers/find") "Clubbers")
+                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'leaders) " main-menu-item-current" ""))
+                                           href: (++ "/" club "/leaders/find") "Leaders")
                                       (<a> class: (++ "main-menu-item" (if (eq? tab 'stats) " main-menu-item-current" ""))
                                            href: (++ "/" club "/stats/attendance") "Stats")
                                       (<a> class: (++ "main-menu-item" (if (eq? tab 'admin) " main-menu-item-current" ""))
@@ -78,23 +80,26 @@
                            (<div> class: "logo"
                                   (<a> class: "main-logo" href: "http://keeptherecords.com" "Keep The Records"))
                            (cond
-                            ((eq? tab 'club-night)
-                             (++ (<a> href: (++ "/" club "/club-night/attendance")
-                                      class: (main-tab-class (is-current?
-                                                              (++ "/" club "/club-night/attendance") actual-path))
-                                      "Attendance")
-                                 (<a> href: (++ "/" club "/club-night/clubbers")
-                                      class: (main-tab-class (is-current? (++ "/" club "/club-night/clubbers") actual-path))
-                                      "Clubbers")
-                                 (<a> href: (++ "/" club "/club-night/sections")
-                                      class: (main-tab-class (is-current? (++ "/" club "/club-night/sections") actual-path))
-                                      "Sections")
-                                 (<a> href: (++ "/" club "/club-night/allergies")
-                                      class: (main-tab-class (is-current? (++ "/" club "/club-night/allergies") actual-path))
-                                      "Allergies")
-                                 (<a> href: (++ "/" club "/club-night/release")
-                                      class: (main-tab-class (is-current? (++ "/" club "/club-night/release") actual-path))
-                                      "Release")))
+                            ((eq? tab 'clubbers)
+                             (fold (lambda (e o)
+                                     (++ o
+                                         (<a> href: (++ "/" club "/clubbers/" (first e))
+                                              class: (main-tab-class (is-current? (++ "/" club "/clubbers/" (first e))
+                                                                                  actual-path))
+                                              (second e))))
+                                   ""
+                                   '(("find" "Find") ("attendance" "Attendance") ("sections" "Sections")
+                                     ("allergies" "Allergies") ("release" "Release") ("birthdays" "Birthdays")
+                                     ("new" "New") ("missed" "Missed") ("dues" "Dues") ("points" "Points"))))
+                            ((eq? tab 'leaders)
+                             (fold (lambda (e o)
+                                     (++ o
+                                         (<a> href: (++ "/" club "/leaders/" (first e))
+                                              class: (main-tab-class (is-current? (++ "/" club "/leaders/" (first e))
+                                                                                  actual-path))
+                                              (second e))))
+                                   ""
+                                   '(("find" "Find"))))
                             ((eq? tab 'stats)
                              (++ (<a> href: (++ "/" club "/stats/attendance")
                                       class: (main-tab-class
@@ -259,7 +264,7 @@
         (html-page
          ""
          headers: (<meta> http-equiv: "refresh"
-                          content: (++ "0;url=/" (user-club u-name) "/club-night/attendance"))))))
+                          content: (++ "0;url=/" (user-club u-name) "/clubbers/attendance"))))))
   no-session: #t)
 
 ;;; club pages
@@ -300,7 +305,7 @@
 (define (get-club path)
   (first (string-split path "/")))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/clubbers/register")
+(define-awana-app-page (regexp "/[^/]*/clubbers/register")
   (lambda (path)
     (let ((club (get-club path)))
       (ajax "lookup-parent" 'parent-name-1 'change
@@ -317,14 +322,13 @@
             update-targets: #t
             method: 'GET
             arguments: '((p-name . "parentIds[parentNames.indexOf($('#parent-name-1').val())]")))
-      (++ (clubbers-menu-html club 'add)
-          (<div> class: "clear")
+      (++ (<div> class: "clear")
           (<div> class: "grid_12" (<div> class: "success" id: "success" (if ($ 'success) "Clubber Added Successfully" "")))
           (<div> class: "grid_6" (<div> class: "padding column-header" "Register New Clubber"))
           (<div> class: "clear clear-no-space")
           (<div> class: "grid_6"
                  (<div> class: "padding column-body"
-                        (<form> action: (++ "/" club  "/club-night/clubbers/create" (if ($ 'from) (++ "?from=" ($ 'from)) ""))
+                        (<form> action: (++ "/" club  "/clubbers/create" (if ($ 'from) (++ "?from=" ($ 'from)) ""))
                                 method: "post"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label-name" id: "label-name" "Name"))
                                                (<td> (<input> id: "name" class: "name" name: "name")))
@@ -374,7 +378,7 @@
   css: '("/css/add-clubber.css" "/css/autocomplete.css" "/css/clubbers-index.css")
   headers: (++ (include-javascript "/js/add-clubber.js") (include-javascript "/js/autocomplete.js"))
   no-ajax: #f
-  tab: 'club-night
+  tab: 'clubbers
   title: "Register Clubber - Club Night - KtR")
 
 (define (date->db date)
@@ -396,7 +400,7 @@
         (string->date db-date "~m/~d/~y")
         (string->date db-date "~m/~d/~Y"))))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/clubbers/create")
+(define-awana-app-page (regexp "/[^/]*/clubbers/create")
   (lambda (path)
 ;;; also add security within awana-app-page or something
     (let ((club (get-club path))
@@ -436,7 +440,7 @@
        headers: (<meta> http-equiv: "refresh"
                         content: (++ "0;url=" (if (not (eq? from #f))
                                                   from
-                                                  (++ "/" club "/club-night/clubbers/register?success=true")))))))
+                                                  (++ "/" club "/clubbers/register?success=true")))))))
   no-session: #t)
 
 (define (present-clubbers club date)
@@ -449,7 +453,7 @@
         (number->string (fold (lambda (m c) (+ c 1)) 0 present-clubbers))
         (<br>) (<br>)
         (fold (lambda (m-name o)
-                (++ o (<a> href: (++ "/" club "/club-night/clubbers/info/" m-name) (name club m-name)) (<br>)))
+                (++ o (<a> href: (++ "/" club "/clubbers/info/" m-name) (name club m-name)) (<br>)))
               ""
               present-clubbers))))
 
@@ -460,7 +464,7 @@
 
 ;;; take attendance
 
-(define-awana-app-page (regexp "/[^/]*/club-night/attendance")
+(define-awana-app-page (regexp "/[^/]*/clubbers/attendance")
   (lambda (path)
     (let ((club (get-club path))
           (date (++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))))
@@ -576,7 +580,7 @@
   headers: (include-javascript "/js/attendance.js")
   no-ajax: #f
   css: '("/css/attendance.css?ver=3")
-  tab: 'club-night
+  tab: 'clubbers
   title: "Attendance - Club Night -KtR")
 
 ;;; clubbers
@@ -605,7 +609,7 @@
 
 (define (clubbers->urls club clubbers first-name-first)
   (fold (lambda (e o)
-          (++ o (<a> class: "clubber-url" href: (++ "/" club "/club-night/clubbers/info/" e)
+          (++ o (<a> class: "clubber-url" href: (++ "/" club "/clubbers/info/" e)
                      (++ (if first-name-first
                              (name club e)
                              (++ (second (string-split (name club e) " ")) " "
@@ -614,30 +618,12 @@
         ""
         clubbers))
 
-(define (clubbers-menu-html club tab)
-  (<div> class: "padding clubbers-menu"
-         (<a> class: (++ "clubber-lists" (if (eq? tab 'find) " highlight" ""))
-              href: (++ "/" club "/club-night/clubbers") "Find")
-         (<a> class: (++ "clubber-lists" (if (eq? tab 'add) " highlight" ""))
-              href: (++ "/" club "/club-night/clubbers/register") "Add")
-         (<a> class: (++ "clubber-lists" (if (eq? tab 'new) " highlight" ""))
-              href: (++ "/" club "/club-night/clubbers/new") "New Clubbers")
-         (<a> class: (++ "clubber-lists" (if (eq? tab 'missed) " highlight" ""))
-              href: (++ "/" club "/club-night/clubbers/missed") "Missed")
-         (<a> class: (++ "clubber-lists" (if (eq? tab 'dues) " highlight" ""))
-              href: (++ "/" club "/club-night/clubbers/dues") "Dues")
-         (<a> class: (++ "clubber-lists" (if (eq? tab 'birthdays) " highlight" ""))
-              href: (++ "/" club "/club-night/clubbers/birthdays") "Birthdays")
-         (<a> class: (++ "clubber-lists" (if (eq? tab 'points) " highlight" ""))
-              href: (++ "/" club "/club-night/clubbers/points") "Points")))
-
-(define-awana-app-page (regexp "/[^/]*/club-night/clubbers")
+(define-awana-app-page (regexp "/[^/]*/clubbers/find")
   (lambda (path)
     (let ((club (get-club path))
           (search ($ 'search))
           (sort-value ($ 'sort)))
-      (++ (clubbers-menu-html club 'find)
-          (<div> class: "clear")
+      (++ (<div> class: "clear")
           (<div> class: "grid_12 column-body"
                  (<table>
                   (<tr>
@@ -659,7 +645,7 @@
                                              " current-sort" "")) "Last Name"))
                    (<td> class: "opts padding"
                          (<span> class: "new-clubber-symbol" "+ ")
-                         (<a> href: (++ "/" club "/club-night/clubbers/register") class: "new-clubber" "Add New Clubber")))))
+                         (<a> href: (++ "/" club "/clubbers/register") class: "new-clubber" "Add New Clubber")))))
           (<div> class: "clear")
           (let* ((clubbers (name-sort club (search-filter club (db:list "clubs" club "clubbers") ($ 'search)) sort-value))
                  (sort-by-first (if (and ($ 'sort) (string=? ($ 'sort) "last")) #f #t))
@@ -701,7 +687,7 @@
                                                    (<div> class: "padding"
                                                           (clubbers->urls club clubbers sort-by-first))) ""))))))
   css: '("/css/clubbers-index.css")
-  tab: 'club-night
+  tab: 'clubbers
   title: "Clubbers - Club Night - KtR")
 
 (define (get-clubber path)
@@ -735,7 +721,7 @@
         ""
         dates))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/clubbers/info/[^/]*")
+(define-awana-app-page (regexp "/[^/]*/clubbers/clubbers/info/[^/]*")
   (lambda (path)
     (let* ((clubber (get-clubber path))
            (club (get-club path))
@@ -802,7 +788,7 @@
                                                            ("Uniform" ,(lambda (c cl d) (uniform c cl d)))
                                                            ("Friend" ,(lambda (c cl d) (friend c cl d))))))))))))))
   css: '("/css/clubbers.css")
-  tab: 'club-night
+  tab: 'clubbers
   title: "Clubber Info - Club Night - KtR")
 
 (define (false->date e) (if (not e) (make-date 0 0 0 0 9 9 1999) e))
@@ -812,11 +798,10 @@
     (date<? (false->date (db->date (date-registered club c2)))
             (false->date (db->date (date-registered club c1))))))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/clubbers/new")
+(define-awana-app-page (regexp "/[^/]*/clubbers/new")
   (lambda (path)
     (let ((club (get-club path)))
-      (++ (clubbers-menu-html club 'new)
-          (<div> class: "grid_12 column-header"
+      (++ (<div> class: "grid_12 column-header"
                  (<div> class: "padding" "Clubbers By Registration Date"))
           (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
@@ -835,7 +820,7 @@
                                        target: (++ "thank-you" c)
                                        method: 'PUT)
                                  (++ o
-                                     (<tr> (<td> (<a> href: (++ "/" club "/club-night/clubbers/info/" c)
+                                     (<tr> (<td> (<a> href: (++ "/" club "/clubbers/info/" c)
                                                       class: "clubber-name"
                                                       (name club c)))
                                            (<td> (date-registered club c))
@@ -847,7 +832,7 @@
                                ""
                                (sort (db:list "clubs" club "clubbers") (make-registration-sort club)))))))))
   no-ajax: #f
-  tab: 'club-night
+  tab: 'clubbers
   css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-new.css?ver=0")
   title: "New Clubbers - Club Night - KtR")
 
@@ -869,11 +854,10 @@
         #t
         club-meetings))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/clubbers/missed")
+(define-awana-app-page (regexp "/[^/]*/clubbers/missed")
   (lambda (path)
     (let ((club (get-club path)))
-      (++ (clubbers-menu-html club 'missed)
-          (<div> class: "grid_12 column-header"
+      (++ (<div> class: "grid_12 column-header"
                  (<div> class: "padding" "Clubbers who missed the last three club meetings"))
           (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
@@ -892,7 +876,7 @@
                                          method: 'PUT)
                                    (++ o
                                        (if (missed-clubs? club e c-meetings)
-                                           (<tr> (<td> (<a> href: (++ "/" club "/club-night/clubbers/info/" e)
+                                           (<tr> (<td> (<a> href: (++ "/" club "/clubbers/info/" e)
                                                             class: "clubber-url" (name club e)))
                                                  (<td> (let ((t (miss-you club e)))
                                                          (if t
@@ -902,15 +886,14 @@
                                  ""
                                  (db:list "clubs" club "clubbers")))))))))
   no-ajax: #f
-  tab: 'club-night
+  tab: 'clubbers
   css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-new.css?ver0")
   title: "Clubbers Missed - Club Night - KtR")
 
-(define-awana-app-page (regexp "/[^/]*/club-night/clubbers/dues")
+(define-awana-app-page (regexp "/[^/]*/clubbers/dues")
   (lambda (path)
     (let ((club (get-club path)))
-      (++ (clubbers-menu-html club 'dues)
-          (<div> class: "grid_12 column-header"
+      (++ (<div> class: "grid_12 column-header"
                  (<div> class: "padding" "Dues"))
           (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
@@ -926,7 +909,7 @@
                                        arguments: `((dues-receipt . ,(++ "$('#dues-receipt" e "').val()")))
                                        method: 'PUT)
                                  (++ o
-                                     (<tr> (<td> (<a> href: (++ "/" club "/club-night/clubbers/info/" e)
+                                     (<tr> (<td> (<a> href: (++ "/" club "/clubbers/info/" e)
                                                       class: "clubber-url" (name club e)))
                                            (<td> (let ((t (dues-receipt club e)))
                                                    (if t
@@ -936,7 +919,7 @@
                                ""
                                (name-sort club (db:list "clubs" club "clubbers") "last"))))))))
   no-ajax: #f
-  tab: 'club-night
+  tab: 'clubbers
   css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-dues.css?ver=0")
   title: "Dues - Club Night - KtR")
 
@@ -958,11 +941,10 @@
                      (in-week? t (date->date-year c-b (string->number (todays-yyyy)))))))
             clubbers)))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/clubbers/birthdays")
+(define-awana-app-page (regexp "/[^/]*/clubbers/birthdays")
   (lambda (path)
     (let ((club (get-club path)))
-      (++ (clubbers-menu-html club 'birthdays)
-          (<div> class: "grid_12"
+      (++ (<div> class: "grid_12"
                  (<div> class: "padding column-header" "Birthdays this week (Sun - Sat)"))
           (<div> class: "grid_12"
                  (<div> class: "padding column-body"
@@ -972,20 +954,19 @@
                                      (<tr> class: "clubber-row"
                                            (<td> class: "name-cell"
                                                  (<a> class: "clubber-name"
-                                                      href: (++ "/" club "/club-night/clubbers/info/" e) (name club e)))
+                                                      href: (++ "/" club "/clubbers/info/" e) (name club e)))
                                            (<td> class: "aux-cell"
                                                  (birthday club e)))))
                                ""
                                (birthdays-this-week club (db:list "clubs" club "clubbers")))))))))
-  tab: 'club-night
+  tab: 'clubbers
   title: "Birthdays - Club Night - KtR"
   css: '("/css/key-value.css?ver=1" "/css/clubbers-index.css?ver=2"))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/clubbers/points")
+(define-awana-app-page (regexp "/[^/]*/clubbers/points")
   (lambda (path)
     (let ((club (get-club path)))
-      (++ (clubbers-menu-html club 'points)
-          (<div> class: "grid_12" (<div> class: "padding column-header" "Clubber Points"))
+      (++ (<div> class: "grid_12" (<div> class: "padding column-header" "Clubber Points"))
           (<div> class: "grid_12"
                  (<div> class: "padding column-body"
                         (<table>
@@ -994,7 +975,7 @@
                                      (<tr> class: "clubber-row"
                                            (<td> class: "name-cell"
                                                  (<a> class: "clubber-name"
-                                                      href: (++ "/" club "/club-night/clubbers/info/" c) (name club c)))
+                                                      href: (++ "/" club "/clubbers/info/" c) (name club c)))
                                            (<td> class: "aux-cell" (total-points club c)))))
                                ""
                                (sort (db:list "clubs" club "clubbers")
@@ -1003,7 +984,7 @@
                                           (total-points club c1)))))))))))
   css: '("/css/key-value.css?ver=1" "/css/clubbers-index.css?ver=2")
   title: "Points - Club Night - KtR"
-  tab: 'club-night)
+  tab: 'clubbers)
 
 ;;; watch list
 
@@ -1013,7 +994,7 @@
 (define (clubbers->allergy-box club clubbers first-name-first)
   (fold (lambda (e o)
           (++ o
-              (<a> class: "clubber-url" href: (++ "/" club "/club-night/clubbers/info/" e)
+              (<a> class: "clubber-url" href: (++ "/" club "/clubbers/info/" e)
                    (if first-name-first
                        (name club e)
                        (++ (second (string-split (name club e) " ")) " "
@@ -1024,7 +1005,7 @@
         ""
         clubbers))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/allergies")
+(define-awana-app-page (regexp "/[^/]*/clubbers/allergies")
   (lambda (path)
       (++ (let* ((club (get-club path))
                  (clubbers (allergy-filter club (db:list "clubs" club "clubbers")))
@@ -1062,7 +1043,7 @@
                                                   (<div> class: "padding"
                                                          (clubbers->allergy-box club journey sort-by-first))) "")))))
   css: '("/css/watch-list.css")
-  tab: 'club-night
+  tab: 'clubbers
   title: "Allergies - Club Night - KtR")
 
 ;;; discharge
@@ -1071,23 +1052,23 @@
   (let ((n (string-split name " ")))
     (++ (second n) " " (first n))))
 
-(define-page (regexp "/[^/]*/club-night/release/awana-release-form")
+(define-page (regexp "/[^/]*/clubbers/release/awana-release-form")
   (lambda (path)
     (let ((club (get-club path)))
-      (define-pdf (++ "/" club "/club-night/release/awana-release-form-" club "-"
+      (define-pdf (++ "/" club "/clubbers/release/awana-release-form-" club "-"
                       (date->string (current-date) "~m~d~y") ".pdf")
         (lambda ()
           (pdf-release-form (map reverse-name (clubbers->names club (name-sort club (present-clubbers club (todays-date)) "last")))
                             (++ club "-awana-release-form.pdf"))
           (insert-file (++ club "-awana-release-form.pdf"))))
-      (redirect-to (++ "/" club "/club-night/release/awana-release-form-" club "-"
+      (redirect-to (++ "/" club "/clubbers/release/awana-release-form-" club "-"
                        (date->string (current-date) "~m~d~y") ".pdf")))))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/release")
+(define-awana-app-page (regexp "/[^/]*/clubbers/release")
   (lambda (path)
     (let ((club (get-club path)))
       (++ (<div> class: "grid_12 column-body" (<div> class: "padding"
-                                                     (<a> href: (++ "/" club "/club-night/release/awana-release-form")
+                                                     (<a> href: (++ "/" club "/clubbers/release/awana-release-form")
                                                           class: "sig-link"
                                                           "Print Signature Release Form")
                                                      (<span> class: "sig-info"
@@ -1099,7 +1080,7 @@
                  (<div> class: "padding"
                         (fold (lambda (clubber-pair o)
                                 (++ o
-                                    (<a> class: "name" href: (++ "/" club "/club-night/clubbers/info/" (fourth clubber-pair))
+                                    (<a> class: "name" href: (++ "/" club "/clubbers/clubbers/info/" (fourth clubber-pair))
                                          (++ (first clubber-pair) " " (second clubber-pair)))
                                     " - "
                                     (parent-release-to club (primary-parent club (third clubber-pair))) (<br>)))
@@ -1113,7 +1094,7 @@
                                       (string< (first e1) (first e2)))))))
           (<div> class: "grid_6 column-body" (<div> class: "padding" "Coming soon!")))))
   css: '("/css/release.css")
-  tab: 'club-night
+  tab: 'clubbers
   title: "Release - Club Night - KtR")
 
 ;;; sections
@@ -1211,7 +1192,7 @@
           (next-section n section-list)
           n))))
 
-(define-awana-app-page (regexp "/[^/]*/club-night/sections")
+(define-awana-app-page (regexp "/[^/]*/clubbers/sections")
   (lambda (path)
     (let ((club (get-club path)))
       (ajax "clubber-sections" 'clubbers '(change keypress)
@@ -1297,7 +1278,7 @@
   css: '("/css/sections.css")
   no-ajax: #f
   headers: (include-javascript "/js/sections.js")
-  tab: 'club-night)
+  tab: 'clubbers)
 
 ;;; stats
 
@@ -1477,11 +1458,19 @@
   css: '("/css/sign-up.css")
   title: "Sign up! - KtR")
 
+;;; leader pages
+
+(define-awana-app-page (regexp "/[^/]*/leaders/find")
+  (lambda (path)
+    (<div> class: "grid_12" (<div> class: "padding" "Smile. I'm being worked on right now!")))
+  tab: 'leaders
+  title: "Find Leaders - KtR")
+
 ;;; main app pages
 
 (define-page "/"
   (lambda ()
-    (redirect-to (++ "/" (name->id (user-club ($session 'user))) "/club-night/attendance"))))
+    (redirect-to (++ "/" (name->id (user-club ($session 'user))) "/clubbers/find"))))
 
 (define-awana-app-page (regexp "/[^/]*/first-use")
   (lambda (path)
@@ -1568,7 +1557,7 @@
       (if (string=? u-pw "")
           #f
           (user-pw user (call-with-output-digest (sha512-primitive) (cut display (->string u-pw) <>))))
-      (redirect-to (++ "/" club "/club-night/attendance?message=account-settings-update-successful")))))
+      (redirect-to (++ "/" club "/clubbers/attendance?message=account-settings-update-successful")))))
 
 (define-awana-app-page (regexp "/[^/]*/account-settings")
   (lambda (path)

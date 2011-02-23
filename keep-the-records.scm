@@ -919,8 +919,6 @@
                                        'change
                                        (lambda ()
                                          (dues-receipt club e ($ 'dues-receipt)))
-                                         ;(date->db (current-date)))
-                                       ;target: (++ "dues-receipt" e)
                                        arguments: `((dues-receipt . ,(++ "$('#dues-receipt" e "').val()")))
                                        method: 'PUT)
                                  (++ o
@@ -928,15 +926,14 @@
                                                       class: "clubber-url" (name club e)))
                                            (<td> (let ((t (dues-receipt club e)))
                                                    (if t
-                                                       (<div> class: "yes" t)
-                                                       (<div> class: "no"
-                                                              (<input> id: (++ "dues-receipt" e)))))))
+                                                       (<input> class: "yes" id: (++ "dues-receipt" e) value: t)
+                                                       (<input> class: "no" id: (++ "dues-receipt" e))))))
                                      ""))
                                ""
-                               (sort (db:list "clubs" club "clubbers") string<?))))))))
+                               (name-sort club (db:list "clubs" club "clubbers") "last"))))))))
   no-ajax: #f
   tab: 'club-night
-  css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-new.css?ver0")
+  css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-dues.css?ver=0")
   title: "Dues - Club Night - KtR")
 
 (define (date->date-year d yyyy)
@@ -1378,7 +1375,7 @@
          "https://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
          "https://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
          "https://fonts.googleapis.com/css?family=Permanent+Marker"
-         "/css/reset.css" "/css/960.css" "/css/master.css?ver=4")
+         "/css/reset.css" "/css/960.css" "/css/master.css?ver=5")
   no-ajax: #f
   no-session: #t
   tab: 'none)

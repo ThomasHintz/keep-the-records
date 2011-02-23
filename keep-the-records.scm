@@ -823,7 +823,8 @@
                         (<table>
                          (<tr> (<td> class: "col-head" "Clubber")
                                (<td> class: "col-head" "Registered")
-                               (<td> class: "col-head" "Sent Thank You?"))
+                               (<td> class: "col-head" "Sent Thank You?")
+                               (<td> class: "col-head" "Address"))
                          (fold (lambda (c o)
                                  (ajax (++ "update-thank-you" c)
                                        (string->symbol (++ "thank-you" c))
@@ -834,12 +835,15 @@
                                        target: (++ "thank-you" c)
                                        method: 'PUT)
                                  (++ o
-                                     (<tr> (<td> (name club c))
+                                     (<tr> (<td> (<a> href: (++ "/" club "/club-night/clubbers/info/" c)
+                                                      class: "clubber-name"
+                                                      (name club c)))
                                            (<td> (date-registered club c))
                                            (<td> (let ((t (thank-you club c)))
                                                    (if t
                                                        (<div> class: "yes" t)
-                                                       (<div> class: "no" id: (++ "thank-you" c) "No")))))))
+                                                       (<div> class: "no" id: (++ "thank-you" c) "No"))))
+                                           (<td> (parent-address club (primary-parent club c))))))
                                ""
                                (sort (db:list "clubs" club "clubbers") (make-registration-sort club)))))))))
   no-ajax: #f

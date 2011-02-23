@@ -1,4 +1,9 @@
+.clubber-name {
+    color: black;
+    text-decoration: underline; }
+
 td {
+    padding-right: 8px;
     padding-top: 4px;
     padding-bottom: 4px;
     min-width: 120px; }

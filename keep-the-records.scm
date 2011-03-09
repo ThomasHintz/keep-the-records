@@ -691,7 +691,7 @@
   title: "Clubbers - Club Night - KtR")
 
 (define (get-clubber path)
-  (fifth (string-split path "/")))
+  (fourth (string-split path "/")))
 
 (define (list-years club clubber)
   (db:list "clubs" club "clubbers" clubber "attendance"))
@@ -721,7 +721,7 @@
         ""
         dates))
 
-(define-awana-app-page (regexp "/[^/]*/clubbers/clubbers/info/[^/]*")
+(define-awana-app-page (regexp "/[^/]*/clubbers/info/[^/]*")
   (lambda (path)
     (let* ((clubber (get-clubber path))
            (club (get-club path))
@@ -929,7 +929,7 @@
 (define (in-week? d1 d2)
   ; is d2 within the same week as d1
   (let ((week-start (date-subtract-duration d1 (make-duration days: (date-week-day d1))))
-        (week-end (date-add-duration d1 (make-duration days: (- 7 (date-week-day d1))))))
+        (week-end (date-add-duration d1 (make-duration days: (- 6 (date-week-day d1))))))
     (and (date>=? d2 week-start) (date<=? d2 week-end))))
 
 (define (birthdays-this-week club clubbers)
@@ -943,9 +943,12 @@
 
 (define-awana-app-page (regexp "/[^/]*/clubbers/birthdays")
   (lambda (path)
-    (let ((club (get-club path)))
+    (let* ((club (get-club path))
+           (d1 (make-date 0 0 0 0 (string->number (todays-dd)) (string->number (todays-mm)) (string->number (todays-yyyy))))
+           (week-start (date->string (date-subtract-duration d1 (make-duration days: (date-week-day d1))) "~m/~d"))
+           (week-end (date->string (date-add-duration d1 (make-duration days: (- 6 (date-week-day d1)))) "~m/~d")))
       (++ (<div> class: "grid_12"
-                 (<div> class: "padding column-header" "Birthdays this week (Sun - Sat)"))
+                 (<div> class: "padding column-header" (++ "Birthdays from " week-start " to " week-end)))
           (<div> class: "grid_12"
                  (<div> class: "padding column-body"
                         (<table>

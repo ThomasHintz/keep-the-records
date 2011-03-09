@@ -88,7 +88,7 @@
                                                                                   actual-path))
                                               (second e))))
                                    ""
-                                   '(("find" "Find") ("attendance" "Attendance") ("sections" "Sections")
+                                   '(("find" "Find") ("register" "Add") ("attendance" "Attendance") ("sections" "Sections")
                                      ("allergies" "Allergies") ("release" "Release") ("birthdays" "Birthdays")
                                      ("new" "New") ("missed" "Missed") ("dues" "Dues") ("points" "Points"))))
                             ((eq? tab 'leaders)
@@ -324,59 +324,63 @@
             arguments: '((p-name . "parentIds[parentNames.indexOf($('#parent-name-1').val())]")))
       (++ (<div> class: "clear")
           (<div> class: "grid_12" (<div> class: "success" id: "success" (if ($ 'success) "Clubber Added Successfully" "")))
-          (<div> class: "grid_6" (<div> class: "padding column-header" "Register New Clubber"))
+          (<div> class: "grid_6 column-header" (<div> class: "padding" "Child"))
+          (<div> class: "grid_6 column-header" (<div> class: "padding" "Parent/Guardian"))
           (<div> class: "clear clear-no-space")
-          (<div> class: "grid_6"
-                 (<div> class: "padding column-body"
-                        (<form> action: (++ "/" club  "/clubbers/create" (if ($ 'from) (++ "?from=" ($ 'from)) ""))
-                                method: "post"
+          (<form> action: (++ "/" club  "/clubbers/create" (if ($ 'from) (++ "?from=" ($ 'from)) "")) method: "post"
+                  (<div> class: "grid_6 column-body on-top"
+                         (<div> class: "padding"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label-name" id: "label-name" "Name"))
-                                               (<td> (<input> id: "name" class: "name" name: "name")))
+                                               (<td> (<input> id: "name" class: "jq_watermark name"
+                                                              title: "First Last" name: "name")))
                                          (<tr> (<td> class: "label" (<span> class: "label grade" "Grade"))
                                                (<td> (combo-box "grade" '(("age-2-or-3" "Age 2 or 3")
                                                                           ("pre-k" "Pre-k") "K" "1"
                                                                           "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12")
                                                                 name: "grade" class: "grade" first-empty: #t)))
                                          (<tr> (<td> class: "label" (<span> class: "label birthday" "Birthday"))
-                                               (<td> (<input> class: "birthday" id: "birthday" name: "birthday")))
+                                               (<td> (<input> class: "jq_watermark birthday" id: "birthday"
+                                                              title: "mm/dd/yyyy" name: "birthday")))
                                          (<tr> (<td> class: "label" (<span> class: "label club" id: "label-club" "Club"))
                                                (<td> (combo-box "club-level"
                                                                 '("Puggles" "Cubbies" "Sparks" "TnT" "Trek" "Journey")
                                                                 name: "club-level" class: "club" first-empty: #t)))
                                          (<tr> (<td> class: "label" (<span> class: "label allergies" "Allergies"))
-                                               (<td> (<input> class: "allergies" id: "allergies" name: "allergies")))
-                                         (<tr> (<td>) (<td> (<span> class: "parent-label" "Parent/Guardian")))
-                                         (<tr> (<td> class: "label" (<span> class: "label parent-name" "Parent Name 1"))
-                                               (<td> (<input> class: "parent-name" id: "parent-name-1"
-                                                              name: "parent-name-1")))
+                                               (<td> (<input> class: "allergies" id: "allergies" name: "allergies"))))))
+                  (<div> class: "grid_6 column-body on-top"
+                         (<div> class: "padding"
+                                (<table> (<tr> (<td> class: "label" (<span> class: "label parent-name" "Parent Name 1"))
+                                               (<td> (<input> class: "jq_watermark parent-name" id: "parent-name-1"
+                                                              title: "First Last" name: "parent-name-1")))
                                          (<tr> (<td> class: "label" (<span> class: "label parent-name" "Parent Name 2"))
-                                               (<td> (<input> class: "parent-name" id: "parent-name-2"
-                                                              name: "parent-name-2")))
+                                               (<td> (<input> class: "jq_watermark parent-name" id: "parent-name-2"
+                                                              title: "First Last" name: "parent-name-2")))
                                          (<tr> (<td> class: "label" (<span> class: "label email" "Email"))
-                                               (<td> (<input> class: "email" id: "email" name: "email")))
+                                               (<td> (<input> class: "jq_watermark email" id: "email"
+                                                              title: "address@mail.com" name: "email")))
                                          (<tr> (<td> class: "label" (<span> class: "label phone" "Phone 1"))
-                                               (<td> (<input> class: "phone" id: "phone-1" name: "phone-1")))
+                                               (<td> (<input> class: "jq_watermark phone" id: "phone-1"
+                                                              title: "123.456.7890" name: "phone-1")))
                                          (<tr> (<td> class: "label" (<span> class: "label phone" "Phone 2"))
-                                               (<td> (<input> class: "phone" id: "phone-2" name: "phone-2")))
+                                               (<td> (<input> class: "phone jq_watermark" id: "phone-2"
+                                                              title: "123.456.7890" name: "phone-2")))
                                          (<tr> (<td> class: "label" (<span> class: "label address" "Address"))
-                                               (<td> (<input> class: "address" id: "address" name: "address")))
+                                               (<td> (<input> class: "jq_watermark address" id: "address"
+                                                              title: "123 Food St Donut MI 49494" name: "address")))
                                          (<tr> (<td> class: "label" (<span> class: "label release-to" "Release To"))
-                                               (<td> (<input> class: "release-to" id: "release-to" name: "release-to")))
-                                         (<tr> (<td> colspan: "2"
-                                                     (<div> class: "create-clubber-container"
-                                                            (<input> type: "submit" class: "create-clubber"
-                                                                     value: "Create Clubber"))))))))
+                                               (<td> (<input> class: "release-to" id: "release-to" name: "release-to"))))))
+                  (<div> class: "clear")
+                  (<div> class: "grid_12"
+                         (<div> class: "create-clubber-container"
+                                (<input> type: "submit" class: "create-clubber"
+                                         value: "Create"))))
           (hidden-input 'parent-names (fold (lambda (e o) (++ o "|" (parent-name club e)))
                                             "" (db:list "clubs" club "parents")))
           (hidden-input 'parent-ids (fold (lambda (e o) (++ o "|" e))
-                                          "" (db:list "clubs" club "parents")))
-          (<div> class: "grid_4"
-                 (<div> class: "info-header name-info-header" (<div> class: "padding" "Adding a Clubber"))
-                 (<div> class: "info-body name-info-body" (<div> class: "padding" "This is a person in your club. Once this clubber is added, you can take attendance, view contact info, and lots more."))
-                 (<div> class: "info-header parent-info-header" (<div> class: "padding" "Parent Info"))
-                 (<div> class: "info-body parent-info-body" (<div> class: "padding" "To retrieve information about a previously entered parent/guardian, just start typing thier name and select the parent/guardian name that appears, and their info will be pre-filled."))))))
+                                          "" (db:list "clubs" club "parents"))))))
   css: '("/css/add-clubber.css" "/css/autocomplete.css" "/css/clubbers-index.css")
-  headers: (++ (include-javascript "/js/add-clubber.js") (include-javascript "/js/autocomplete.js"))
+  headers: (++ (include-javascript "/js/jquery.watermark.min.js") (include-javascript "/js/add-clubber.js")
+               (include-javascript "/js/autocomplete.js"))
   no-ajax: #f
   tab: 'clubbers
   title: "Register Clubber - Club Night - KtR")

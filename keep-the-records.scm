@@ -305,9 +305,25 @@
 (define (get-club path)
   (first (string-split path "/")))
 
-(define-awana-app-page (regexp "/[^/]*/clubbers/register")
+(define (grade-index grade)
+  (cond ((string=? grade "age-2-or-3") 1) ((string=? grade "Pre-k") 2) ((string=? grade "k") 3)
+        ((string=? grade "1") 4) ((string=? grade "2") 5) ((string=? grade "3") 6) ((string=? grade "4") 7)
+        ((string=? grade "5") 8) ((string=? grade "6") 9) ((string=? grade "7") 10) ((string=? grade "8") 11)
+        ((string=? grade "9") 12) ((string=? grade "10") 13) ((string=? grade "11") 14) ((string=? grade "12") 15)))
+
+(define (club-index club)
+  (cond ((string=? club "Puggles") 1)
+        ((string=? club "Cubbies") 2)
+        ((string=? club "Sparks") 3)
+        ((string=? club "TnT") 4)
+        ((string=? club "Trek") 5)
+        ((string=? club "Journey") 6)))
+
+(define-awana-app-page (regexp "/[^/]*/clubbers/(register|info/[^/]*/edit)")
   (lambda (path)
-    (let ((club (get-club path)))
+    (let* ((club (get-club path))
+           (edit (> (length (string-split path "/")) 3))
+           (c-name (if edit (get-clubber path) #f)))
       (ajax "lookup-parent" 'parent-name-1 'change
             (lambda ()
               (if ($ 'p-name)
@@ -332,48 +348,78 @@
                          (<div> class: "padding"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label-name" id: "label-name" "Name"))
                                                (<td> (<input> id: "name" class: "jq_watermark name"
+                                                              value: (if edit (name club c-name) "")
                                                               title: "First Last" name: "name")))
                                          (<tr> (<td> class: "label" (<span> class: "label grade" "Grade"))
                                                (<td> (combo-box "grade" '(("age-2-or-3" "Age 2 or 3")
                                                                           ("pre-k" "Pre-k") "K" "1"
                                                                           "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12")
+                                                                selectedindex: (if edit (grade-index (grade club c-name)) 0)
                                                                 name: "grade" class: "grade" first-empty: #t)))
                                          (<tr> (<td> class: "label" (<span> class: "label birthday" "Birthday"))
                                                (<td> (<input> class: "jq_watermark birthday" id: "birthday"
+                                                              value: (if edit (birthday club c-name) "")
                                                               title: "mm/dd/yyyy" name: "birthday")))
                                          (<tr> (<td> class: "label" (<span> class: "label club" id: "label-club" "Club"))
                                                (<td> (combo-box "club-level"
                                                                 '("Puggles" "Cubbies" "Sparks" "TnT" "Trek" "Journey")
+                                                                value: (if edit (club-level club c-name) "")
+                                                                selectedindex: (if edit
+                                                                                   (club-index (club-level club c-name))
+                                                                                   0)
                                                                 name: "club-level" class: "club" first-empty: #t)))
                                          (<tr> (<td> class: "label" (<span> class: "label allergies" "Allergies"))
-                                               (<td> (<input> class: "allergies" id: "allergies" name: "allergies"))))))
+                                               (<td> (<input> class: "allergies" id: "allergies" name: "allergies"
+                                                              value: (if edit (allergies club c-name) "")))))))
                   (<div> class: "grid_6 column-body on-top"
                          (<div> class: "padding"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label parent-name" "Parent Name 1"))
                                                (<td> (<input> class: "jq_watermark parent-name" id: "parent-name-1"
-                                                              title: "First Last" name: "parent-name-1")))
+                                                              title: "First Last" name: "parent-name-1"
+                                                              value: (if edit
+                                                                         (parent-name club (primary-parent club c-name))
+                                                                         ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label parent-name" "Parent Name 2"))
                                                (<td> (<input> class: "jq_watermark parent-name" id: "parent-name-2"
-                                                              title: "First Last" name: "parent-name-2")))
+                                                              title: "First Last" name: "parent-name-2"
+                                                              value: (if edit
+                                                                         (parent-spouse club (primary-parent club c-name))
+                                                                         ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label email" "Email"))
                                                (<td> (<input> class: "jq_watermark email" id: "email"
-                                                              title: "address@mail.com" name: "email")))
+                                                              title: "address@mail.com" name: "email"
+                                                              value: (if edit
+                                                                         (parent-email club (primary-parent club c-name))
+                                                                         ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label phone" "Phone 1"))
                                                (<td> (<input> class: "jq_watermark phone" id: "phone-1"
-                                                              title: "123.456.7890" name: "phone-1")))
+                                                              title: "123.456.7890" name: "phone-1"
+                                                              value: (if edit
+                                                                         (parent-phone-1 club (primary-parent club c-name))
+                                                                         ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label phone" "Phone 2"))
                                                (<td> (<input> class: "phone jq_watermark" id: "phone-2"
-                                                              title: "123.456.7890" name: "phone-2")))
+                                                              title: "123.456.7890" name: "phone-2"
+                                                              value: (if edit
+                                                                         (parent-phone-2 club (primary-parent club c-name))
+                                                                         ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label address" "Address"))
                                                (<td> (<input> class: "jq_watermark address" id: "address"
-                                                              title: "123 Food St Donut MI 49494" name: "address")))
+                                                              title: "123 Food St Donut MI 49494" name: "address"
+                                                              value: (if edit
+                                                                         (parent-address club (primary-parent club c-name))
+                                                                         ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label release-to" "Release To"))
-                                               (<td> (<input> class: "release-to" id: "release-to" name: "release-to"))))))
+                                               (<td> (<input> class: "release-to" id: "release-to" name: "release-to"
+                                                              value: (if edit
+                                                                         (parent-release-to club
+                                                                                            (primary-parent club c-name))
+                                                                         "")))))))
                   (<div> class: "clear")
                   (<div> class: "grid_12"
                          (<div> class: "create-clubber-container"
                                 (<input> type: "submit" class: "create-clubber"
-                                         value: "Create"))))
+                                         value: (if edit "Update" "Create")))))
           (hidden-input 'parent-names (fold (lambda (e o) (++ o "|" (parent-name club e)))
                                             "" (db:list "clubs" club "parents")))
           (hidden-input 'parent-ids (fold (lambda (e o) (++ o "|" e))
@@ -731,7 +777,11 @@
            (club (get-club path))
            (p-parent (primary-parent club clubber))
            (dates (attendance-dates club clubber)))
-      (++ (<div> class: "grid_12" (<div> class: "column-header padding" (name club clubber)))
+      (++ (<div> class: "grid_12 column-body"
+                 (<div> class: "padding"
+                        (<a> href: (++ path "/edit") class: "edit" "Edit This Clubber")))
+          (<div> class: "clear")
+          (<div> class: "grid_12" (<div> class: "column-header padding" (name club clubber)))
           (<div> class: "grid_12 column-body"
                  (<div> class: "grid_8 no-margins"
                         (<div> class: "grid_2 margins-right" (<div> class: "info-header padding" "General Info"))

@@ -76,6 +76,5 @@ input:focus, select:focus {
 
 .success {
     font-size: 24px;
-    padding: 2px;
     margin-bottom: 5px;
     background-color: yellow; }

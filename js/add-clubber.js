@@ -4,6 +4,11 @@ var parentIds;
 $(document).ready(function() {
     $('#success').delay(5000).fadeTo('slow', 0, 'swing');
 
+    // for edit only
+    if ($('#grade').attr('selectedindex') != undefined) {
+	$('#grade').attr('selectedIndex', $('#grade').attr('selectedindex'));
+	$('#club-level').attr('selectedIndex', $('#club-level').attr('selectedindex')); }
+
     $('input').attr('spellcheck', false).attr('autocomplete', false);
 
     $('#name').focus();

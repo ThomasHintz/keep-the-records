@@ -6,7 +6,7 @@
 ;;; Settings
 
 (enable-ajax #t)
-(ajax-library "https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
+(ajax-library "https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js")
 (enable-session #t)
 (enable-web-repl "/web-repl")
 
@@ -63,52 +63,43 @@
                            (<a> href: (++ "/" club "/account-settings") "My Info") " | "
                            (<a> href: "/sign-out" "Signout"))
                         "")
-                    (if (not (eq? tab 'none))
+                    (if (neq? tab 'none)
                         (<div> class: "grid_12 menu-bar full-width"
                                (<div> class: "mmi-c"
-                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'clubbers)
-                                                                           " main-menu-item-current" ""))
-                                           href: (++ "/" club "/clubbers/find") "Clubbers")
-                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'leaders) " main-menu-item-current" ""))
-                                           href: (++ "/" club "/leaders/find") "Leaders")
-                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'stats) " main-menu-item-current" ""))
-                                           href: (++ "/" club "/stats/attendance") "Stats")
-                                      (<a> class: (++ "main-menu-item" (if (eq? tab 'admin) " main-menu-item-current" ""))
-                                           href: (++ "/" club "/admin/leaders") "Admin")))
+                                      (folds* (lambda (str url)
+                                                (<a> class: (++ "main-menu-item"
+                                                                (if (eq? tab (string->symbol (string-downcase str)))
+                                                                    " main-menu-item-current" ""))
+                                                     href: (++ "/" club "/" (string-downcase str) "/" url) str))
+                                              '(("Clubbers" "find")
+                                                ("Leaders" "find")
+                                                ("Stats" "attendance")
+                                                ("Admin" "leaders"))))
+                               (<div> class: "logo"
+                                      (<a> class: "main-logo" href: "http://keeptherecords.com" "Keep The Records")))
                         "")
                     (<div> class: "grid_12 main-tab-bar full-width"
-                           (<div> class: "logo"
-                                  (<a> class: "main-logo" href: "http://keeptherecords.com" "Keep The Records"))
                            (cond
                             ((eq? tab 'clubbers)
-                             (fold (lambda (e o)
-                                     (++ o
-                                         (<a> href: (++ "/" club "/clubbers/" (first e))
-                                              class: (main-tab-class (is-current? (++ "/" club "/clubbers/" (first e))
-                                                                                  actual-path))
-                                              (second e))))
-                                   ""
-                                   '(("find" "Find") ("register" "Add") ("attendance" "Attendance") ("sections" "Sections")
-                                     ("allergies" "Allergies") ("release" "Release") ("birthdays" "Birthdays")
-                                     ("new" "New") ("missed" "Missed") ("dues" "Dues") ("points" "Points"))))
+                             (folds* (lambda (t)
+                                       (<a> href: (++ "/" club "/clubbers/" (string-downcase t))
+                                            class: (main-tab-class (is-current? (++ "/" club "/clubbers/"
+                                                                                    (string-downcase t)) actual-path))
+                                            t))
+                                   '(("Find") ("Add") ("Attendance") ("Sections") ("Allergies") ("Release") ("Birthdays")
+                                     ("New") ("Missed") ("Dues") ("Points"))))
                             ((eq? tab 'leaders)
-                             (fold (lambda (e o)
-                                     (++ o
-                                         (<a> href: (++ "/" club "/leaders/" (first e))
-                                              class: (main-tab-class (is-current? (++ "/" club "/leaders/" (first e))
-                                                                                  actual-path))
-                                              (second e))))
-                                   ""
-                                   '(("find" "Find"))))
+                             (folds* (lambda (t)
+                                       (<a> href: (++ "/" club "/leaders/" (string-downcase t))
+                                            class: (main-tab-class (is-current? (++ "/" club "/leaders/"
+                                                                                    (string-downcase t)) actual-path))
+                                            t))
+                                     '(("Find"))))
                             ((eq? tab 'stats)
                              (++ (<a> href: (++ "/" club "/stats/attendance")
                                       class: (main-tab-class
                                               (is-current? (++ "/" club "/stats/attendance") actual-path))
                                       "Attendance")
-                                        ;(<a> href: (++ "/" club "/stats/clubbers")
-                                        ;     class: (main-tab-class
-                                        ;             (is-current? (++ "/" club "/stats/clubbers") actual-path))
-                                        ;     "Clubbers")
                                  (<a> href: (++ "/" club "/stats/sections")
                                       class: (main-tab-class
                                               (is-current? (++ "/" club "/stats/sections") actual-path))
@@ -122,10 +113,6 @@
                                       class: (main-tab-class
                                               (is-current? (++ "/" club "/admin/leaders") actual-path))
                                       "Leaders")
-                                 ;(<a> href: (++ "/" club "/admin/club")
-                                 ;     class: (main-tab-class
-                                 ;             (is-current? (++ "/" club "/admin/club") actual-path))
-                                 ;     "Club")
                                  (<a> href: (++ "/" club "/admin/clubbers")
                                       class: (main-tab-class
                                               (is-current? (++ "/" club "/admin/clubbers") actual-path))
@@ -134,7 +121,6 @@
                     (<div> class: "selected-tab-container" (if (regexp? path) (content actual-path) (content))))))))
     css: (append '("https://fonts.googleapis.com/css?family=Tangerine:regular,bold&subset=latin"
                    "https://fonts.googleapis.com/css?family=Neucha&subset=latin"
-                   ;"https://fonts.googleapis.com/css?family=Buda:light"
                    "https://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
                    "https://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
                    "https://fonts.googleapis.com/css?family=Permanent+Marker"
@@ -264,7 +250,7 @@
         (html-page
          ""
          headers: (<meta> http-equiv: "refresh"
-                          content: (++ "0;url=/" (user-club u-name) "/clubbers/attendance"))))))
+                          content: (++ "0;url=/" (user-club u-name) "/clubbers/find"))))))
   no-session: #t)
 
 ;;; club pages
@@ -306,7 +292,7 @@
   (first (string-split path "/")))
 
 (define (grade-index grade)
-  (cond ((string=? grade "age-2-or-3") 1) ((string=? grade "Pre-k") 2) ((string=? grade "k") 3)
+  (cond ((string=? grade "age-2-or-3") 1) ((string=? grade "pre-k") 2) ((string=? grade "K") 3)
         ((string=? grade "1") 4) ((string=? grade "2") 5) ((string=? grade "3") 6) ((string=? grade "4") 7)
         ((string=? grade "5") 8) ((string=? grade "6") 9) ((string=? grade "7") 10) ((string=? grade "8") 11)
         ((string=? grade "9") 12) ((string=? grade "10") 13) ((string=? grade "11") 14) ((string=? grade "12") 15)))
@@ -319,7 +305,7 @@
         ((string=? club "Trek") 5)
         ((string=? club "Journey") 6)))
 
-(define-awana-app-page (regexp "/[^/]*/clubbers/(register|info/[^/]*/edit)")
+(define-awana-app-page (regexp "/[^/]*/clubbers/(add|info/[^/]*/edit)")
   (lambda (path)
     (let* ((club (get-club path))
            (edit (> (length (string-split path "/")) 3))
@@ -343,7 +329,8 @@
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Child"))
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Parent/Guardian"))
           (<div> class: "clear clear-no-space")
-          (<form> action: (++ "/" club  "/clubbers/create" (if ($ 'from) (++ "?from=" ($ 'from)) "")) method: "post"
+          (<form> action: (++ "/" club  "/clubbers/create" (if ($ 'from) (++ "?from=" ($ 'from)) "")
+                              (if edit (++ "?from=/" club "/clubbers/info/" c-name) "")) method: "post"
                   (<div> class: "grid_6 column-body on-top"
                          (<div> class: "padding"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label-name" id: "label-name" "Name"))
@@ -429,7 +416,7 @@
                (include-javascript "/js/autocomplete.js"))
   no-ajax: #f
   tab: 'clubbers
-  title: "Register Clubber - Club Night - KtR")
+  title: "Add Clubber - Club Night - KtR")
 
 (define (date->db date)
   (date->string date "~D"))
@@ -454,8 +441,8 @@
   (lambda (path)
 ;;; also add security within awana-app-page or something
     (let ((club (get-club path))
-           (m-name ($ 'name))
-           (from ($ 'from)))
+          (m-name ($ 'name))
+          (from ($ 'from)))
       (name club m-name m-name)
       (grade club m-name ($ 'grade))
       (birthday club m-name ($ 'birthday))
@@ -485,12 +472,9 @@
         (db:update-list "release" "clubs" club "parents" p-name)
         (db:update-list "children" "clubs" club "parents" p-name)
         (db:update-list (name->id p-name) "clubs" club "parents"))
-      (html-page
-       ""
-       headers: (<meta> http-equiv: "refresh"
-                        content: (++ "0;url=" (if (not (eq? from #f))
-                                                  from
-                                                  (++ "/" club "/clubbers/register?success=true")))))))
+      (cond (from (redirect-to from))
+            (($ 'edit) (redirect-to edit))
+            (#t (redirect-to (++ "/" club "/clubbers/add?success=true"))))))
   no-session: #t)
 
 (define (present-clubbers club date)
@@ -695,7 +679,7 @@
                                              " current-sort" "")) "Last Name"))
                    (<td> class: "opts padding"
                          (<span> class: "new-clubber-symbol" "+ ")
-                         (<a> href: (++ "/" club "/clubbers/register") class: "new-clubber" "Add New Clubber")))))
+                         (<a> href: (++ "/" club "/clubbers/add") class: "new-clubber" "Add New Clubber")))))
           (<div> class: "clear")
           (let* ((clubbers (name-sort club (search-filter club (db:list "clubs" club "clubbers") ($ 'search)) sort-value))
                  (sort-by-first (if (and ($ 'sort) (string=? ($ 'sort) "last")) #f #t))
@@ -841,7 +825,7 @@
                                                            ("Handbook" ,(lambda (c cl d) (handbook c cl d)))
                                                            ("Uniform" ,(lambda (c cl d) (uniform c cl d)))
                                                            ("Friend" ,(lambda (c cl d) (friend c cl d))))))))))))))
-  css: '("/css/clubbers.css")
+  css: '("/css/clubbers.css?ver=1")
   tab: 'clubbers
   title: "Clubber Info - Club Night - KtR")
 
@@ -1184,6 +1168,11 @@
 (define (sec-cl border finished)
   (++ border " " (if finished "finished" "unfinished")))
 
+(define (disp-date d)
+  (if d
+      d
+      ""))
+
 (define (sections-table sections)
   (<table> id: "regular-sections"
            (<tr> (<td> class: "border")
@@ -1200,34 +1189,36 @@
                      (let ((n (number->string c)))
                        (++ o
                            (<tr> (<td> class: "border" c)
-                                 (<td> class: (sec-cl "border" (first e)) id: (++ n ".0"))
-                                 (<td> class: (sec-cl "border" (second e)) id: (++ n ".1"))
-                                 (<td> class: (sec-cl "border" (third e)) id: (++ n ".2"))
-                                 (<td> class: (sec-cl "border" (fourth e)) id: (++ n ".3"))
-                                 (<td> class: (sec-cl "border" (fifth e)) id: (++ n ".4"))
-                                 (<td> class: (sec-cl "border" (sixth e)) id: (++ n ".5"))
-                                 (<td> class: (sec-cl "border" (seventh e)) id: (++ n ".6"))
-                                 (<td> class: (sec-cl "border-end" (eighth e)) id: (++ n ".7"))
+                                 (<td> class: (sec-cl "border" (first e)) id: (++ n ".0") (disp-date (first e)))
+                                 (<td> class: (sec-cl "border" (second e)) id: (++ n ".1") (disp-date (second e)))
+                                 (<td> class: (sec-cl "border" (third e)) id: (++ n ".2") (disp-date (third e)))
+                                 (<td> class: (sec-cl "border" (fourth e)) id: (++ n ".3") (disp-date (fourth e)))
+                                 (<td> class: (sec-cl "border" (fifth e)) id: (++ n ".4") (disp-date (fifth e)))
+                                 (<td> class: (sec-cl "border" (sixth e)) id: (++ n ".5") (disp-date (sixth e)))
+                                 (<td> class: (sec-cl "border" (seventh e)) id: (++ n ".6") (disp-date (seventh e)))
+                                 (<td> class: (sec-cl "border-end" (eighth e)) id: (++ n ".7") (disp-date (eighth e)))
                                  (<td> class: "cell-sep")
-                                 (<td> class: (sec-cl "border" (ninth e)) id: (++ n ".8"))
-                                 (<td> class: (sec-cl "border" (tenth e)) id: (++ n ".9"))
-                                 (<td> class: (sec-cl "border-end" (list-ref e 10)) id: (++ n ".10"))))))
+                                 (<td> class: (sec-cl "border" (ninth e)) id: (++ n ".8") (disp-date (ninth e)))
+                                 (<td> class: (sec-cl "border" (tenth e)) id: (++ n ".9") (disp-date (tenth e)))
+                                 (<td> class: (sec-cl "border-end" (list-ref e 10)) id: (++ n ".10")
+                                       (disp-date  (list-ref e 10)))))))
                    ""
                    (take sections 7)))
            (let ((end (first (drop sections 7))))
              (<tr> (<td> class: "border-bottom" "8")
-                   (<td> class: (sec-cl "border-bottom" (first end)) id: "8.0")
-                   (<td> class: (sec-cl "border-bottom" (second end)) id: "8.1")
-                   (<td> class: (sec-cl "border-bottom" (third end)) id: "8.2")
-                   (<td> class: (sec-cl "border-bottom" (fourth end)) id: "8.3")
-                   (<td> class: (sec-cl "border-bottom" (fifth end)) id: "8.4")
-                   (<td> class: (sec-cl "border-bottom" (sixth end)) id: "8.5")
-                   (<td> class: (sec-cl "border-bottom" (seventh end)) id: "8.6")
-                   (<td> class: (sec-cl "border-bottom-end" (eighth end)) id: "8.7")
+                   (<td> class: (sec-cl "border-bottom" (first end)) id: "8.0" (disp-date (first end)))
+                   (<td> class: (sec-cl "border-bottom" (second end)) id: "8.1" (disp-date (second end)))
+                   (<td> class: (sec-cl "border-bottom" (third end)) id: "8.2" (disp-date (third end)))
+                   (<td> class: (sec-cl "border-bottom" (fourth end)) id: "8.3" (disp-date (fourth end)))
+                   (<td> class: (sec-cl "border-bottom" (fifth end)) id: "8.4" (disp-date (fifth end)))
+                   (<td> class: (sec-cl "border-bottom" (sixth end)) id: "8.5" (disp-date (sixth end)))
+                   (<td> class: (sec-cl "border-bottom" (seventh end)) id: "8.6" (disp-date (seventh end)))
+                   (<td> class: (sec-cl "border-bottom-end" (eighth end)) id: "8.7" (disp-date (eighth end)))
                    (<td> class: "cell-sep")
-                   (<td> class: (sec-cl "border-bottom" (ninth end)) id: "8.8")
-                   (<td> class: (sec-cl "border-bottom" (tenth end)) id: "8.9")
-                   (<td> class: (sec-cl "border-bottom-end" (list-ref end 10)) id: "8.10")))))
+                   (<td> class: (sec-cl "border-bottom" (ninth end)) id: "8.8" (disp-date (ninth end)))
+                   (<td> class: (sec-cl "border-bottom" (tenth end)) id: "8.9" (disp-date (tenth end)))
+                   (<td> class: (sec-cl "border-bottom-end" (list-ref end 10)) id: "8.10"
+                         (disp-date (list-ref end 10)))))))
 
 (define (start-zone-table sections)
   (<table> (<tr> (fold (lambda (s o)
@@ -1241,7 +1232,7 @@
 (define (next-section current-section section-list)
   (let ((c (first current-section)) (s (second current-section))
         (csl (list-ref section-list (- (first current-section) 1))))
-    (let ((n (cond ((= s (length csl))
+    (let ((n (cond ((= s (- (length csl) 5))
                     `(,(+ c 1) 0))     ; done with chapter
                    (#t
                     `(,c ,(+ s 1)))))) ; done with section
@@ -1287,8 +1278,12 @@
             arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').attr('selectedIndex')")))
       (ajax "mark-section" 'mark-section 'click
             (lambda ()
-              (let ((c-book ($ 'book)) (clubber ($ 'clubber)) (chapter ($ 'chapter)) (section ($ 'section)))
-                (clubber-section club clubber c-book (->string chapter) (->string section) #t)
+              (let* ((c-book ($ 'book)) (clubber ($ 'clubber)) (chapter ($ 'chapter)) (section ($ 'section))
+                     (c-sect (clubber-section club clubber c-book (->string chapter) (->string section))))
+                (clubber-section club clubber c-book (->string chapter) (->string section)
+                                 (if c-sect
+                                     #f
+                                     (date->db (current-date))))
                 (last-section club clubber (next-section `(,(string->number chapter) ,(string->number section))
                                                          (sections-list club clubber c-book)))
                 `((book-num . ,c-book)
@@ -1381,7 +1376,7 @@
   (lambda (path)
     (let* ((club (get-club path))
            (email (auth-url club path)))
-      (if (not (eq? email 'not-found))
+      (if (neq? email 'not-found)
           (begin
             (add-javascript "$(document).ready(function() { $('#name').focus(); });")
             (<div> class: "container_12"

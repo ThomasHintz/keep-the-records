@@ -4,6 +4,7 @@
 ;(load "production")
 ;;; end production
 
+(load "macs.scm")
 (load "utils.scm")
 (load "mda.scm")
 (load "storage-funcs.scm")

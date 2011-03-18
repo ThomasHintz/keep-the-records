@@ -19,6 +19,7 @@ body {
     text-align: right; }
 
 .mmi-c {
+    float: left;
     margin-top: 0px;
     margin-bottom: 40px; }
 
@@ -28,8 +29,10 @@ body {
     font-size: 22px; }
 
 .main-menu-item {
+    float: left;
     padding: 3px;
     border: 2px solid black;
+    border-top: 0px solid black;
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
     margin-right: 20px;
@@ -38,8 +41,8 @@ body {
     color: #eeeeee; }
 
 .main-menu-item:hover {
-    background-color: #111111;
-    text-decoration: underline; }
+    text-shadow: #111111 2px 2px 2px;
+    background-color: #ffa100; }
 
 .main-menu-item-current {
     background-color: #111111;
@@ -68,6 +71,10 @@ body {
     text-decoration: none;
     margin-right: 5px;
     background-color: #ffb366; }
+
+.main-tab-item:hover {
+    text-shadow: #111111 1px 1px 1px;
+    background-color: #ffc966; }
 
 .main-tab-item-current {
     color: #111111;

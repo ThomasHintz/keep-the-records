@@ -45,15 +45,16 @@ td {
     width: 60px; }
 
 .finished {
+    font-weight: bold;
     background-color: #004eff;
-    color: #004eff; }
+    color: #ffb100; }
 
 tr:hover .finished {
-    font-weight: bold;
-    color: #ffb100; }
+    font-weight: bold; }
 
 td:hover {
     cursor: pointer;
+    color: #004eff;
     background-color: #ffb100; }
 
 .unfinished {

@@ -1,0 +1,17 @@
+.dt {
+    text-align: center;
+    color: white;
+    margin-left: 2px;
+    margin-right: 2px;
+    background-color: #999999;
+    border: 0px solid grey; }
+
+.dt:hover {
+    color: black;
+    background-color: white; }
+
+.month-day {
+    width: 20px; }
+
+.year {
+    width: 30px; }

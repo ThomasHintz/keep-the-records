@@ -6,7 +6,7 @@
 ;;; Settings
 
 (enable-ajax #t)
-(ajax-library "https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js")
+(ajax-library "https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js")
 (enable-session #t)
 (enable-web-repl "/web-repl")
 
@@ -86,8 +86,7 @@
                                             class: (main-tab-class (is-current? (++ "/" club "/clubbers/"
                                                                                     (string-downcase t)) actual-path))
                                             t))
-                                   '(("Find") ("Add") ("Attendance") ("Sections") ("Allergies") ("Release") ("Birthdays")
-                                     ("New") ("Missed") ("Dues") ("Points"))))
+                                     '(("Dashboard") ("Attendance") ("Awards") ("Find") ("Release") ("Sections"))))
                             ((eq? tab 'leaders)
                              (folds* (lambda (t)
                                        (<a> href: (++ "/" club "/leaders/" (string-downcase t))
@@ -287,6 +286,37 @@
   no-session: #t)
 
 ;;; clubber pages
+
+(define-awana-app-page (regexp "/[^/]*/clubbers/dashboard")
+  (lambda (path)
+    (let ((club (get-club path)))
+      (add-javascript "$('#from-date').datepicker(); $('#to-date').datepicker();")
+      (++ (<div> class: "grid_8"
+                 (<div> class: "column-header padding" "Birthdays")
+                 (<div> class: "info-header padding"
+                        "From "
+                        (<input> class: "dt" id: "from-date"
+                                 value: (date->string (week-start (current-date-0000)) "~m/~d/~Y"))
+                        " to "
+                        (<input> class: "dt" id: "to-date"
+                                 value: (date->string (week-end (current-date-0000)) "~m/~d/~Y")))
+                 (<div> class: "column-body padding"
+                        "Joe Monkey" (<br>)
+                        "Sammy Food"))
+          (<div> class: "grid_4"
+                 (<div> class: "column-header padding" "Misc...")
+                 (<div> class: "column-body padding"
+                        (folds* (lambda (t)
+                                  (++ (<a> href: (++ "/" club "/clubbers/" (string-downcase t))
+                                           class: ""
+                                           t)
+                                      (<br>)))
+                                '(("Allergies") ("New") ("Birthdays") ("Missed") ("Dues") ("Points") ("Add"))))))))
+  no-ajax: #f
+  headers: (++ (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js")
+               (include-javascript "/js/jquery-ui-1.8.11.custom.min.js"))
+  css: '("/css/dashboard.css?ver=0" "/css/ui-lightness/jquery-ui-1.8.11.custom.css")
+  tab: 'clubbers)
 
 (define (get-club path)
   (first (string-split path "/")))
@@ -979,12 +1009,21 @@
                      (in-week? t (date->date-year c-b (string->number (todays-yyyy)))))))
             clubbers)))
 
+(define (week-start d)
+  (date-subtract-duration d (make-duration days: (date-week-day d))))
+
+(define (week-end d)
+  (date-add-duration d (make-duration days: (- 6 (date-week-day d)))))
+
+(define (current-date-0000)
+  (make-date 0 0 0 0 (string->number (todays-dd)) (string->number (todays-mm)) (string->number (todays-yyyy))))
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/birthdays")
   (lambda (path)
     (let* ((club (get-club path))
-           (d1 (make-date 0 0 0 0 (string->number (todays-dd)) (string->number (todays-mm)) (string->number (todays-yyyy))))
-           (week-start (date->string (date-subtract-duration d1 (make-duration days: (date-week-day d1))) "~m/~d"))
-           (week-end (date->string (date-add-duration d1 (make-duration days: (- 6 (date-week-day d1)))) "~m/~d")))
+           (d1 (current-date-0000))
+           (week-start (date->string (week-start d1) "~m/~d"))
+           (week-end (date->string (week-end d1) "~m/~d")))
       (++ (<div> class: "grid_12"
                  (<div> class: "padding column-header" (++ "Birthdays from " week-start " to " week-end)))
           (<div> class: "grid_12"

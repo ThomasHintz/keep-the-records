@@ -249,7 +249,7 @@
         (html-page
          ""
          headers: (<meta> http-equiv: "refresh"
-                          content: (++ "0;url=/" (user-club u-name) "/clubbers/find"))))))
+                          content: (++ "0;url=/" (user-club u-name) "/clubbers/dashboard"))))))
   no-session: #t)
 
 ;;; club pages
@@ -313,7 +313,19 @@
             arguments: '((from-date . "$('#from-date').val()")
                          (to-date . "$('#to-date').val()"))
             target: "birthdays")
-      (++ (<div> class: "grid_8"
+      (++ (<div> class: "grid_12"
+                 (<div> class: "column-header padding" (club-name club))
+                 (<div> class: "column-body padding"
+                        (folds* (lambda (t s)
+                                  (++ (<a> href: (++ "/" club "/clubbers/" (string-downcase t))
+                                           class: "misc-links"
+                                           (<div> class: "misc-border"
+                                                  (<img> src: (++ "/images/" (string-downcase t) ".png")
+                                                         class: "misc-icons") s))))
+                                '(("Missed" "Absent") ("Add" "Add Clubber") ("Allergies" "Allergies") ("Dues" "Dues")
+                                  ("New" "First Time") ("Points" "Points")))))
+          (<div> class: "clear")
+          (<div> class: "grid_12"
                  (<div> class: "column-header padding" "Birthdays")
                  (<div> class: "info-header padding"
                         "From "
@@ -323,16 +335,12 @@
                         (<input> class: "dt" id: "to-date" name: "to-date"
                                  value: (date->string date-end "~m/~d/~Y")))
                  (<div> class: "column-body padding" id: "birthdays"
-                        (birthday-table club (birthdays-within club (db:list "clubs" club "clubbers") date-start date-end))))
-          (<div> class: "grid_4"
-                 (<div> class: "column-header padding" "Misc...")
-                 (<div> class: "column-body padding"
-                        (folds* (lambda (t)
-                                  (++ (<a> href: (++ "/" club "/clubbers/" (string-downcase t))
-                                           class: ""
-                                           t)
-                                      (<br>)))
-                                '(("Allergies") ("New") ("Missed") ("Dues") ("Points") ("Add"))))))))
+                        (birthday-table club (birthdays-within club (db:list "clubs" club "clubbers")
+                                                               date-start date-end))))
+          (<div> class: "clear")
+          (<div> class: "grid_12"
+                 (<a> href: "http://www.icons-land.com"
+                      class: "cit" "Some Icons used with permission from Icons Land.")))))
   no-ajax: #f
   headers: (++ (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js")
                (include-javascript "/js/jquery-ui-1.8.11.custom.min.js"))
@@ -1558,7 +1566,7 @@
 
 (define-page "/"
   (lambda ()
-    (redirect-to (++ "/" (name->id (user-club ($session 'user))) "/clubbers/find"))))
+    (redirect-to (++ "/" (name->id (user-club ($session 'user))) "/clubbers/dashboard"))))
 
 (define-awana-app-page (regexp "/[^/]*/first-use")
   (lambda (path)

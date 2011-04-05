@@ -22,3 +22,28 @@
 
 .clubber-url {
     color: black; }
+
+.misc-border {
+    font-family: "Verdana";
+    text-align: center;
+    margin-bottom: 20px;
+    margin-right: 30px;
+    padding: 4px;
+    border: 2px solid #66ff66;
+    border-radius: 6px;
+    width: 180px;
+    height: 64px;
+    display: inline-block; }
+
+.misc-border:hover {
+    background-color: #66ff66; }
+
+.misc-links {
+    text-decoration: none;
+    color: green; }
+
+.misc-icons {
+    vertical-align: middle; }
+
+.cit {
+    color: grey; }

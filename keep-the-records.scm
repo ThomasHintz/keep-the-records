@@ -287,22 +287,43 @@
 
 ;;; clubber pages
 
+(define (clubber->url club clubber #!key (class #f))
+  (<a> href: (++ "/" club "/clubbers/info/" clubber) class: (if class class "") (name club clubber)))
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/dashboard")
   (lambda (path)
-    (let ((club (get-club path)))
+    (define (birthday-table club clubbers)
+      (<table>
+       (fold (lambda (c o)
+               (++ o
+                   (<tr> (<td> class: "c-cell clubber-url-cell" (clubber->url club c class: "clubber-url"))
+                         (<td> class: "c-cell clubber-birthday" (birthday club c))
+                         (<td> class: "c-cell clubber-club-level" (club-level club c)))))
+             ""
+             clubbers)))
+    (let ((club (get-club path))
+          (date-start (week-start (current-date-0000)))
+          (date-end (week-end (current-date-0000))))
       (add-javascript "$('#from-date').datepicker(); $('#to-date').datepicker();")
+      (ajax "get-birthdays" ".dt" 'change
+            (lambda ()
+              (birthday-table club (birthdays-within club (db:list "clubs" club "clubbers")
+                                                     (string->date ($ 'from-date)  "~m/~d/~Y")
+                                                     (string->date ($ 'to-date) "~m/~d/~Y"))))
+            arguments: '((from-date . "$('#from-date').val()")
+                         (to-date . "$('#to-date').val()"))
+            target: "birthdays")
       (++ (<div> class: "grid_8"
                  (<div> class: "column-header padding" "Birthdays")
                  (<div> class: "info-header padding"
                         "From "
-                        (<input> class: "dt" id: "from-date"
-                                 value: (date->string (week-start (current-date-0000)) "~m/~d/~Y"))
+                        (<input> class: "dt" id: "from-date" name: "from-date"
+                                 value: (date->string date-start "~m/~d/~Y"))
                         " to "
-                        (<input> class: "dt" id: "to-date"
-                                 value: (date->string (week-end (current-date-0000)) "~m/~d/~Y")))
-                 (<div> class: "column-body padding"
-                        "Joe Monkey" (<br>)
-                        "Sammy Food"))
+                        (<input> class: "dt" id: "to-date" name: "to-date"
+                                 value: (date->string date-end "~m/~d/~Y")))
+                 (<div> class: "column-body padding" id: "birthdays"
+                        (birthday-table club (birthdays-within club (db:list "clubs" club "clubbers") date-start date-end))))
           (<div> class: "grid_4"
                  (<div> class: "column-header padding" "Misc...")
                  (<div> class: "column-body padding"
@@ -1000,14 +1021,13 @@
         (week-end (date-add-duration d1 (make-duration days: (- 6 (date-week-day d1))))))
     (and (date>=? d2 week-start) (date<=? d2 week-end))))
 
-(define (birthdays-this-week club clubbers)
-  ;; use a manual make-date instead of current-date to keep the days time at 0
-  (let ((t (make-date 0 0 0 0 (string->number (todays-dd)) (string->number (todays-mm)) (string->number (todays-yyyy)))))
+(define (birthdays-within club clubbers d1 d2)
     (filter (lambda (c)
-              (let ((c-b (db->date (birthday club c))))
-                (and c-b
-                     (in-week? t (date->date-year c-b (string->number (todays-yyyy)))))))
-            clubbers)))
+              (let* ((c-b (birthday club c))
+                     (c-bd (and c-b (db->date c-b)))
+                     (c-bd-c (date->date-year c-bd (string->number (todays-yyyy)))))
+                (and c-b (date>=? c-bd-c d1) (date<=? c-bd-c d2))))
+            clubbers))
 
 (define (week-start d)
   (date-subtract-duration d (make-duration days: (date-week-day d))))
@@ -1017,31 +1037,6 @@
 
 (define (current-date-0000)
   (make-date 0 0 0 0 (string->number (todays-dd)) (string->number (todays-mm)) (string->number (todays-yyyy))))
-
-(define-awana-app-page (regexp "/[^/]*/clubbers/birthdays")
-  (lambda (path)
-    (let* ((club (get-club path))
-           (d1 (current-date-0000))
-           (week-start (date->string (week-start d1) "~m/~d"))
-           (week-end (date->string (week-end d1) "~m/~d")))
-      (++ (<div> class: "grid_12"
-                 (<div> class: "padding column-header" (++ "Birthdays from " week-start " to " week-end)))
-          (<div> class: "grid_12"
-                 (<div> class: "padding column-body"
-                        (<table>
-                         (fold (lambda (e o)
-                                 (++ o
-                                     (<tr> class: "clubber-row"
-                                           (<td> class: "name-cell"
-                                                 (<a> class: "clubber-name"
-                                                      href: (++ "/" club "/clubbers/info/" e) (name club e)))
-                                           (<td> class: "aux-cell"
-                                                 (birthday club e)))))
-                               ""
-                               (birthdays-this-week club (db:list "clubs" club "clubbers")))))))))
-  tab: 'clubbers
-  title: "Birthdays - Club Night - KtR"
-  css: '("/css/key-value.css?ver=1" "/css/clubbers-index.css?ver=2"))
 
 (define-awana-app-page (regexp "/[^/]*/clubbers/points")
   (lambda (path)

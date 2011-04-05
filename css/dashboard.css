@@ -15,3 +15,10 @@
 
 .year {
     width: 30px; }
+
+.c-cell {
+    min-width: 100px;
+    padding: 4px; }
+
+.clubber-url {
+    color: black; }

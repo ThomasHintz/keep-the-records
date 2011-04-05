@@ -332,7 +332,7 @@
                                            class: ""
                                            t)
                                       (<br>)))
-                                '(("Allergies") ("New") ("Birthdays") ("Missed") ("Dues") ("Points") ("Add"))))))))
+                                '(("Allergies") ("New") ("Missed") ("Dues") ("Points") ("Add"))))))))
   no-ajax: #f
   headers: (++ (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js")
                (include-javascript "/js/jquery-ui-1.8.11.custom.min.js"))
@@ -380,8 +380,9 @@
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Child"))
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Parent/Guardian"))
           (<div> class: "clear clear-no-space")
-          (<form> action: (++ "/" club  "/clubbers/create" (if ($ 'from) (++ "?from=" ($ 'from)) "")
-                              (if edit (++ "?from=/" club "/clubbers/info/" c-name) "")) method: "post"
+          (<form> action: (++ "/" club  "/clubbers/create") method: "post"
+                  (if edit (hidden-input 'edit (++ "/" club "/clubbers/info/" c-name)) "")
+                  (if ($ 'from) (hidden-input 'from ($ 'from)) "")
                   (<div> class: "grid_6 column-body on-top"
                          (<div> class: "padding"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label-name" id: "label-name" "Name"))
@@ -493,14 +494,15 @@
 ;;; also add security within awana-app-page or something
     (let ((club (get-club path))
           (m-name ($ 'name))
-          (from ($ 'from)))
+          (from ($ 'from))
+          (edit ($ 'edit)))
       (name club m-name m-name)
       (grade club m-name ($ 'grade))
       (birthday club m-name ($ 'birthday))
       (club-level club m-name ($ 'club-level))
       (allergies club m-name ($ 'allergies))
       (primary-parent club m-name ($ 'parent-name-1))
-      (date-registered club m-name (date->db (current-date)))
+      (and (not edit) (date-registered club m-name (date->db (current-date))))
       (db:update-list (name->id m-name) "clubs" club "clubbers")
       (let ((p-name ($ 'parent-name-1)))
         (parent-name club p-name p-name)

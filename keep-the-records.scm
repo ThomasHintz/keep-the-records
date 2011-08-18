@@ -184,7 +184,7 @@
              reply-to: "t@keeptherecords.com"
              html: (++ (<p> "Welcome, " name "!")
                        (<p> "You now have access to " (club-name club) "'s Keep The Records, Awana Record Keeping program. To login and start using the program you can go to " (<a> href: "https://a.keeptherecords.com" "https://a.keeptherecords.com") ". You can also find the login link at the KtR blog - " (<a> href: "http://keeptherecords.com" "http://keeptherecords.com") ".")
-                       (<p> "If you ever have any questions or just want to give me feedback, just email Thomas Hintz at " (<a> href: "mailto:t@keeptherecords.com" "t@keeptherecords.com") " or give me a call at 906.934.6413. Also, please feel free to follow the KtR blog at " (<a> href: "http://keeptherecords.com/blog" "http://keeptherecords.com/blog") ".")
+                       (<p> "If you ever have any questions or just want to give me feedback, just email Thomas Hintz at " (<a> href: "mailto:t@keeptherecords.com" "t@keeptherecords.com") ". Also, please feel free to follow the KtR blog at " (<a> href: "http://keeptherecords.com/blog" "http://keeptherecords.com/blog") ".")
                        (<p> "If you enjoy using KtR, than please recommend it to your friends. I want to help as many Awana clubs as I can. Taking good records and being able to see what works and what doesn't is critical to running a great Awana program.")
                        (<p>)
                        (<p> "Thanks and God Bless!")
@@ -274,7 +274,7 @@
                  (user-birthday u-email u-birthday)
                  (user-address u-email u-address)
                  (user-pw u-email (call-with-output-digest (sha512-primitive) (cut display (->string u-pw) <>)))
-                 (club-users club (cons email (club-users club)))
+                 (club-users club (cons u-email (club-users club)))
                  (send-welcome-email u-email club u-name)
                  (html-page
                   ""
@@ -471,9 +471,11 @@
                                             "" (db:list "clubs" club "parents")))
           (hidden-input 'parent-ids (fold (lambda (e o) (++ o "|" e))
                                           "" (db:list "clubs" club "parents"))))))
-  css: '("/css/add-clubber.css" "/css/autocomplete.css" "/css/clubbers-index.css")
-  headers: (++ (include-javascript "/js/jquery.watermark.min.js") (include-javascript "/js/add-clubber.js")
-               (include-javascript "/js/autocomplete.js"))
+  css: '("/css/add-clubber.css" "/css/autocomplete.css" "/css/clubbers-index.css" "/css/jquery.qtip.min.css")
+  headers: (++ (include-javascript "/js/jquery.watermark.min.js")
+               (include-javascript "/js/autocomplete.js")
+	       (include-javascript "/js/jquery.qtip.min.js")
+	       (include-javascript "/js/add-clubber.js"))
   no-ajax: #f
   tab: 'clubbers
   title: "Add Clubber - Club Night - KtR")

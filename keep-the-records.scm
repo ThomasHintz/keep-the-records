@@ -143,29 +143,31 @@
 
 (define-awana-app-page "/club/register"
   (lambda ()
-    (add-javascript "$(document).ready(function() { $('#church').focus(); });")
+    (add-javascript "$(document).ready(function() { $('#club-register-form').validationEngine('attach'); $('#church').focus(); });")
     (<div> class: "grid_12"
-           (<form> action: "/club/create" method: "post"
+           (<form> action: "/club/create" method: "post" id: "club-register-form"
                    (<h1> class: "action" "Create Club")
                    (<span> class: "form-context" "Church or Association Name") (<br>)
-                   (<input> class: "text" type: "text" id: "church" name: "church")
+                   (<input> class: "text validate[required,custom[onlyLetterSp]]" type: "text" id: "church" name: "church")
                    (<h1> class: "action" "Create Your Account")
                    (<span> class: "form-context" "Name") (<br>)
-                   (<input> class: "text" type: "text" id: "name" name: "name") (<br>)
+                   (<input> class: "text validate[required,custom[onlyLetterSp],custom[ktr-name]]" type: "text" id: "name" name: "name") (<br>)
                    (<span> class: "form-context" "Email") (<br>)
-                   (<input> class: "text" type: "text" id: "email" name: "email") (<br>)
+                   (<input> class: "text validate[required,custom[email]" type: "text" id: "email" name: "email") (<br>)
                    (<span> class: "form-context" "Phone") (<br>)
-                   (<input> class: "text" type: "text" id: "phone" name: "phone") (<br>)
+                   (<input> class: "text validate[custom[ktr-phone]]" type: "text" id: "phone" name: "phone") (<br>)
                    (<span> class: "form-context" "Birthday") (<br>)
-                   (<input> class: "text" type: "text" id: "birthday" name: "birthday") (<br>)
+                   (<input> class: "text validate[custom[ktr-date]]" type: "text" id: "birthday" name: "birthday") (<br>)
                    (<span> class: "form-context" "Address") (<br>)
                    (<input> class: "text" type: "text" id: "address" name: "address") (<br>)
                    (<span> class: "form-context" "Password") (<br>)
-                   (<input> class: "text" type: "password" id: "password" name: "password") (<br>)
+                   (<input> class: "text validate[required]" type: "password" id: "password" name: "password") (<br>)
                    (<span> class: "form-context" "Password Again") (<br>)
-                   (<input> class: "text" type: "password" id: "password-again" name: "password-again") (<br>)
+                   (<input> class: "text validate[required,equals[password]]" type: "password" id: "password-again" name: "password-again") (<br>)
                    (<input> type: "submit" value: "Create Club" class: "create"))))
-  css: '("/css/club-register.css?v=2")
+  css: '("/css/validation-engine.jquery.css" "/css/club-register.css?v=2")
+  headers: (++ (include-javascript "/js/jquery.validation-engine.js")
+	       (include-javascript "/js/jquery.validation-engine-en.js"))
   no-ajax: #f
   no-session: #t
   tab: 'none)
@@ -1430,41 +1432,43 @@
            (email (auth-url club path)))
       (if (neq? email 'not-found)
           (begin
-            (add-javascript "$(document).ready(function() { $('#name').focus(); });")
+            (add-javascript "$(document).ready(function() { $('#add-user-form').validationEngine('attach'); $('#name').focus(); });")
             (<div> class: "container_12"
                    (<div> class: "menu-bar menu-bar-height"
                           (<div> class: "logo"
                                  (<a> class: "main-logo" href: "http://keeptherecords.com" "Keep The Records")))
                    (<div> class: "grid_12 selected-tab-container"
                           (<div> class: "padding"
-                                 (<form> action: (++ "/" club "/user/create") method: "post"
+                                 (<form> action: (++ "/" club "/user/create") method: "post" id: "add-user-form"
                                          (hidden-input 'orig-email email)
                                          (hidden-input 'auth-url path)
                                          (<h1> class: "action" (club-name club))
                                          (<h1> class: "action" "Create Your Account")
                                          (<span> class: "form-context" "Name") (<br>)
-                                         (<input> class: "text" type: "text" id: "name" name: "name") (<br>)
+                                         (<input> class: "text validate[required,custom[onlyLetterSp],custom[ktr-name]]" type: "text" id: "name" name: "name") (<br>)
                                          (<span> class: "form-context" "Email") (<br>)
-                                         (<input> class: "text" type: "text" id: "email" name: "email" value: email) (<br>)
+                                         (<input> class: "text validate[required,custom[email]]" type: "text" id: "email" name: "email" value: email) (<br>)
                                          (<span> class: "form-context" "Phone") (<br>)
-                                         (<input> class: "text" type: "text" id: "phone" name: "phone") (<br>)
+                                         (<input> class: "text validate[required,custom[ktr-phone]]" type: "text" id: "phone" name: "phone") (<br>)
                                          (<span> class: "form-context" "Birthday") (<br>)
-                                         (<input> class: "text" type: "text" id: "birthday" name: "birthday") (<br>)
+                                         (<input> class: "text validate[required,custom[ktr-date]]" type: "text" id: "birthday" name: "birthday") (<br>)
                                          (<span> class: "form-context" "Address") (<br>)
-                                         (<input> class: "text" type: "text" id: "address" name: "address") (<br>)
+                                         (<input> class: "text validate[required]" type: "text" id: "address" name: "address") (<br>)
                                          (<span> class: "form-context" "Password") (<br>)
-                                         (<input> class: "text" type: "password" id: "password" name: "password") (<br>)
+                                         (<input> class: "text validate[required]" type: "password" id: "password" name: "password") (<br>)
                                          (<span> class: "form-context" "Password Again") (<br>)
-                                         (<input> class: "text" type: "password" id: "password-again" name: "password-again") (<br>)
+                                         (<input> class: "text validate[required,equals[password]]" type: "password" id: "password-again" name: "password-again") (<br>)
                                          (<input> type: "submit" value: "Create Your Account" class: "create"))))))
           "Not a valid authorization url.")))
-  css: '("/css/club-register.css?v=2"
+  css: '("/css/club-register.css?v=2" "/css/validation-engine.jquery.css"
          "https://fonts.googleapis.com/css?family=Tangerine:regular,bold&subset=latin"
          "https://fonts.googleapis.com/css?family=Neucha&subset=latin"
          "https://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
          "https://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
          "https://fonts.googleapis.com/css?family=Permanent+Marker"
          "/css/reset.css" "/css/960.css" "/css/master.css?ver=5")
+  headers: (++ (include-javascript "/js/jquery.validation-engine.js")
+	       (include-javascript "/js/jquery.validation-engine-en.js"))
   no-ajax: #f
   no-session: #t
   tab: 'none)
@@ -1480,14 +1484,13 @@
       (handle-exceptions
        exn
        "There was an error sending out the email. Please go back and try again later. If this problem persists, email me at t@keeptherecords.com or call me at 906.934.6413."
-       (send-mail subject: "Authorization To Access Keep The Records - Awana Record Keeping"
+       (send-mail subject: "Response Needed - Authorization To Access Keep The Records - Awana Record Keeping"
                   from: "t@keeptherecords.com"
                   from-name: "Keep The Records"
                   to: ($ 'email)
                   reply-to: "t@keeptherecords.com"
                   html: (++ (<p> "Hello,")
-                            (<p> "You have be
-    '()en granted access to " (club-name club) "'s Keep The Records, Awana Record Keeping, program. To finish the authorization process, click the link below (if it doesn't work, copy and paste into a new window or tab).")
+                            (<p> "You have been granted access to " (club-name club) "'s Keep The Records, Awana Record Keeping, program. To finish the authorization process, click the link below (if it doesn't work, copy and paste into a new window or tab).")
                             (<p> (<a> href: (++ "https://a.keeptherecords.com" link-url)
                                       (++ "https://a.keeptherecords.com" link-url)))
                             (<p> "Keep The Records is an Awana Record Keeping application that runs on the Internet. This email is just to notify you that the administrator for " (club-name club) " has granted the person with this email address access to " (club-name club) "'s Keep The Records account.")

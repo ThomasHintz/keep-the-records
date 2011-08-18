@@ -63,7 +63,7 @@
                 },
                 "equals": {
                     "regex": "none",
-                    "alertText": "* Fields do not match"
+                    "alertText": "* Passwords do not match"
                 },
                 "phone": {
                     // credit: jquery.h5validate.js / orefalo

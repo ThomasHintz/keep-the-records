@@ -2,6 +2,7 @@ var parentNames;
 var parentIds;
 
 $(document).ready(function() {
+    $('#add-clubber-form').validationEngine('attach');
     $('#success').delay(5000).fadeTo('slow', 0, 'swing');
 
     // for edit only

@@ -21,7 +21,7 @@ select {
 
 input:hover, select:hover {
     border-bottom: 1px solid grey; }
-
+i
 input:focus, select:focus {
     -webkit-box-shadow: 0px 0px 10px #ff8100; }
 

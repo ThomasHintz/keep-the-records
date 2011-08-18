@@ -276,6 +276,11 @@
                  (user-pw u-email (call-with-output-digest (sha512-primitive) (cut display (->string u-pw) <>)))
                  (club-users club (cons u-email (club-users club)))
                  (send-welcome-email u-email club u-name)
+		 (handle-exceptions
+		  exn
+		  'error
+		  (send-mail from: "momentum@keeptherecords.com" from-name: "Momentum" to: "t@thintz.com" reply-to: "momentum@keeptherecords.com" subject: "New Club Register!"
+			    html: (++ "Good work!\n\n" u-email " just registered " church " as " club)))
                  (html-page
                   ""
                   headers: (<meta> http-equiv: "refresh"
@@ -388,13 +393,13 @@
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Child"))
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Parent/Guardian"))
           (<div> class: "clear clear-no-space")
-          (<form> action: (++ "/" club  "/clubbers/create") method: "post"
+          (<form> action: (++ "/" club  "/clubbers/create") method: "post" id: "add-clubber-form"
                   (if edit (hidden-input 'edit (++ "/" club "/clubbers/info/" c-name)) "")
                   (if ($ 'from) (hidden-input 'from ($ 'from)) "")
                   (<div> class: "grid_6 column-body on-top"
                          (<div> class: "padding"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label-name" id: "label-name" "Name"))
-                                               (<td> (<input> id: "name" class: "jq_watermark name"
+                                               (<td> (<input> id: "name" class: "jq_watermark name validate[required,custom[onlyLetterSp],custom[ktr-name]]"
                                                               value: (if edit (name club c-name) "")
                                                               title: "First Last" name: "name")))
                                          (<tr> (<td> class: "label" (<span> class: "label grade" "Grade"))
@@ -402,9 +407,9 @@
                                                                           ("pre-k" "Pre-k") "K" "1"
                                                                           "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12")
                                                                 selectedindex: (if edit (grade-index (grade club c-name)) 0)
-                                                                name: "grade" class: "grade" first-empty: #t)))
+                                                                name: "grade" class: "grade validate[required]" first-empty: #t)))
                                          (<tr> (<td> class: "label" (<span> class: "label birthday" "Birthday"))
-                                               (<td> (<input> class: "jq_watermark birthday" id: "birthday"
+                                               (<td> (<input> class: "jq_watermark birthday validate[required,custom[ktr-date]]" id: "birthday"
                                                               value: (if edit (birthday club c-name) "")
                                                               title: "mm/dd/yyyy" name: "birthday")))
                                          (<tr> (<td> class: "label" (<span> class: "label club" id: "label-club" "Club"))
@@ -414,44 +419,44 @@
                                                                 selectedindex: (if edit
                                                                                    (club-index (club-level club c-name))
                                                                                    0)
-                                                                name: "club-level" class: "club" first-empty: #t)))
+                                                                name: "club-level" class: "club validate[required]" first-empty: #t)))
                                          (<tr> (<td> class: "label" (<span> class: "label allergies" "Allergies"))
                                                (<td> (<input> class: "allergies" id: "allergies" name: "allergies"
                                                               value: (if edit (allergies club c-name) "")))))))
                   (<div> class: "grid_6 column-body on-top"
                          (<div> class: "padding"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label parent-name" "Parent Name 1"))
-                                               (<td> (<input> class: "jq_watermark parent-name" id: "parent-name-1"
+                                               (<td> (<input> class: "jq_watermark parent-name validate[required,custom[onlyLetterSp],custom[ktr-name]]" id: "parent-name-1"
                                                               title: "First Last" name: "parent-name-1"
                                                               value: (if edit
                                                                          (parent-name club (primary-parent club c-name))
                                                                          ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label parent-name" "Parent Name 2"))
-                                               (<td> (<input> class: "jq_watermark parent-name" id: "parent-name-2"
+                                               (<td> (<input> class: "jq_watermark parent-name validate[custom[onlyLetterSp],custom[ktr-name]]" id: "parent-name-2"
                                                               title: "First Last" name: "parent-name-2"
                                                               value: (if edit
                                                                          (parent-spouse club (primary-parent club c-name))
                                                                          ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label email" "Email"))
-                                               (<td> (<input> class: "jq_watermark email" id: "email"
+                                               (<td> (<input> class: "jq_watermark email validate[required,custom[email]]" id: "email"
                                                               title: "address@mail.com" name: "email"
                                                               value: (if edit
                                                                          (parent-email club (primary-parent club c-name))
                                                                          ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label phone" "Phone 1"))
-                                               (<td> (<input> class: "jq_watermark phone" id: "phone-1"
+                                               (<td> (<input> class: "jq_watermark phone validate[required,custom[ktr-phone]]" id: "phone-1"
                                                               title: "123.456.7890" name: "phone-1"
                                                               value: (if edit
                                                                          (parent-phone-1 club (primary-parent club c-name))
                                                                          ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label phone" "Phone 2"))
-                                               (<td> (<input> class: "phone jq_watermark" id: "phone-2"
+                                               (<td> (<input> class: "phone jq_watermark validate[custom[ktr-phone]]" id: "phone-2"
                                                               title: "123.456.7890" name: "phone-2"
                                                               value: (if edit
                                                                          (parent-phone-2 club (primary-parent club c-name))
                                                                          ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label address" "Address"))
-                                               (<td> (<input> class: "jq_watermark address" id: "address"
+                                               (<td> (<input> class: "jq_watermark address validate[required]" id: "address"
                                                               title: "123 Food St Donut MI 49494" name: "address"
                                                               value: (if edit
                                                                          (parent-address club (primary-parent club c-name))
@@ -471,10 +476,11 @@
                                             "" (db:list "clubs" club "parents")))
           (hidden-input 'parent-ids (fold (lambda (e o) (++ o "|" e))
                                           "" (db:list "clubs" club "parents"))))))
-  css: '("/css/add-clubber.css" "/css/autocomplete.css" "/css/clubbers-index.css" "/css/jquery.qtip.min.css")
+  css: '("/css/validation-engine.jquery.css" "/css/add-clubber.css" "/css/autocomplete.css" "/css/clubbers-index.css")
   headers: (++ (include-javascript "/js/jquery.watermark.min.js")
+	       (include-javascript "/js/jquery.validation-engine.js")
+	       (include-javascript "/js/jquery.validation-engine-en.js")
                (include-javascript "/js/autocomplete.js")
-	       (include-javascript "/js/jquery.qtip.min.js")
 	       (include-javascript "/js/add-clubber.js"))
   no-ajax: #f
   tab: 'clubbers

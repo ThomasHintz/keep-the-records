@@ -1,4 +1,4 @@
-(require-extension srfi-1 srfi-13 srfi-18 srfi-69 sdbm)
+(require-extension srfi-1 srfi-13 srfi-18 srfi-69 tokyocabinet)
 
 ;;; utils
 
@@ -20,10 +20,13 @@
         ""
         list))
 
-(define (db:open-db path)
-  (open-database path page-block-power: 14 dir-block-power: 14))
+;(define (db:open-db path)
+;  (open-database path page-block-power: 14 dir-block-power: 14))
 
-;;; setup sdbm
+(define (db:open-db path)
+  (tc-hdb-open path))
+
+;;; setup tokyocabinet
 
 ;(define *db* (open-database "ktr-db" page-block-power: 14 dir-block-power: 14))
 (define *db* "")
@@ -84,74 +87,66 @@
   (syntax-rules ()
     ((db- amount first ...) (db:store (- (db:read first ...) amount) first ...))))
 
-;;; db operations
-;;; only store, read, list, exists?, and delete
+;;; tokyocabinet db operations / to be refactored of course!
 
-(define (sdbm-store db data path-list)
-  (store! db (name->id (list->path path-list)) (with-output-to-string (lambda () (write data)))))
+(define (tc-store db data path-list)
+  (tc-hdb-put! db (name->id (list->path path-list)) (with-output-to-string (lambda () (write data)))))
 
-(define (sdbm-read db path-list)
-  (let ((val (fetch db (name->id (list->path path-list)))))
+(define (tc-read db path-list)
+  (let ((val (tc-hdb-get db (name->id (list->path path-list)))))
     (if val
         (with-input-from-string val (lambda () (read)))
         'not-found)))
 
-(define (sdbm-delete db path-list)
-  (delete! db (name->id (list->path path-list))))
+(define (tc-delete db path-list)
+  (tc-hdb-delete! db (name->id (list->path path-list))))
 
-(define (sdbm-exists? db path-list)
-  (not (eq? (sdbm-read db path-list) 'not-found)))
+(define (tc-exists? db path-list)
+  (not (eq? (tc-read db path-list) 'not-found)))
 
 ;;; external funcs, they wrap db calls with permission and locking protection
 
 (define (db:store data . path-list)
-  (with-db path-list #f (sdbm-store (db:db) data path-list)))
+  (tc-store (db:db) data path-list))
 
 (define (db:read . path-list)
-  (with-db path-list #t (sdbm-read (db:db) path-list)))
+  (tc-read (db:db) path-list))
 
 (define (db:list-old . path-list)
-  (with-db
-   path-list #t
-   (let* ((s-form (list->path path-list))
-          (s-length (string-length s-form))
-          (list-length (length path-list)))
-     (delete-duplicates (pair-fold (db:db)
-                                   (lambda (k v kvs)
-                                     (if (string= s-form k 0 s-length 0 (if (< (string-length k) s-length) 0 s-length))
-                                         (cons (list-ref (string-split k (db:sep)) list-length) kvs)
-                                         kvs))
-                                   '())
-                        string=))))
+  (let* ((s-form (list->path path-list))
+	 (s-length (string-length s-form))
+	 (list-length (length path-list)))
+    (delete-duplicates (pair-fold (db:db)
+				  (lambda (k v kvs)
+				    (if (string= s-form k 0 s-length 0 (if (< (string-length k) s-length) 0 s-length))
+					(cons (list-ref (string-split k (db:sep)) list-length) kvs)
+					kvs))
+				  '())
+		       string=)))
 
 (define (db:update-list data . path-list)
-  (with-db
-   path-list #t
-   (let* ((p (append path-list `(,(db:list-index))))
-          (l (sdbm-read (db:db) p))
-          (ls (if (eq? l 'not-found) '() l)))
-     (or (contains? ls data) (sdbm-store (db:db) (cons data ls) p)))))
+  (let* ((p (append path-list `(,(db:list-index))))
+	 (l (tc-read (db:db) p))
+	 (ls (if (eq? l 'not-found) '() l)))
+    (or (contains? ls data) (tc-store (db:db) (cons data ls) p))))
 
 (define (db:list . path-list)
-  (with-db
-   path-list #t
-   (let ((r (sdbm-read (db:db) (append path-list `(,(db:list-index))))))
-     (if (eq? r 'not-found)
-         '()
-         r))))
+  (let ((r (tc-read (db:db) (append path-list `(,(db:list-index))))))
+    (if (eq? r 'not-found)
+	'()
+	r)))
 
 (define (db:delete . path-list)
-  (with-db path-list #f (sdbm-delete (db:db) path-list)))
+  (tc-delete (db:db) path-list))
 
 (define (db:delete-r . path-list)
-  (with-db path-list #f
-           (let* ((s-form (list->path path-list))
-                  (s-length (string-length s-form))
-                  (list-length (length path-list)))
-             (map (lambda (k) (delete! (db:db) k))
-                  (pair-fold (db:db)
-                             (lambda (k v kvs)
-                               (if (string= s-form k 0 s-length 0 (if (< (string-length k) s-length) 0 s-length))
-                                   (cons k kvs)
-                                   kvs))
-                             '())))))
+  (let* ((s-form (list->path path-list))
+	 (s-length (string-length s-form))
+	 (list-length (length path-list)))
+    (map (lambda (k) (delete! (db:db) k))
+	 (pair-fold (db:db)
+		    (lambda (k v kvs)
+		      (if (string= s-form k 0 s-length 0 (if (< (string-length k) s-length) 0 s-length))
+			  (cons k kvs)
+			  kvs))
+		    '()))))

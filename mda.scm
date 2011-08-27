@@ -1,4 +1,4 @@
-(require-extension srfi-1 srfi-13 srfi-18 srfi-69 tokyocabinet)
+(use srfi-1 srfi-13 srfi-18 srfi-69 tokyocabinet mailbox (prefix amazon-s3 amazon-s3:))
 
 ;;; utils
 
@@ -87,10 +87,39 @@
   (syntax-rules ()
     ((db- amount first ...) (db:store (- (db:read first ...) amount) first ...))))
 
+;;; amazon-s3 stuff
+
+(load "aws-setup.scm") ; for credentials
+(define as3-bucket (make-parameter (if (is-production?) "keep-the-records-backup-db" "keep-the-records-dev-backup-db")))
+
+(define (make-as3-thread mb)
+  (make-thread
+   (lambda ()
+     (let loop ()
+       (let ((k-v (mailbox-receive! mb)))
+	 (if (eq? (first k-v) 'put!)
+	     (amazon-s3:put-string! (as3-bucket) (second k-v) (third k-v))
+	     (amazon-s3:delete-object! (as3-bucket) (second k-v))))
+       (loop)))))
+
+(define as3-mailbox (make-parameter (make-mailbox)))
+
+; make amazon s3 threads
+(for-each (lambda (n) (thread-start! (make-as3-thread (as3-mailbox)))) (range 20))
+
+(define (as3-put! k v)
+  (mailbox-send! (as3-mailbox) `(put! ,k ,v)))
+
+(define (as3-delete! k v)
+  (mailbox-send! (as3-mailbox) `(delete! ,k ,v)))
+
 ;;; tokyocabinet db operations / to be refactored of course!
 
 (define (tc-store db data path-list)
-  (tc-hdb-put! db (name->id (list->path path-list)) (with-output-to-string (lambda () (write data)))))
+  (let ((k (name->id (list->path path-list)))
+	(v (with-output-to-string (lambda () (write data)))))
+    (tc-hdb-put! db k v)
+    (as3-put! k v)))
 
 (define (tc-read db path-list)
   (let ((val (tc-hdb-get db (name->id (list->path path-list)))))
@@ -99,7 +128,9 @@
         'not-found)))
 
 (define (tc-delete db path-list)
-  (tc-hdb-delete! db (name->id (list->path path-list))))
+  (let ((k (name->id (list->path path-list))))
+    (tc-hdb-delete! db k)
+    (as3-delete! k)))
 
 (define (tc-exists? db path-list)
   (not (eq? (tc-read db path-list) 'not-found)))

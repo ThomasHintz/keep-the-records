@@ -15,3 +15,10 @@
 
 (define (string-fold-sep proc sep list)
   (fold-sep proc sep "" list))
+
+(define (range from/to . to)
+  (let ((f (if (= (length to) 0) -1 (- from/to 1)))
+        (t (if (> (length to) 0) (first to) from/to)))
+    (do ((i (- t 1) (- i 1))
+         (l '() (cons i l)))
+        ((= i f) l))))

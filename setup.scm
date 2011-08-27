@@ -1,7 +1,9 @@
 (use spiffy awful)
 
+(define is-production? (make-parameter (file-exists? "/keep-the-records/i-am-production")))
+
 ;;; production
-;(load "production")
+(if (is-production?) (load "production") #f)
 ;;; end production
 
 (load "macs.scm")

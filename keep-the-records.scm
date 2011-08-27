@@ -1200,13 +1200,6 @@
                            "The Ultimate Challenge Series Book One"
                            "The Ultimate Challenge Series Book Two"))
 
-(define (range from/to . to)
-  (let ((f (if (= (length to) 0) -1 (- from/to 1)))
-        (t (if (> (length to) 0) (first to) from/to)))
-    (do ((i (- t 1) (- i 1))
-         (l '() (cons i l)))
-        ((= i f) l))))
-
 (define (book-chapters club-level book)
   (cond ((string-ci=? club-level "tnt")
          (if (= (string->number (->string book)) 0) 1 8))

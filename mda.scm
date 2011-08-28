@@ -29,7 +29,7 @@
 ;;; setup tokyocabinet
 
 ;(define *db* (open-database "ktr-db" page-block-power: 14 dir-block-power: 14))
-(define *db* "")
+(define *db* #f)
 (define (db:db . val)
   (if (> (length val) 0)
       (set! *db* (first val))

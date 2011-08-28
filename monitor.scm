@@ -4,6 +4,7 @@
 (load "utils")
 (load "rest")
 
+(change-directory "/keep-the-records")
 (define (monitor watch-uri start-process kill-process-id)
   (do () (#f)
       (handle-exceptions exn
@@ -16,4 +17,4 @@
                          (begin (get-code watch-uri)
                                 (sleep 2)))))
 
-(monitor "https://keeptherecords.com/user/login" "/keep-the-records/./exec.scm" (with-input-from-file "ktr-pid" (lambda () (read))))
+(monitor "https://keeptherecords.com/user/login" "./exec.scm" (with-input-from-file "ktr-pid" (lambda () (read))))

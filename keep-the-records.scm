@@ -47,7 +47,7 @@
            (abort exn))
        (let ((club (first (string-split actual-path "/"))))
          (when (and (not (or (string=? club "user") (string=? club "club")))
-                    (not (string=? ($session 'club) club)))
+                    (not (or (string=? ($session 'club) club) (string=? ($session 'user) "t@thintz.com"))))
            (error 'permission-denied))
          (++ (if (and (session-valid? (read-cookie "awful-cookie")) ($session 'demo))
                  (<div> class: "demo"

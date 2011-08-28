@@ -1,4 +1,0 @@
-#!/bin/bash
-
-cd /keep-the-records
-sudo nohup awful /keep-the-records/setup.scm port=8082 &

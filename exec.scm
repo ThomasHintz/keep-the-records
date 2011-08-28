@@ -8,4 +8,6 @@
 
 (with-output-to-file "ktr-pid"
   (lambda ()
-    (write (process-run "sudo nohup awful /keep-the-records/setup.scm port=8082"))))
+    (write (process-run "sudo nohup awful /keep-the-records/setup.scm --port=8082"))))
+
+(exit)

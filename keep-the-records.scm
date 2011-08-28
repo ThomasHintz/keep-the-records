@@ -72,8 +72,8 @@
                                                                     " main-menu-item-current" ""))
                                                      href: (++ "/" club "/" (string-downcase str) "/" url) str))
                                               '(("Clubbers" "find")
-                                                ("Leaders" "find")
-                                                ("Stats" "attendance")
+                                                ;("Leaders" "find")
+                                                ;("Stats" "attendance")
                                                 ("Admin" "leaders"))))
                                (<div> class: "logo"
                                       (<a> class: "main-logo" href: "http://keeptherecords.com" "Keep The Records")))
@@ -86,7 +86,9 @@
                                             class: (main-tab-class (is-current? (++ "/" club "/clubbers/"
                                                                                     (string-downcase t)) actual-path))
                                             t))
-                                     '(("Dashboard") ("Attendance") ("Awards") ("Find") ("Release") ("Sections"))))
+                                     '(("Dashboard") ("Attendance")
+				       ;("Awards")
+				       ("Find") ("Release")))) ;("Sections"))))
                             ((eq? tab 'leaders)
                              (folds* (lambda (t)
                                        (<a> href: (++ "/" club "/leaders/" (string-downcase t))

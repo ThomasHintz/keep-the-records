@@ -1,0 +1,16 @@
+(use sequences)
+
+(define (ad . rest)
+  (letrec ((ad-internal
+	    (lambda (ol params)
+	      (if (= (size params) 1)
+		  (map (lambda (l)
+			 (if (list? l)
+			     (first l)
+			     l))
+		       (second ol))
+		  (map (lambda (l)
+			 `(,(first l)
+			   ,(ad-internal l (cdr params))))
+		       (second ol))))))
+    (ad-internal (section-data) rest)))

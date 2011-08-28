@@ -1287,6 +1287,9 @@
           (next-section n section-list)
           n))))
 
+(define (list-books-as-clubber club clubber)
+  (list-books (select-club-level (section-data) (club-level club clubber))))
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/sections")
   (lambda (path)
     (let ((club (get-club path)))
@@ -1295,7 +1298,7 @@
               (let* ((clubber ($ 'clubber))
                      (c-book (book club clubber)))
                 `((book-num . ,c-book)
-                  (books . ,(tnt-book-names))
+                  (books . ,(list-books-as-clubber club clubber))
                   (name . ,clubber)
                   (last-section . ,(last-section club clubber))
                   (sections . ,(let ((s (sections-list club clubber c-book)))
@@ -1312,7 +1315,7 @@
                      (c-book (string->number ($ 'book))))
               (book club clubber c-book)
               `((book-num . ,c-book)
-                  (books . ,(tnt-book-names))
+                  (books . ,(list-books-as-clubber club clubber))
                   (name . ,clubber)
                   (last-section . ,(last-section club clubber))
                   (sections . ,(let ((s (sections-list club clubber c-book)))
@@ -1705,7 +1708,10 @@
       (++ (<a> href: "/reload/keep-the-records" "keep-the-records.scm")
           (<br>)
           (<br>)
-          (<a> href: "/reload/setup" "setup.scm"))))
+          (<a> href: "/reload/setup" "setup.scm")
+	  (<br>)
+	  (<br>)
+	  (<a> href: "/reload/section-data" "section.data.scm"))))
   no-session: #t
   title: "Reload Pages")
 
@@ -1723,4 +1729,12 @@
       (load "setup.scm")
       (redirect-to "/reload/index")))
   title: "Reloaded setup"
+  no-session: #t)
+
+(define-page "/reload/section-data"
+  (lambda ()
+    (when (developer-access?)
+      (load "section.data.scm")
+      (redirect-to "/reload/index")))
+  title: "Reloaded section.data.scm"
   no-session: #t)

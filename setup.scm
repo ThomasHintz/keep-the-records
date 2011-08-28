@@ -14,5 +14,6 @@
 (load "handlers.scm")
 (load "rest.scm")
 (load "demo-data.scm")
+(load "sections.scm")
 
 (load "keep-the-records.scm")

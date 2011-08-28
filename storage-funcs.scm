@@ -165,6 +165,9 @@
 (db-club-clubber-date uniform "uniform" #f)
 (db-club-clubber-date friend "friend" #f)
 (db-club-clubber-date extra "extra" #f)
+(db-club-clubber-date sunday-school "sunday-school" #f)
+(db-club-clubber-date dues "dues" #f)
+(db-club-clubber-date on-time "on-time" #f)
 
 ; (clubber-section club clubber book chapter section . date)
 (db-club-clubber-section clubber-section #f)

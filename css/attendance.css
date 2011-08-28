@@ -85,6 +85,18 @@
 .friend {
     background-image: url("/images/friend.png"); }
 
+.extra {
+    background-image: url("/images/extra.png"); }
+
+.sunday-school {
+    background-image: url("/images/sunday-school.png"); }
+
+.dues {
+    background-image: url("/images/dues-attendance.png"); }
+
+.on-time {
+    background-image: url("/images/on-time.png"); }
+
 .cubbies {
     background-color: #99CCFF; }
 

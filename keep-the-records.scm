@@ -587,6 +587,9 @@
                       (uniform . ,(uniform club n date))
                       (friend . ,(friend club n date))
                       (extra . ,(extra club n date))
+                      (sunday-school . ,(sunday-school club n date))
+                      (dues . ,(dues club n date))
+                      (on-time . ,(on-time club n date))
                       (points-total . ,(total-points club n))
                       (allergies . ,(allergies club n))
                       (club-level . ,(club-level club n))
@@ -627,6 +630,21 @@
               (extra club ($ 'name) date (if (string=? ($ 'extra) "false") #f #t)))
             method: 'PUT
             arguments: '((name . "$('#clubbers').val()[0]") (extra . "stringToBoolean($('#extra').val())")))
+      (ajax "save-sunday-school" 'sunday-school 'click
+            (lambda ()
+              (sunday-school club ($ 'name) date (if (string=? ($ 'sunday-school) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (sunday-school . "stringToBoolean($('#sunday-school').val())")))
+      (ajax "save-dues" 'dues 'click
+            (lambda ()
+              (dues club ($ 'name) date (if (string=? ($ 'dues) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (dues . "stringToBoolean($('#dues').val())")))
+      (ajax "on-time" 'on-time 'click
+            (lambda ()
+              (on-time club ($ 'name) date (if (string=? ($ 'on-time) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (on-time . "stringToBoolean($('#on-time').val())")))
       (++ (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
                         (<form> action: path  method: "GET"
@@ -673,7 +691,14 @@
                                       (<div> class: "attendance-button" id: "friend" "Friend"
                                              (<input> class: "friend" type: "button" id: "friend" value: ""))
                                       (<div> class: "attendance-button" id: "extra" "Extra"
-                                             (<input> class: "extra" type: "button" id: "extra" value: "+1")))
+                                             (<input> class: "extra" type: "button" id: "extra" value: ""))
+				      (<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)
+                                      (<div> class: "attendance-button" id: "sunday-school" "Sunday"
+                                             (<input> class: "sunday-school" type: "button" id: "sunday-school" value: ""))
+                                      (<div> class: "attendance-button" id: "dues" "Dues"
+                                             (<input> class: "dues" type: "button" id: "dues" value: ""))
+                                      (<div> class: "attendance-button" id: "on-time" "On Time"
+                                             (<input> class: "on-time" type: "button" id: "on-time" value: "")))
                                (<div> class: "points-container"
                                       (<div> class: "points" id: "points-total")
                                       (<div> class: "points points-label" " points"))
@@ -685,9 +710,9 @@
               (<div> class: "tab-body padding"
                      (<div> class: "attendees" id: "attendees"
                             (attendees-html club date)))))))
-  headers: (include-javascript "/js/attendance.js")
+  headers: (include-javascript "/js/attendance.js?ver=1")
   no-ajax: #f
-  css: '("/css/attendance.css?ver=3")
+  css: '("/css/attendance.css?ver=4")
   tab: 'clubbers
   title: "Attendance - Club Night -KtR")
 
@@ -898,7 +923,11 @@
                                                            ("Bible" ,(lambda (c cl d) (bible c cl d)))
                                                            ("Handbook" ,(lambda (c cl d) (handbook c cl d)))
                                                            ("Uniform" ,(lambda (c cl d) (uniform c cl d)))
-                                                           ("Friend" ,(lambda (c cl d) (friend c cl d))))))))))))))
+                                                           ("Friend" ,(lambda (c cl d) (friend c cl d)))
+                                                           ("Extra" ,(lambda (c cl d) (extra c cl d)))
+                                                           ("Sunday School" ,(lambda (c cl d) (sunday-school c cl d)))
+                                                           ("Dues" ,(lambda (c cl d) (dues c cl d)))
+                                                           ("On Time" ,(lambda (c cl d) (on-time c cl d))))))))))))))
   css: '("/css/clubbers.css?ver=1")
   tab: 'clubbers
   title: "Clubber Info - Club Night - KtR")
@@ -1712,6 +1741,9 @@
           (<br>)
           (<br>)
           (<a> href: "/reload/setup" "setup.scm")
+          (<br>)
+          (<br>)
+          (<a> href: "/reload/storage-funcs" "storage-funcs.scm")
 	  (<br>)
 	  (<br>)
 	  (<a> href: "/reload/section-data" "section.data.scm"))))
@@ -1740,4 +1772,12 @@
       (load "section.data.scm")
       (redirect-to "/reload/index")))
   title: "Reloaded section.data.scm"
+  no-session: #t)
+
+(define-page "/reload/storage-funcs"
+  (lambda ()
+    (when (developer-access?)
+      (load "storage-funcs.scm")
+      (redirect-to "/reload/index")))
+  title: "Reloaded storage-funcs.scm"
   no-session: #t)

@@ -46,6 +46,18 @@ $(document).ready(function() {
 	if ($('#extra').val() == "true") { $('#extra').val("false"); pointsMinus(); }
 	else { $('#extra').val("true"); pointsPlus(); }
 	$('#extra').toggleClass('selected'); });
+    $('#sunday-school').click(function() {
+	if ($('#sunday-school').val() == "true") { $('#sunday-school').val("false"); pointsMinus(); }
+	else { $('#sunday-school').val("true"); pointsPlus(); }
+	$('#sunday-school').toggleClass('selected'); });
+    $('#dues').click(function() {
+	if ($('#dues').val() == "true") { $('#dues').val("false"); pointsMinus(); }
+	else { $('#dues').val("true"); pointsPlus(); }
+	$('#dues').toggleClass('selected'); });
+    $('#on-time').click(function() {
+	if ($('#on-time').val() == "true") { $('#on-time').val("false"); pointsMinus(); }
+	else { $('#on-time').val("true"); pointsPlus(); }
+	$('#on-time').toggleClass('selected'); });
     $('#friend').click(function() {
 	if ($('#friend').val() == "true") { $('#friend').val("false"); pointsMinus(); }
 	else { $('#friend').val("true"); pointsPlus(); }
@@ -68,6 +80,12 @@ function loadClubberInfo(response) {
 			     else { $('#friend').addClass('selected'); $('#friend').val("true"); }}
 	else if (id == "extra") { if (html == false) { $('#extra').removeClass('selected'); $('#extra').val("false"); }
 			     else { $('#extra').addClass('selected'); $('#extra').val("true"); }}
+	else if (id == "sunday-school") { if (html == false) { $('#sunday-school').removeClass('selected'); $('#sunday-school').val("false"); }
+			     else { $('#sunday-school').addClass('selected'); $('#sunday-school').val("true"); }}
+	else if (id == "dues") { if (html == false) { $('#dues').removeClass('selected'); $('#dues').val("false"); }
+			     else { $('#dues').addClass('selected'); $('#dues').val("true"); }}
+	else if (id == "on-time") { if (html == false) { $('#on-time').removeClass('selected'); $('#on-time').val("false"); }
+			     else { $('#on-time').addClass('selected'); $('#on-time').val("true"); }}
 	else if (id == "club-level") {
 	    switch (html) {
 	    case "Cubbies": { $('#clubber-name-container').addClass('cubbies'); break; }

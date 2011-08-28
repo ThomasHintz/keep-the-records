@@ -21,7 +21,8 @@
        #f
        (password-matches? user password))))
 
-(when (not (db:db)) (db:db (db:open-db "ktr-db")))
+;(when (not (db:db)) (db:db (db:open-db "ktr-db")))
+(db:db (db:open-db "ktr-db"))
 
 (define (is-current? url path)
   (if (string-match (regexp (++ url ".*")) path)

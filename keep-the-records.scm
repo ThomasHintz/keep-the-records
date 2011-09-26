@@ -1744,6 +1744,9 @@
           (<br>)
           (<br>)
           (<a> href: "/reload/storage-funcs" "storage-funcs.scm")
+          (<br>)
+          (<br>)
+          (<a> href: "/reload/mda" "mda.scm")
 	  (<br>)
 	  (<br>)
 	  (<a> href: "/reload/section-data" "section.data.scm"))))
@@ -1772,6 +1775,14 @@
       (load "section.data.scm")
       (redirect-to "/reload/index")))
   title: "Reloaded section.data.scm"
+  no-session: #t)
+
+(define-page "/reload/mda"
+  (lambda ()
+    (when (developer-access?)
+      (load "mda.scm")
+      (redirect-to "/reload/index")))
+  title: "Reloaded mda.scm"
   no-session: #t)
 
 (define-page "/reload/storage-funcs"

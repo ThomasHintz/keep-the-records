@@ -30,6 +30,7 @@
 
 ;(define *db* (open-database "ktr-db" page-block-power: 14 dir-block-power: 14))
 (define *db* #f)
+
 (define (db:db . val)
   (if (> (length val) 0)
       (set! *db* (first val))
@@ -105,21 +106,21 @@
 (define as3-mailbox (make-parameter (make-mailbox)))
 
 ; make amazon s3 threads
-(for-each (lambda (n) (thread-start! (make-as3-thread (as3-mailbox)))) (range 20))
+;(for-each (lambda (n) (thread-start! (make-as3-thread (as3-mailbox)))) (range 20))
 
-(define (as3-put! k v)
-  (mailbox-send! (as3-mailbox) `(put! ,k ,v)))
+(define (as3-put! k v) 'a)
+  ;(mailbox-send! (as3-mailbox) `(put! ,k ,v)))
 
-(define (as3-delete! k v)
-  (mailbox-send! (as3-mailbox) `(delete! ,k ,v)))
+(define (as3-delete! k v) 'a)
+  ;(mailbox-send! (as3-mailbox) `(delete! ,k ,v)))
 
 ;;; tokyocabinet db operations / to be refactored of course!
 
 (define (tc-store db data path-list)
   (let ((k (name->id (list->path path-list)))
 	(v (with-output-to-string (lambda () (write data)))))
-    (tc-hdb-put! db k v)
-    (as3-put! k v)))
+    (tc-hdb-put! db k v)))
+    ;(as3-put! k v)))
 
 (define (tc-read db path-list)
   (let ((val (tc-hdb-get db (name->id (list->path path-list)))))
@@ -129,8 +130,8 @@
 
 (define (tc-delete db path-list)
   (let ((k (name->id (list->path path-list))))
-    (tc-hdb-delete! db k)
-    (as3-delete! k)))
+    (tc-hdb-delete! db k)))
+    ;(as3-delete! k)))
 
 (define (tc-exists? db path-list)
   (not (eq? (tc-read db path-list) 'not-found)))

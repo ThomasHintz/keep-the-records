@@ -7,9 +7,9 @@
 (use shell)
 
 ; dry run
-(run "rsync -naurtvv --exclude '.git' --exclude 'essays-in' --exclude 'nohup.out' --exclude 'ktr-db' -e ssh . webaccess@thintz.com:/keep-the-records | grep -v 'uptodate'")
+(run "rsync -naurtvv --exclude '.git' --exclude 'essays-in' --exclude 'nohup.out' --exclude 'ktr-db' -e ssh . webaccess@a.keeptherecords.com:/keep-the-records | grep -v 'uptodate'")
 (display "continue? ")
 (if (string=? (read) "y")
-    (run "rsync -aurtvv --exclude '.git' --exclude 'essays-in' --exclude 'nohup.out' --exclude 'ktr-db' -e ssh . webaccess@thintz.com:/keep-the-records | grep -v 'uptodate'")
+    (run "rsync -aurtvv --exclude '.git' --exclude 'essays-in' --exclude 'nohup.out' --exclude 'ktr-db' -e ssh . webaccess@a.keeptherecords.com:/keep-the-records | grep -v 'uptodate'")
     #f)
 (exit)

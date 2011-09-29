@@ -1,9 +1,18 @@
-(use sequences)
+(use srfi-1)
+
+; filters result of ad based on specifics given as strings
+; ex: (ad-filter (ad "TnT" 'book) '("TnT" 'book)) equals (ad "TnT" 'book)
+(define (ad-filter data-l params)
+  (if (> (length params) 0)
+      (if (string? (first params))
+	  (ad-filter (second (first (filter (lambda (e) (string=? (first params) (first e))) data-l))) (cdr params))
+	  data-l)
+      data-l))
 
 (define (ad . rest)
   (letrec ((ad-internal
 	    (lambda (ol params)
-	      (if (= (size params) 1)
+	      (if (= (length params) 1)
 		  (map (lambda (l)
 			 (if (list? l)
 			     (first l)
@@ -13,4 +22,4 @@
 			 `(,(first l)
 			   ,(ad-internal l (cdr params))))
 		       (second ol))))))
-    (ad-internal (section-data) rest)))
+    (ad-filter (ad-internal (section-data) rest) rest)))

@@ -569,7 +569,7 @@
 (define (todays-yy) (date->string (current-date) "~y"))
 (define (todays-yyyy) (date->string (current-date) "~Y"))
 
-;;; take attendance
+;;; attendance
 
 (define-awana-app-page (regexp "/[^/]*/clubbers/attendance")
   (lambda (path)
@@ -709,7 +709,7 @@
               (<div> class: "tab-body padding"
                      (<div> class: "attendees" id: "attendees"
                             (attendees-html club date)))))))
-  headers: (include-javascript "/js/attendance.js?ver=1")
+  headers: (include-javascript "/js/attendance.js?ver=2")
   no-ajax: #f
   css: '("/css/attendance.css?ver=4")
   tab: 'clubbers
@@ -1315,9 +1315,9 @@
 				;      "Mark section "
 				;      (<input> type: "button" id: "mark-section" class: "easy-mark-button"))
 			       (<div> id: "sections-container")))))))
-  css: '("/css/sections.css")
+  css: '("/css/sections.css?ver=0")
   no-ajax: #f
-  headers: (include-javascript "/js/sections.js")
+  headers: (include-javascript "/js/sections.js?ver=0")
   tab: 'clubbers)
 
 ;;; stats

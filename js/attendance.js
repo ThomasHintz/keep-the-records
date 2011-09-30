@@ -22,6 +22,14 @@ function pointsPlus() {
     $('#points-total').text(parseInt($('#points-total').text()) + 1); }
 
 $(document).ready(function() {
+    $.ajaxSetup({ timeout: 2000, error: function (jqxhr, msg, err) {
+	if (msg == 'timeout') {
+	    alert('The server could not be reached, check your network connection. If this message persists, and' +
+		  ' the rest of the site functions correctly, please let me know at t@keeptherecords.com'); }
+	else {
+	    alert('There has been an unexpected error. Please check your network connection and reload the page.' +
+		  ' If the error persists, please let me know at t@keeptherecords.com'); } } });
+    
     $('#filter').keyup(function() {
 	MyUtil.selectFilter('clubbers', $('#filter').val());
 	document.getElementById('clubbers').selectedIndex = 0; });

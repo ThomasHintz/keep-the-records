@@ -82,10 +82,10 @@
 (define-syntax db-club-clubber-section
   (syntax-rules ()
     ((db-club-clubber-section prop default)
-     (define (prop club mem book chapter section . prop)
+     (define (prop club mem club-level book chapter section . prop)
        (if (store? prop)
-           (db:store (car prop) "clubs" club "clubbers" mem "sections" "books" book "chapters" chapter section)
-           (with-default (db:read "clubs" club "clubbers" mem "sections" "books" book "chapters" chapter section)
+           (db:store (car prop) "clubs" club "clubbers" mem "sections" "club-levels" club-level "books" book "chapters" chapter section)
+           (with-default (db:read "clubs" club "clubbers" mem "sections" "club-levels" club-level "books" book "chapters" chapter section)
                          default))))))
 
 (define-syntax db-club-par
@@ -170,7 +170,7 @@
 (db-club-clubber-date on-time "on-time" #f)
 
 ; (clubber-section club clubber book chapter section . date)
-(db-club-clubber-section clubber-section #f)
+(db-club-clubber-section clubber-section "")
 
 ; (parent-spouse club spouse-name . spouse-name)
 (db-club-par parent-name "name" "")

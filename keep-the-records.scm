@@ -148,7 +148,7 @@
   (lambda ()
     (add-javascript "$(document).ready(function() { $('#club-register-form').validationEngine('attach'); $('#church').focus(); });")
     (<div> class: "grid_12"
-           (<form> action: "/club/create" method: "post" id: "club-register-form"
+           (<form> action: "/club/create" id: "club-register-form"
                    (<h1> class: "action" "Create Club")
                    (<span> class: "form-context" "Church or Association Name") (<br>)
                    (<input> class: "text validate[required,custom[onlyLetterSp]]" type: "text" id: "church" name: "church")
@@ -207,7 +207,7 @@
   (lambda ()
     (add-javascript "$(document).ready(function() { $('#user').focus(); });")
     (<div> class: "grid_12"
-           (<form> action: "/login-trampoline" method: "POST"
+           (<form> action: "/login-trampoline"
                    (<h1> class: "action" "Login to Keep the Records")
                    (<span> class: "form-context" "Email") (<br>)
                    (<input> class: "text" type: "text" id: "user" name: "user") (<br>)
@@ -398,7 +398,7 @@
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Child"))
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Parent/Guardian"))
           (<div> class: "clear clear-no-space")
-          (<form> action: (++ "/" club  "/clubbers/create") method: "post" id: "add-clubber-form"
+          (<form> action: (++ "/" club  "/clubbers/create") id: "add-clubber-form"
                   (if edit (hidden-input 'edit (++ "/" club "/clubbers/info/" c-name)) "")
                   (if ($ 'from) (hidden-input 'from ($ 'from)) "")
                   (<div> class: "grid_6 column-body on-top"
@@ -548,8 +548,7 @@
         (db:update-list (name->id p-name) "clubs" club "parents"))
       (cond (from (redirect-to from))
             (($ 'edit) (redirect-to edit))
-            (#t (redirect-to (++ "/" club "/clubbers/add?success=true"))))))
-  no-session: #t)
+            (#t (redirect-to (++ "/" club "/clubbers/add?success=true")))))))
 
 (define (present-clubbers club date)
   (filter (lambda (m-name)
@@ -1226,189 +1225,96 @@
 
 ;;; sections
 
-(define (tnt-book-names) '("Start Zone"
-                           "The Ultimate Adventure Series Book One"
-                           "The Ultimate Adventure Series Book Two"
-                           "The Ultimate Challenge Series Book One"
-                           "The Ultimate Challenge Series Book Two"))
-
-(define (book-chapters club-level book)
-  (cond ((string-ci=? club-level "tnt")
-         (if (= (string->number (->string book)) 0) 1 8))
-        (#t #f)))
-
-(define (sections-list club clubber book)
-  (map (lambda (chapter)
-         (map (lambda (section)
-                (clubber-section club clubber (->string book) (number->string chapter) (number->string section)))
-              (range 12)))
-       (range 1 (+ (book-chapters (club-level club clubber) book) 1))))
-
-(define (sec-cl border finished)
-  (++ border " " (if finished "finished" "unfinished")))
-
 (define (disp-date d)
   (if d
       d
       ""))
 
-(define (sections-table sections)
-  (<table> id: "regular-sections"
-           (<tr> (<td> class: "border")
-                 (<td> class: "border" "Section 0")
-                 (<td> class: "border" "1") (<td> class: "border" "2") (<td> class: "border" "3")
-                 (<td> class: "border" "4") (<td> class: "border" "5") (<td> class: "border" "6")
-                 (<td> class: "border-end" "7")
-                 (<td> class: "cell-sep")
-                 (<td> class: "border" "Silver")
-                 (<td> class: "border" "Gold") (<td> class: "border-end" "Gold"))
-           (let ((c 0))
-             (fold (lambda (e o)
-                     (set! c (+ c 1))
-                     (let ((n (number->string c)))
-                       (++ o
-                           (<tr> (<td> class: "border" c)
-                                 (<td> class: (sec-cl "border" (first e)) id: (++ n ".0") (disp-date (first e)))
-                                 (<td> class: (sec-cl "border" (second e)) id: (++ n ".1") (disp-date (second e)))
-                                 (<td> class: (sec-cl "border" (third e)) id: (++ n ".2") (disp-date (third e)))
-                                 (<td> class: (sec-cl "border" (fourth e)) id: (++ n ".3") (disp-date (fourth e)))
-                                 (<td> class: (sec-cl "border" (fifth e)) id: (++ n ".4") (disp-date (fifth e)))
-                                 (<td> class: (sec-cl "border" (sixth e)) id: (++ n ".5") (disp-date (sixth e)))
-                                 (<td> class: (sec-cl "border" (seventh e)) id: (++ n ".6") (disp-date (seventh e)))
-                                 (<td> class: (sec-cl "border-end" (eighth e)) id: (++ n ".7") (disp-date (eighth e)))
-                                 (<td> class: "cell-sep")
-                                 (<td> class: (sec-cl "border" (ninth e)) id: (++ n ".8") (disp-date (ninth e)))
-                                 (<td> class: (sec-cl "border" (tenth e)) id: (++ n ".9") (disp-date (tenth e)))
-                                 (<td> class: (sec-cl "border-end" (list-ref e 10)) id: (++ n ".10")
-                                       (disp-date  (list-ref e 10)))))))
-                   ""
-                   (take sections 7)))
-           (let ((end (first (drop sections 7))))
-             (<tr> (<td> class: "border-bottom" "8")
-                   (<td> class: (sec-cl "border-bottom" (first end)) id: "8.0" (disp-date (first end)))
-                   (<td> class: (sec-cl "border-bottom" (second end)) id: "8.1" (disp-date (second end)))
-                   (<td> class: (sec-cl "border-bottom" (third end)) id: "8.2" (disp-date (third end)))
-                   (<td> class: (sec-cl "border-bottom" (fourth end)) id: "8.3" (disp-date (fourth end)))
-                   (<td> class: (sec-cl "border-bottom" (fifth end)) id: "8.4" (disp-date (fifth end)))
-                   (<td> class: (sec-cl "border-bottom" (sixth end)) id: "8.5" (disp-date (sixth end)))
-                   (<td> class: (sec-cl "border-bottom" (seventh end)) id: "8.6" (disp-date (seventh end)))
-                   (<td> class: (sec-cl "border-bottom-end" (eighth end)) id: "8.7" (disp-date (eighth end)))
-                   (<td> class: "cell-sep")
-                   (<td> class: (sec-cl "border-bottom" (ninth end)) id: "8.8" (disp-date (ninth end)))
-                   (<td> class: (sec-cl "border-bottom" (tenth end)) id: "8.9" (disp-date (tenth end)))
-                   (<td> class: (sec-cl "border-bottom-end" (list-ref end 10)) id: "8.10"
-                         (disp-date (list-ref end 10)))))))
-
-(define (start-zone-table sections)
-  (<table> (<tr> (fold (lambda (s o)
-                         (++ o (<td> class: (++ "border border-bottom "
-                                                (if s "finished" "unfinished")) "")))
-                       ""
-                       (take (first sections) 7))
-                 (<td> class: (++ "border border-bottom-end "
-                                  (if (eighth (first sections)) "finished" "unfinished")) ""))))
-
-(define (next-section current-section section-list)
-  (let ((c (first current-section)) (s (second current-section))
-        (csl (list-ref section-list (- (first current-section) 1))))
-    (let ((n (cond ((= s (- (length csl) 5))
-                    `(,(+ c 1) 0))     ; done with chapter
-                   (#t
-                    `(,c ,(+ s 1)))))) ; done with section
-      (if (list-ref (list-ref section-list (- (first n) 1)) (second n))
-          (next-section n section-list)
-          n))))
-
-(define (list-books-as-clubber club clubber)
-  (list-books (select-club-level (section-data) (club-level club clubber))))
-
 (define-awana-app-page (regexp "/[^/]*/clubbers/sections")
   (lambda (path)
     (let ((club (get-club path)))
-      (ajax "clubber-sections" 'clubbers '(change keypress)
-            (lambda ()
-              (let* ((clubber ($ 'clubber))
-                     (c-book (book club clubber)))
-                `((book-num . ,c-book)
-                  (books . ,(list-books-as-clubber club clubber))
-                  (name . ,clubber)
-                  (last-section . ,(last-section club clubber))
-                  (sections . ,(let ((s (sections-list club clubber c-book)))
-                                 (if (< (length s) 2)
-                                     (start-zone-table s)
-                                     (sections-table s)))))))
-            success: "loadClubberSections(response);"
-            update-targets: #t
-            method: 'GET
-            arguments: '((clubber . "$('#clubbers').val()[0]")))
-      (ajax "clubber-book" 'change-book 'change
-            (lambda ()
-              (let* ((clubber ($ 'clubber))
-                     (c-book (string->number ($ 'book))))
-              (book club clubber c-book)
-              `((book-num . ,c-book)
-                  (books . ,(list-books-as-clubber club clubber))
-                  (name . ,clubber)
-                  (last-section . ,(last-section club clubber))
-                  (sections . ,(let ((s (sections-list club clubber c-book)))
-                                 (if (< (length s) 2)
-                                     (start-zone-table s)
-                                     (sections-table s)))))))
-            success: "loadClubberSections(response);"
-            update-targets: #t
-            method: 'PUT
-            arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').attr('selectedIndex')")))
-      (ajax "mark-section" 'mark-section 'click
-            (lambda ()
-              (let* ((c-book ($ 'book)) (clubber ($ 'clubber)) (chapter ($ 'chapter)) (section ($ 'section))
-                     (c-sect (clubber-section club clubber c-book (->string chapter) (->string section))))
-                (clubber-section club clubber c-book (->string chapter) (->string section)
-                                 (if c-sect
-                                     #f
-                                     (date->db (current-date))))
-                (last-section club clubber (next-section `(,(string->number chapter) ,(string->number section))
-                                                         (sections-list club clubber c-book)))
-                `((book-num . ,c-book)
-                  (books . ,(tnt-book-names))
-                  (name . ,clubber)
-                  (last-section . ,(last-section club clubber))
-                  (sections . ,(let ((s (sections-list club clubber c-book)))
-                                 (if (< (length s) 2)
-                                     (start-zone-table s)
-                                     (sections-table s)))))))
-            success: "loadClubberSections(response);"
-            update-targets: #t
-            method: 'PUT
-            arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').attr('selectedIndex')")
-                        (chapter . "lastChapter") (section . "lastSection")))
+      (ajax "clubber-books" 'clubbers '(change keypress)
+	    (lambda ()
+	      (combo-box "change-book" (ad (club-level club ($ 'clubber)) 'book)
+			 selectedindex: (book club ($ 'clubber)) class: "change-book"
+			 default: (book club ($ 'clubber))))
+	    ; hack to fix apparent bug in combo-box
+	    success: "$('#info-header').html(response); $('#change-book').attr('selectedIndex', $('#change-book').attr('selectedindex'));
+                      $('#change-book').change();"
+	    arguments: '((clubber . "$('#clubbers').val()[0]"))
+	    live: #t
+	    method: 'GET
+	    target: "info-header")
+      (ajax "clubber-sections" 'change-book 'change
+	    (lambda ()
+	      (book club ($ 'clubber) ($ 'book-num))
+	      (fold (lambda (chapter/sections o)
+		      (++ o (<span> class: "chapter" (first chapter/sections))
+			  " "
+			  (fold (lambda (s o)
+				  (let ((c-section (clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
+								    ($ 'book) (first chapter/sections) (->string s))))
+				    (++ o (<button> type: "button"
+						    class: (++ "mark-section" (if (string=? c-section "") "" " done"))
+						    value: (->string s)
+						    (if (string=? c-section "")
+							(->string s)
+							c-section)
+						    (hidden-input 'chapter (first chapter/sections)))
+					" ")))
+				"" (second chapter/sections))
+			  (<br>)))
+		    ""
+		    (ad (club-level club ($ 'clubber)) ($ 'book) 'chapter 'section)))
+	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
+			 (book-num . "$('#change-book').attr('selectedIndex')"))
+	    method: 'GET
+	    live: #t
+	    target: "sections-container")
+      (ajax "mark-section" ".mark-section" 'click
+	    (lambda ()
+	      (let ((c-section (clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
+						($ 'book) ($ 'chapter) ($ 'section))))
+		(clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
+				 ($ 'book) ($ 'chapter) ($ 'section) (if (string=? c-section "") (date->db (current-date)) ""))
+		(if (string=? c-section "") (date->db (current-date)) ($ 'section))))
+	    method: 'PUT
+	    live: #t
+	    prelude: "var ele = event.srcElement;"
+	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).text(response).append(book);"
+	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
+			 (chapter . "$(event.srcElement).children().eq(0).val()") (section . "$(event.srcElement).val()")))
+      (ajax "combo-clubbers" ".club-filter" 'change
+	    (lambda ()
+	      (let ((c-out (remove (lambda (e) (not (any (lambda (e2) (string=? (club-level club e) e2)) (string-split ($ 'clubs) ",")))) (db:list "clubs" club "clubbers"))))
+		(combo-box "clubbers"
+			   (zip c-out (clubbers->names club c-out))
+			   class: "clubbers" multiple: #t)))
+	    success: "$('#clubbers-c').html(response); MyUtil.selectFilterData = new Object();"
+	    live: #t
+	    arguments: '((clubs . "(function () { var chked = ''; $('.club-filter:checked').each(function(i,v) { chked += ',' + v.id; }); return chked; })()")))
       (++ (<div> class: "grid_3"
                  (<div> class: "column-header padding" "Find Clubber")
                  (<div> class: "padding column-body"
-                        (<input> type: "checkbox" id: "puggles" disabled: #t) (<label> for: "puggles" "Puggles")
-                        (<input> type: "checkbox" id: "cubbies" disabled: #t) (<label> for: "cubbies" "Cubbies")
-                        (<input> type: "checkbox" id: "sparks" disabled: #t) (<label> for: "sparks" "Sparks")
-                        (<input> type: "checkbox" id: "tnt" checked: #t) (<label> for: "tnt" "TnT")
-                        (<input> type: "checkbox" id: "trek" disabled: #t) (<label> for: "trek" "Trek")
-                        (<input> type: "checkbox" id: "journey" disabled: #t) (<label> for: "journey" "Journey")
+			(fold (lambda (cl o) (++ o (<input> type: "checkbox" checked: #t id: cl class: "club-filter")
+						 (<label> for: cl cl))) ""
+				(ad 'club-level))
                         (<br>)
                         (<input> type: "text" class: "filter" id: "filter")
                         (<br>)
-                        (combo-box "clubbers"
-                                   (clubbers->names club (club-filter club (db:list "clubs" club "clubbers") "tnt"))
-                                   class: "clubbers" multiple: #t)))
-          (<div> class: "grid_9" id: "default-info"
-                 (<div> class: "padding column-header" "Mark Sections")
-                 (<div> class: "padding column-body"
-                        "To begin, select a name <--"))
-          (<div> class: "grid_9 hidden" id: "info-container"
+			(<div> id: "clubbers-c"
+			       (combo-box "clubbers"
+					  (zip (db:list "clubs" club "clubbers") (clubbers->names club (db:list "clubs" club "clubbers")))
+					  class: "clubbers" multiple: #t))))
+          (<div> class: "grid_9" id: "info-container"
                  (<div> class: "padding column-header" id: "clubber-name" "Clubber Name")
-                 (<div> class: "padding info-header"
-                        (combo-box "change-book" '() class: "change-book"))
+                 (<div> class: "padding info-header" id: "info-header")
                  (<div> class: "padding column-body"
-                        (<div> class: "easy-mark"
-                               "Mark section "
-                               (<input> type: "button" id: "mark-section" class: "easy-mark-button"))
-                        (<div> id: "sections-container"))))))
+			(<div> class: "section-focus-c"
+			       ;(<div> class: "easy-mark"
+				;      "Mark section "
+				;      (<input> type: "button" id: "mark-section" class: "easy-mark-button"))
+			       (<div> id: "sections-container")))))))
   css: '("/css/sections.css")
   no-ajax: #f
   headers: (include-javascript "/js/sections.js")
@@ -1467,7 +1373,7 @@
                                  (<a> class: "main-logo" href: "http://keeptherecords.com" "Keep The Records")))
                    (<div> class: "grid_12 selected-tab-container"
                           (<div> class: "padding"
-                                 (<form> action: (++ "/" club "/user/create") method: "post" id: "add-user-form"
+                                 (<form> action: (++ "/" club "/user/create") id: "add-user-form"
                                          (hidden-input 'orig-email email)
                                          (hidden-input 'auth-url path)
                                          (<h1> class: "action" (club-name club))
@@ -1617,6 +1523,7 @@
 
 ;;; error page
 
+(when (is-production?)
 (page-exception-message
  (lambda (exn)
    (let ((c (with-output-to-string (lambda () (print-call-chain)))))
@@ -1629,7 +1536,7 @@
                               (display c)
                               (print-error-message exn)
                               (newline)
-                              (write (uri-path (request-uri (current-request))))
+                              (when uri-path (write (uri-path (request-uri (current-request)))))
                               (newline)
                               (if (session-valid? (read-cookie (session-cookie-name)))
                                   (let ((user ($session 'user)))
@@ -1652,7 +1559,7 @@
               (<div> style: "font-family: IM Fell Great Primer; font-size: 34px; margin-left: 10px; padding-top: 10px; padding-bottom: 5px;" "I messed something up!")
               (<div> style: "font-style: italic; color: grey; margin-left: 35px;" "An email has just been sent to my personal inbox detailing what went wrong and I will fix this as quickly as possible.")
               (<br>)
-              (<div> style: "font-family: Rock Salt; padding-left: 10px; padding-top: 15px; padding-bottom: 15px; font-size: 30px; font-style: italic; font-weight: 700; color: #ff8100; background-color: black; text-shadow: white 1px 1px;" (<h2> "I'm sincerely sorry."))))))
+              (<div> style: "font-family: Rock Salt; padding-left: 10px; padding-top: 15px; padding-bottom: 15px; font-size: 30px; font-style: italic; font-weight: 700; color: #ff8100; background-color: black; text-shadow: white 1px 1px;" (<h2> "I'm sincerely sorry.")))))))
 
 ;;; stats
 
@@ -1702,7 +1609,7 @@
                  (<div> class: "padding" "My Info"))
           (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
-                        (<form> action: (++ "/" club "/account-settings-trampoline") method: "POST"
+                        (<form> action: (++ "/" club "/account-settings-trampoline")
                                 autocomplete: "off"
                                 (<span> class: "form-context" "Name") (<br>)
                                 (<input> class: "jq_watermark text name" type: "text" id: "name" name: "name"

@@ -1275,16 +1275,15 @@
 			 selectedindex: (book-index club ($ 'clubber)) class: "change-book"
 			 default: (book club ($ 'clubber))))
 	    ; hack to fix apparent bug in combo-box
-	    success: "$('#info-header').html(response); $('#change-book').attr('selectedIndex', $('#change-book').attr('selectedindex'));
-                      $('#change-book').change();"
+	    success: "$('#info-header').html(response); $('#change-book').attr('selectedIndex', $('#change-book').attr('selectedindex'));"
 	    arguments: '((clubber . "$('#clubbers').val()[0]"))
 	    live: #t
 	    method: 'GET
 	    target: "info-header")
-      (ajax "clubber-sections" 'change-book 'change
+      (ajax "clubber-sections" "#change-book, #clubbers" '(change keypress)
 	    (lambda ()
-	      (book club ($ 'clubber) ($ 'book-num))
-	      (book-index club ($ 'clubber) ($ 'book-index))
+	      (if (string=? ($ 'book "false") "false") #f (book club ($ 'clubber) ($ 'book)))
+	      (if (string=? ($ 'book-index "false") "false") #f (book-index club ($ 'clubber) ($ 'book-index)))
 	      (let* ((clubber ($ 'clubber))
 		     (last (last-section club clubber))
 		     (next (if last (next-section club clubber (first last) (second last) (third last) (fourth last)) #f))
@@ -1296,7 +1295,7 @@
 					 " "
 					 (fold (lambda (s o)
 						 (let ((c-section (clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
-										   ($ 'book) (first chapter/sections) (->string s))))
+										   (book club ($ 'clubber)) (first chapter/sections) (->string s))))
 						   (++ o (<button> type: "button"
 								   class: (++ "mark-section" (if (string=? c-section "") "" " done"))
 								   value: (->string s)
@@ -1311,12 +1310,13 @@
 					       "" (second chapter/sections))
 					 (<br>)))
 				   ""
-				   (ad (club-level club ($ 'clubber)) ($ 'book) 'chapter 'section)))
+				   (ad (club-level club ($ 'clubber)) (book club ($ 'clubber)) 'chapter 'section)))
 		  (mark-id . ,(if (and chapter section) (->html-id (++ chapter "-" section)) ""))
 		  (mark-text . ,(if (and chapter section) (++ chapter " - " section) "")))))
 	    update-targets: #t
-	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
-			 (book-num . "$('#change-book').val()") (book-index . "$('#change-book').attr('selected-index')"))
+	    arguments: '((clubber . "$('#clubbers').val()[0]")
+			 (book . "(function () { if (event.srcElement.id != 'clubbers') { return $('#change-book').val(); } return 'false'; })()")
+			 (book-index . "(function () { if (event.srcElement.id != 'clubbers') { return $('#change-book').attr('selectedIndex'); } return 'false'; })()"))
 	    success: "$('#sections-container').html(response['sections']);
                       $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['mark-id']).click(); }).val(response['mark-text']);"
 	    method: 'GET

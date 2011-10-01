@@ -152,6 +152,7 @@
 (db-club-clubber primary-parent "primary-parent" "")
 (db-club-clubber total-points "total-points" 0)
 (db-club-clubber book "book" 0)
+(db-club-clubber book-index "book-index" 0)
 (db-club-clubber last-section "last-section" #f)
 (db-club-clubber date-registered "date-registered" "09/01/10") ; mm/dd/yy
 (db-club-clubber thank-you "thank-you" #f)

@@ -89,7 +89,7 @@
                                             t))
                                      '(("Dashboard") ("Attendance")
 				       ;("Awards")
-				       ("Find") ("Release")))) ;("Sections"))))
+				       ("Find") ("Release") ("Sections"))))
                             ((eq? tab 'leaders)
                              (folds* (lambda (t)
                                        (<a> href: (++ "/" club "/leaders/" (string-downcase t))
@@ -1257,13 +1257,22 @@
 (define (next-section club clubber club-level book chapter section)
   (next-section-pruned (prune-till-section club clubber club-level book chapter section) club clubber club-level book))
 
+(define (->html-id s)
+  (string-fold
+   (lambda (c o)
+     (++ o
+	 (cond ((char=? #\space c) "-")
+	       ((char=? #\: c) "")
+	       (#t (->string c)))))
+   "" s))
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/sections")
   (lambda (path)
     (let ((club (get-club path)))
       (ajax "clubber-books" 'clubbers '(change keypress)
 	    (lambda ()
 	      (combo-box "change-book" (ad (club-level club ($ 'clubber)) 'book)
-			 selectedindex: (book club ($ 'clubber)) class: "change-book"
+			 selectedindex: (book-index club ($ 'clubber)) class: "change-book"
 			 default: (book club ($ 'clubber))))
 	    ; hack to fix apparent bug in combo-box
 	    success: "$('#info-header').html(response); $('#change-book').attr('selectedIndex', $('#change-book').attr('selectedindex'));
@@ -1275,11 +1284,12 @@
       (ajax "clubber-sections" 'change-book 'change
 	    (lambda ()
 	      (book club ($ 'clubber) ($ 'book-num))
+	      (book-index club ($ 'clubber) ($ 'book-index))
 	      (let* ((clubber ($ 'clubber))
 		     (last (last-section club clubber))
 		     (next (if last (next-section club clubber (first last) (second last) (third last) (fourth last)) #f))
-		     (chapter (if next (third next) (first (ad (club-level club clubber) (book club clubber) 'chapter))))
-		     (section (if next (fourth next) (caadar (ad (club-level club clubber) (book club clubber) 'chapter 'section)))))
+		     (chapter (if next (if (> (length next) 2) (third next) #f) (first (ad (club-level club clubber) (book club clubber) 'chapter))))
+		     (section (if next (if (> (length next) 2) (fourth next) #f) (caadar (ad (club-level club clubber) (book club clubber) 'chapter 'section)))))
 		`((sections .
 			    ,(fold (lambda (chapter/sections o)
 				     (++ o (<span> class: "chapter" (first chapter/sections))
@@ -1290,22 +1300,25 @@
 						   (++ o (<button> type: "button"
 								   class: (++ "mark-section" (if (string=? c-section "") "" " done"))
 								   value: (->string s)
-								   id: (space->dash (++ (first chapter/sections) "-" s))
-								   (if (string=? c-section "")
-								       (->string s)
-								       c-section)
+								   id: (->html-id (++ (first chapter/sections) "-" s))
+								   ; no dates for now
+								   ;(if (string=? c-section "")
+								   ;    (->string s)
+								   ;    c-section)
+								   s
 								   (hidden-input 'chapter (first chapter/sections)))
 						       " ")))
 					       "" (second chapter/sections))
 					 (<br>)))
 				   ""
 				   (ad (club-level club ($ 'clubber)) ($ 'book) 'chapter 'section)))
-		  (mark-id . ,(space->dash (++ chapter "-" section)))
-		  (mark-text . ,(++ chapter " - " section)))))
+		  (mark-id . ,(if (and chapter section) (->html-id (++ chapter "-" section)) ""))
+		  (mark-text . ,(if (and chapter section) (++ chapter " - " section) "")))))
 	    update-targets: #t
 	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
-			 (book-num . "$('#change-book').attr('selectedIndex')"))
-	    success: "$('#sections-container').html(response['sections']); $('#easy-mark').val(response['mark-text']);"
+			 (book-num . "$('#change-book').val()") (book-index . "$('#change-book').attr('selected-index')"))
+	    success: "$('#sections-container').html(response['sections']);
+                      $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['mark-id']).click(); }).val(response['mark-text']);"
 	    method: 'GET
 	    live: #t)
       (ajax "mark-section" ".mark-section" 'click
@@ -1316,9 +1329,9 @@
 		(clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
 				 ($ 'book) ($ 'chapter) ($ 'section) (if (string=? c-section "") (date->db (current-date)) ""))
 		(last-section club ($ 'clubber) (list (club-level club ($ 'clubber)) ($ 'book) ($ 'chapter) ($ 'section)))
-		`((text . ,(if (string=? c-section "") (date->db (current-date)) ($ 'section)))
-		  (next-id . ,(space->dash (++ (third next) "-" (fourth next))))
-		  (next-title . ,(++ (third next) " - " (fourth next))))))
+		`((text . ,($ 'section)) ;,(if (string=? c-section "") (date->db (current-date)) ($ 'section))) - no date for now
+		  (next-id . ,(if (> (length next) 2) (->html-id (++ (third next) "-" (fourth next))) ""))
+		  (next-title . ,(if (> (length next) 2) (++ (third next) " - " (fourth next)) "")))))
 	    update-targets: #t
 	    method: 'PUT
 	    live: #t
@@ -1346,9 +1359,15 @@
                         (<input> type: "text" class: "filter" id: "filter")
                         (<br>)
 			(<div> id: "clubbers-c"
+			       (let ((c-out
+				      (remove (lambda (e)
+						(not (any
+						      (lambda (e2) (string=? (club-level club e) e2))
+						      '("Cubbies" "Sparks" "TnT"))))
+					      (db:list "clubs" club "clubbers"))))
 			       (combo-box "clubbers"
-					  (zip (db:list "clubs" club "clubbers") (clubbers->names club (db:list "clubs" club "clubbers")))
-					  class: "clubbers" multiple: #t))))
+					  (zip c-out (clubbers->names club c-out))
+					  class: "clubbers" multiple: #t)))))
           (<div> class: "grid_9" id: "info-container"
                  (<div> class: "padding column-header" id: "clubber-name" "Clubber Name")
                  (<div> class: "padding info-header" id: "info-header")

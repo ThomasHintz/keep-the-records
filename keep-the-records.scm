@@ -1360,11 +1360,11 @@
                         (<br>)
 			(<div> id: "clubbers-c"
 			       (let ((c-out
-				      (remove (lambda (e)
-						(not (any
-						      (lambda (e2) (string=? (club-level club e) e2))
-						      '("Cubbies" "Sparks" "TnT"))))
-					      (db:list "clubs" club "clubbers"))))
+				      (name-sort club (remove (lambda (e)
+								(not (any
+								      (lambda (e2) (string=? (club-level club e) e2))
+								      '("Cubbies" "Sparks" "TnT"))))
+							      (db:list "clubs" club "clubbers")) "last")))
 			       (combo-box "clubbers"
 					  (zip c-out (clubbers->names club c-out))
 					  class: "clubbers" multiple: #t)))))

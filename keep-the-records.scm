@@ -1284,6 +1284,7 @@
 	    (lambda ()
 	      (if (string=? ($ 'book "false") "false") #f (book club ($ 'clubber) ($ 'book)))
 	      (if (string=? ($ 'book-index "false") "false") #f (book-index club ($ 'clubber) ($ 'book-index)))
+	      (if (string=? (book club ($ 'clubber)) "") (book club ($ 'clubber) (first (ad (club-level club ($ 'clubber)) 'b))) #f)
 	      (let* ((clubber ($ 'clubber))
 		     (last (last-section club clubber))
 		     (next (if last (next-section club clubber (first last) (second last) (third last) (fourth last)) #f))

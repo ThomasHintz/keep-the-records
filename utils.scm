@@ -19,3 +19,8 @@
     (do ((i (- t 1) (- i 1))
          (l '() (cons i l)))
         ((= i f) l))))
+
+(define (empty? l) (eq? l '()))
+
+(define (space->dash s)
+  (string-fold (lambda (c o) (string-append o (if (char=? #\space c) "-" (->string c)))) "" s))

@@ -207,7 +207,7 @@
   (lambda ()
     (add-javascript "$(document).ready(function() { $('#user').focus(); });")
     (<div> class: "grid_12"
-           (<form> action: "/login-trampoline"
+           (<form> action: "/login-trampoline" method: "POST"
                    (<h1> class: "action" "Login to Keep the Records")
                    (<span> class: "form-context" "Email") (<br>)
                    (<input> class: "text" type: "text" id: "user" name: "user") (<br>)
@@ -1230,6 +1230,33 @@
       d
       ""))
 
+(define (chapter-from chapters/sections chapter)
+  (if (or (empty? chapters/sections) (string=? (car (car chapters/sections)) chapter))
+      chapters/sections
+      (chapter-from (cdr chapters/sections) chapter)))
+
+(define (section-from section-list section)
+  (if (or (empty? section-list) (string=? (car section-list) section))
+      (if (empty? section-list) '() (cdr section-list))
+      (section-from (cdr section-list) section)))
+
+(define (next-section-pruned chapters/sections club clubber club-level book)
+  (if (empty? chapters/sections)
+      chapters/sections
+      (if (empty? (cadar chapters/sections))
+	  (next-section-pruned (cdr chapters/sections) club clubber club-level book)
+	  (if (not (string=? (clubber-section club clubber club-level book (caar chapters/sections) (caadar chapters/sections)) ""))
+	      (next-section-pruned (cons (cons (caar chapters/sections) (list (cdadar chapters/sections))) (cdr chapters/sections)) ; remove current section
+			    club clubber club-level book)
+	      (list club-level book (caar chapters/sections) (caadar chapters/sections))))))
+
+(define (prune-till-section club clubber club-level book chapter section)
+  (let ((chapters/sections (chapter-from (ad club-level book 'chapter 'section) chapter)))
+    (cons (cons (caar chapters/sections) (list (section-from (cadar chapters/sections) section))) (cdr chapters/sections))))
+
+(define (next-section club clubber club-level book chapter section)
+  (next-section-pruned (prune-till-section club clubber club-level book chapter section) club clubber club-level book))
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/sections")
   (lambda (path)
     (let ((club (get-club path)))
@@ -1248,42 +1275,58 @@
       (ajax "clubber-sections" 'change-book 'change
 	    (lambda ()
 	      (book club ($ 'clubber) ($ 'book-num))
-	      (fold (lambda (chapter/sections o)
-		      (++ o (<span> class: "chapter" (first chapter/sections))
-			  " "
-			  (fold (lambda (s o)
-				  (let ((c-section (clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
-								    ($ 'book) (first chapter/sections) (->string s))))
-				    (++ o (<button> type: "button"
-						    class: (++ "mark-section" (if (string=? c-section "") "" " done"))
-						    value: (->string s)
-						    (if (string=? c-section "")
-							(->string s)
-							c-section)
-						    (hidden-input 'chapter (first chapter/sections)))
-					" ")))
-				"" (second chapter/sections))
-			  (<br>)))
-		    ""
-		    (ad (club-level club ($ 'clubber)) ($ 'book) 'chapter 'section)))
+	      (let* ((clubber ($ 'clubber))
+		     (last (last-section club clubber))
+		     (next (if last (next-section club clubber (first last) (second last) (third last) (fourth last)) #f))
+		     (chapter (if next (third next) (first (ad (club-level club clubber) (book club clubber) 'chapter))))
+		     (section (if next (fourth next) (caadar (ad (club-level club clubber) (book club clubber) 'chapter 'section)))))
+		`((sections .
+			    ,(fold (lambda (chapter/sections o)
+				     (++ o (<span> class: "chapter" (first chapter/sections))
+					 " "
+					 (fold (lambda (s o)
+						 (let ((c-section (clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
+										   ($ 'book) (first chapter/sections) (->string s))))
+						   (++ o (<button> type: "button"
+								   class: (++ "mark-section" (if (string=? c-section "") "" " done"))
+								   value: (->string s)
+								   id: (space->dash (++ (first chapter/sections) "-" s))
+								   (if (string=? c-section "")
+								       (->string s)
+								       c-section)
+								   (hidden-input 'chapter (first chapter/sections)))
+						       " ")))
+					       "" (second chapter/sections))
+					 (<br>)))
+				   ""
+				   (ad (club-level club ($ 'clubber)) ($ 'book) 'chapter 'section)))
+		  (mark-id . ,(space->dash (++ chapter "-" section)))
+		  (mark-text . ,(++ chapter " - " section)))))
+	    update-targets: #t
 	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
 			 (book-num . "$('#change-book').attr('selectedIndex')"))
+	    success: "$('#sections-container').html(response['sections']); $('#easy-mark').val(response['mark-text']);"
 	    method: 'GET
-	    live: #t
-	    target: "sections-container")
+	    live: #t)
       (ajax "mark-section" ".mark-section" 'click
 	    (lambda ()
 	      (let ((c-section (clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
-						($ 'book) ($ 'chapter) ($ 'section))))
+						($ 'book) ($ 'chapter) ($ 'section)))
+		    (next (next-section club ($ 'clubber) (club-level club ($ 'clubber)) ($ 'book) ($ 'chapter) ($ 'section))))
 		(clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
 				 ($ 'book) ($ 'chapter) ($ 'section) (if (string=? c-section "") (date->db (current-date)) ""))
-		(if (string=? c-section "") (date->db (current-date)) ($ 'section))))
+		(last-section club ($ 'clubber) (list (club-level club ($ 'clubber)) ($ 'book) ($ 'chapter) ($ 'section)))
+		`((text . ,(if (string=? c-section "") (date->db (current-date)) ($ 'section)))
+		  (next-id . ,(space->dash (++ (third next) "-" (fourth next))))
+		  (next-title . ,(++ (third next) " - " (fourth next))))))
+	    update-targets: #t
 	    method: 'PUT
 	    live: #t
-	    prelude: "var ele = event.srcElement;"
-	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).text(response).append(book);"
+	    prelude: "var ele = this;"
+	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).text(response['text']).append(book);
+                      $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['next-id']).click(); }).val(response['next-title']);"
 	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
-			 (chapter . "$(event.srcElement).children().eq(0).val()") (section . "$(event.srcElement).val()")))
+			 (chapter . "$(this).children().eq(0).val()") (section . "$(this).val()")))
       (ajax "combo-clubbers" ".club-filter" 'change
 	    (lambda ()
 	      (let ((c-out (remove (lambda (e) (not (any (lambda (e2) (string=? (club-level club e) e2)) (string-split ($ 'clubs) ",")))) (db:list "clubs" club "clubbers"))))
@@ -1311,9 +1354,9 @@
                  (<div> class: "padding info-header" id: "info-header")
                  (<div> class: "padding column-body"
 			(<div> class: "section-focus-c"
-			       ;(<div> class: "easy-mark"
-				;      "Mark section "
-				;      (<input> type: "button" id: "mark-section" class: "easy-mark-button"))
+			       (<div> class: "easy-mark-c"
+				      "Mark section "
+				      (<input> type: "button" id: "easy-mark" class: "easy-mark-button"))
 			       (<div> id: "sections-container")))))))
   css: '("/css/sections.css?ver=0")
   no-ajax: #f

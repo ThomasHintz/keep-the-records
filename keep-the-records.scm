@@ -1316,10 +1316,10 @@
 		  (mark-text . ,(if (and chapter section) (++ chapter " - " section) "")))))
 	    update-targets: #t
 	    arguments: '((clubber . "$('#clubbers').val()[0]")
-			 (book . "(function () { if (event.srcElement.id != 'clubbers') { return $('#change-book').val(); } return 'false'; })()")
-			 (book-index . "(function () { if (event.srcElement.id != 'clubbers') { return $('#change-book').attr('selectedIndex'); } return 'false'; })()"))
+			 (book . "(function () { if (event.target.id != 'clubbers') { return $('#change-book').val(); } return 'false'; })()")
+			 (book-index . "(function () { if (event.target.id != 'clubbers') { return $('#change-book').attr('selectedIndex'); } return 'false'; })()"))
 	    success: "$('#sections-container').html(response['sections']);
-                      $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['mark-id']).click(); }).val(response['mark-text']);"
+                      $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['mark-id']).click(); }).text(response['mark-text']);"
 	    method: 'GET
 	    live: #t)
       (ajax "mark-section" ".mark-section" 'click
@@ -1338,7 +1338,7 @@
 	    live: #t
 	    prelude: "var ele = this;"
 	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).text(response['text']).append(book);
-                      $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['next-id']).click(); }).val(response['next-title']);"
+                      $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['next-id']).click(); }).text(response['next-title']);"
 	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
 			 (chapter . "$(this).children().eq(0).val()") (section . "$(this).val()")))
       (ajax "combo-clubbers" ".club-filter" 'change
@@ -1376,7 +1376,7 @@
 			(<div> class: "section-focus-c"
 			       (<div> class: "easy-mark-c"
 				      "Mark section "
-				      (<input> type: "button" id: "easy-mark" class: "easy-mark-button"))
+				      (<button> type: "button" id: "easy-mark" class: "easy-mark-button"))
 			       (<div> id: "sections-container")))))))
   css: '("/css/sections.css?ver=0")
   no-ajax: #f

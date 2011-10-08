@@ -1,4 +1,4 @@
-(use srfi-1)
+(use srfi-1 srfi-69)
 
 ; filters result of ad based on specifics given as strings
 ; ex: (ad-filter (ad "TnT" 'book) '("TnT" 'book)) equals (ad "TnT" 'book)
@@ -9,17 +9,23 @@
 	  data-l)
       data-l))
 
+(define *mem-ht* (make-hash-table))
+
 (define (ad . rest)
-  (letrec ((ad-internal
-	    (lambda (ol params)
-	      (if (= (length params) 1)
-		  (map (lambda (l)
-			 (if (list? l)
-			     (first l)
-			     l))
-		       (second ol))
-		  (map (lambda (l)
-			 `(,(first l)
-			   ,(ad-internal l (cdr params))))
-		       (second ol))))))
-    (ad-filter (ad-internal (section-data) rest) rest)))
+  (if (hash-table-ref/default *mem-ht* rest #f)
+      (hash-table-ref *mem-ht* rest)
+      (let ((r (letrec ((ad-internal
+			 (lambda (ol params)
+			   (if (= (length params) 1)
+			       (map (lambda (l)
+				      (if (list? l)
+					  (first l)
+					  l))
+				    (second ol))
+			       (map (lambda (l)
+				      `(,(first l)
+					,(ad-internal l (cdr params))))
+				    (second ol))))))
+		 (ad-filter (ad-internal (section-data) rest) rest))))
+	(hash-table-set! *mem-ht* rest r)
+	r)))

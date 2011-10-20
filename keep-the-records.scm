@@ -10,6 +10,10 @@
 (enable-session #t)
 (enable-web-repl "/web-repl")
 
+(session-cookie-setter
+ (lambda (sid)
+   (set-cookie! (session-cookie-name) sid secure: (is-production?) httponly: #t)))
+
 (define (developer-access?)
   (or (development-mode?) (string=? ($session 'user) "t@thintz.com")))
 
@@ -379,7 +383,7 @@
     (let* ((club (get-club path))
            (edit (> (length (string-split path "/")) 3))
            (c-name (if edit (get-clubber path) #f)))
-      (ajax "lookup-parent" 'parent-name-1 'change
+      (ajax "lookup-parent" 'parent-name-1 '(change blur)
             (lambda ()
               (if ($ 'p-name)
                   (map (lambda (data)
@@ -1702,6 +1706,13 @@
   headers: (include-javascript "/js/jquery.watermark.min.js")
   title: "Account Settings - KtR")
 
+;;; developer page
+
+(define (define-dev-page path thunk)
+  (define-page path
+    (lambda ()
+      (when (developer-access?) (thunk)))))
+
 ;;; loaders
 
 (define-page "/reload/index"
@@ -1762,3 +1773,5 @@
       (redirect-to "/reload/index")))
   title: "Reloaded storage-funcs.scm"
   no-session: #t)
+
+;;; dashboard

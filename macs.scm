@@ -17,3 +17,8 @@
                           o
                           (string-append o (loop (cdr rl) (apply proc (car rl))))))))
        (loop l "")))))
+
+(define-syntax neq?
+  (syntax-rules ()
+    ((neq? e1 e2)
+     (not (eq? e1 e2)))))

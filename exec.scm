@@ -4,10 +4,8 @@
 ;sudo nohup awful /keep-the-records/setup.scm port=8082 &
 
 (use posix)
-(change-directory "/keep-the-records")
+;(change-directory "/keep-the-records")
 
-(with-output-to-file "ktr-pid"
-  (lambda ()
-    (write (process-run "sudo nohup awful /keep-the-records/setup.scm --port=8082"))))
+(process-run (string-append "nohup awful --port=" (car (command-line-arguments)) " keep-the-records &"))
 
 (exit)

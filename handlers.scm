@@ -1,4 +1,4 @@
-(require-extension spiffy intarweb srfi-69 uri-common)
+(require-extension spiffy intarweb srfi-69 uri-common awful)
 
 ;;; pdf resource handler
 

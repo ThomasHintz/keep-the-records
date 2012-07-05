@@ -22,5 +22,20 @@
 
 (define (empty? l) (eq? l '()))
 
+(define (dash->space s)
+  (string-fold (lambda (c o) (string-append o (if (char=? #\- c) " " (->string c)))) "" s))
+
 (define (space->dash s)
   (string-fold (lambda (c o) (string-append o (if (char=? #\space c) "-" (->string c)))) "" s))
+
+(define (id->name id)
+  (string-titlecase (dash->space id)))
+
+(define (name->id name)
+  (string-downcase (space->dash name)))
+
+(define (list->path list)
+  (fold (lambda (e o)
+          (string-append o (db:sep) e))
+        ""
+        list))

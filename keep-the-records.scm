@@ -3,6 +3,20 @@
 (use numbers) ;; !IMPORTANT! needs to come before other eggs, may segfault otherwise (020111)
 (use awful message-digest-port sha2 posix http-session spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18)
 
+(include "macs.scm")
+(load "utils")
+(load "storage-funcs")
+(load "demo-data")
+(load "handlers")
+(load "pdf")
+(load "awana-data-dsl")
+(load "sections")
+
+(define is-production? (make-parameter (file-exists? "/keep-the-records/i-am-production")))
+
+;;; production
+(if (is-production?) (load "production") #f)
+
 ;;; Settings
 
 (enable-ajax #t)
@@ -25,7 +39,7 @@
        #f
        (password-matches? user password))))
 
-(when (not (db:db)) (db:db (db:open-db "ktr-db")))
+;(when (not (db:db)) (db:db (db:open-db "ktr-db")))
 
 (define (is-current? url path)
   (if (string-match (regexp (++ url ".*")) path)
@@ -92,7 +106,7 @@
                                                                                     (string-downcase t)) actual-path))
                                             t))
                                      '(("Dashboard") ("Attendance")
-				       ;("Awards")
+				       ("Awards")
 				       ("Find") ("Release") ("Sections"))))
                             ((eq? tab 'leaders)
                              (folds* (lambda (t)
@@ -201,6 +215,8 @@
 
 (define-login-trampoline "/login-trampoline"
   hook: (lambda (user)
+	  (print "logging in")
+	  (print "check1" (session-valid? (sid)))
           (if (sid)
               (begin ($session-set! 'user user)
                      ($session-set! 'club (user-club user)))
@@ -251,8 +267,6 @@
       (sid new-sid)
       (set-cookie! (session-cookie-name) new-sid)
       ($session-set! 'demo #t)
-      (db:add-permission (->string sid)
-                         (lambda (path-list) #t))
       (let ((u-name (as-db-unique (lambda (u-n) (user-email u-n)) "demo" 1)))
         (setup-demo u-name)
         (html-page
@@ -272,7 +286,7 @@
            (u-phone ($ 'phone))
            (u-birthday ($ 'birthday))
            (u-address ($ 'address))
-           (u-pw ($ 'password))
+           (u-pw ($ 'passwrd))
            (u-pw2 ($ 'password-again)))
       (if (and (string=? u-pw u-pw2) (eq? (user-name u-email) 'not-found))
           (begin (club-name club church)
@@ -393,7 +407,7 @@
                                      ,(db:read "clubs" club "parents" ($ 'p-name) data)))))
                        (db:list "clubs" club "parents" ($ 'p-name)))
                   '()))
-            success: "$.each(response, function(id, html) { $('#' + id).val(html).addClass('filled'); })"
+            success: "$.each(response, function(id, html) { $('#' + id).val(html).addClass('filled').watermark(''); })"
             update-targets: #t
             method: 'GET
             arguments: '((p-name . "parentIds[parentNames.indexOf($('#parent-name-1').val())]")))
@@ -1775,3 +1789,145 @@
   no-session: #t)
 
 ;;; dashboard
+
+
+;(define-awana-app-page (regexp "/[^/]*/clubbers/attendance")
+;  (lambda (path)
+(define (profile)
+    (let ((path "")
+	  (club "evangel-baptist-church1"))
+          (date (++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))))
+      (ajax "clubber-attendance-info" 'clubbers '(change keypress)
+            (lambda ()
+              (let ((n ($ 'name)))
+                (if n
+                    `((clubber-name . ,(name club n))
+                      (present . ,(present club n date))
+                      (bible . ,(bible club n date))
+                      (handbook . ,(handbook club n date))
+                      (uniform . ,(uniform club n date))
+                      (friend . ,(friend club n date))
+                      (extra . ,(extra club n date))
+                      (sunday-school . ,(sunday-school club n date))
+                      (dues . ,(dues club n date))
+                      (on-time . ,(on-time club n date))
+                      (points-total . ,(total-points club n))
+                      (allergies . ,(allergies club n))
+                      (club-level . ,(club-level club n))
+                      (notes . ,(notes club n))
+                      (attendees-html . ,(attendees-html club date)))
+                    '())))
+            success: "loadClubberInfo(response);"
+            update-targets: #t
+            method: 'GET
+            arguments: '((name . "$('#clubbers').val()[0]")))
+      (ajax "save-present" 'present 'click
+            (lambda ()
+              (present club ($ 'name) date (if (string=? ($ 'present) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (present . "stringToBoolean($('#present').val())")))
+      (ajax "save-bible" 'bible 'click
+            (lambda ()
+              (bible club ($ 'name) date (if (string=? ($ 'bible) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (bible . "stringToBoolean($('#bible').val())")))
+      (ajax "save-handbook" 'handbook 'click
+            (lambda ()
+              (handbook club ($ 'name) date (if (string=? ($ 'handbook) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (handbook . "stringToBoolean($('#handbook').val())")))
+      (ajax "save-uniform" 'uniform 'click
+            (lambda ()
+              (uniform club ($ 'name) date (if (string=? ($ 'uniform) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (uniform . "stringToBoolean($('#uniform').val())")))
+      (ajax "save-friend" 'friend 'click
+            (lambda ()
+              (friend club ($ 'name) date (if (string=? ($ 'friend) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (friend . "stringToBoolean($('#friend').val())")))
+      (ajax "save-extra" 'extra 'click
+            (lambda ()
+              (extra club ($ 'name) date (if (string=? ($ 'extra) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (extra . "stringToBoolean($('#extra').val())")))
+      (ajax "save-sunday-school" 'sunday-school 'click
+            (lambda ()
+              (sunday-school club ($ 'name) date (if (string=? ($ 'sunday-school) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (sunday-school . "stringToBoolean($('#sunday-school').val())")))
+      (ajax "save-dues" 'dues 'click
+            (lambda ()
+              (dues club ($ 'name) date (if (string=? ($ 'dues) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (dues . "stringToBoolean($('#dues').val())")))
+      (ajax "on-time" 'on-time 'click
+            (lambda ()
+              (on-time club ($ 'name) date (if (string=? ($ 'on-time) "false") #f #t)))
+            method: 'PUT
+            arguments: '((name . "$('#clubbers').val()[0]") (on-time . "stringToBoolean($('#on-time').val())")))
+      (++ (<div> class: "grid_12 column-body"
+                 (<div> class: "padding"
+                        (<form> action: path  method: "GET"
+                                (<span> class: "date-label" "Date:")
+                                (<input> class: "date-input" name: "month" id: "month"
+                                         value: (or ($ 'month) (todays-mm))) "/"
+                                (<input> class: "date-input" name: "day" id: "day"
+                                         value: (or ($ 'day) (todays-dd))) "/"
+                                (<input> class: "date-input" name: "year" id: "year"
+                                         value: (or ($ 'year) (todays-yyyy)))
+                                (<a> href: (++ path "?month=" (todays-mm) "&day=" (todays-dd) "&year=" (todays-yyyy))
+                                     class: "preset-date" "Today")
+                                ;(<a> href: "#" class: "preset-date" "Last Club Meeting")
+                                (<input> class: "change-date" type: "submit" value: "Update Date"))))
+          (<div> class: "clear")
+          (<div> class: "grid_3 column-header" (<div> class: "padding" "Find Clubbers"))
+          (<div> class: "grid_6 column-header" id: "clubber-name-container"
+                 (<div> id: "clubber-name" class: "padding" "Mark Attendance"))
+          (<div> class: "grid_3 column-header" (<div> class: "padding" "View Attendees"))
+          (<div> class: "grid_3 column-body"
+                 (<div> class: "padding"
+                        (<input> type: "text" class: "filter" id: "filter")
+                        (combo-box "clubbers"
+                                   (map (lambda (e)
+                                          `(,e . ,(name club e)))
+                                        (name-sort club (db:list "clubs" club "clubbers") "last"))
+                                   class: "clubbers" multiple: #t)))
+          (<div> class: "grid_6 column-body"
+                 (<div> class: "padding"
+                        (<div> class: "description-container" id: "description-container"
+                                      "To begin, click on a name to the left" (<br>) (<br>)
+                                      "<--" (<br>) (<br>)
+                                      "You can also filter (sort of like search) the names by typing into the box above the clubbers")
+                        (<div> class: "clubber-data" id: "clubber-data"
+                               (<div> class: "attendance-container"
+                                      (<div> class: "attendance-button" id: "present" "Present"
+                                             (<input> class: "present" type: "button" id: "present" value: ""))
+                                      (<div> class: "attendance-button" id: "bible" "Bible"
+                                             (<input> class: "bible" type: "button" id: "bible" value: ""))
+                                      (<div> class: "attendance-button" id: "handbook" "Handbook"
+                                             (<input> class: "handbook" type: "button" id: "handbook" value: ""))
+                                      (<div> class: "attendance-button" id: "uniform" "Uniform"
+                                             (<input> class: "uniform" type: "button" id: "uniform" value: ""))
+                                      (<div> class: "attendance-button" id: "friend" "Friend"
+                                             (<input> class: "friend" type: "button" id: "friend" value: ""))
+                                      (<div> class: "attendance-button" id: "extra" "Extra"
+                                             (<input> class: "extra" type: "button" id: "extra" value: ""))
+				      (<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)
+                                      (<div> class: "attendance-button" id: "sunday-school" "Sunday"
+                                             (<input> class: "sunday-school" type: "button" id: "sunday-school" value: ""))
+                                      (<div> class: "attendance-button" id: "dues" "Dues"
+                                             (<input> class: "dues" type: "button" id: "dues" value: ""))
+                                      (<div> class: "attendance-button" id: "on-time" "On Time"
+                                             (<input> class: "on-time" type: "button" id: "on-time" value: "")))
+                               (<div> class: "points-container"
+                                      (<div> class: "points" id: "points-total")
+                                      (<div> class: "points points-label" " points"))
+                               (<div> class: "allergy-info" id: "allergy-container"
+                                      (<div> class: "allergic-to info" "Allergic To:") (<br>)
+                                      (<div> class: "allergic-to-item" id: "allergies" ""))
+                               (<div> class: "notes info" id: "notes" ""))))
+          (<div> class: "grid_3 column-body"
+              (<div> class: "tab-body padding"
+                     (<div> class: "attendees" id: "attendees"
+                            (attendees-html club date))))))

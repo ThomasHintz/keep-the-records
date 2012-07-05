@@ -1,6 +1,9 @@
 ;;; utilities
 (use srfi-19 http-session spiffy-cookies http-session spiffy-cookies)
 
+(load "mda-client")
+(include "macs.scm")
+
 (define (todays-date)
   (date->string (current-date) "~Y/~m/~d"))
 
@@ -8,11 +11,6 @@
   (if (> (length test) 0) #t #f))
 
 ;;; macros
-
-(define-syntax neq?
-  (syntax-rules ()
-    ((neq? e1 e2)
-     (not (eq? e1 e2)))))
 
 (define-syntax with-default
   (syntax-rules ()
@@ -106,8 +104,8 @@
 
 (define (secondary-parent club name . parent)
   (if (store? parent)
-      (db:store (car parent) "clubs" club "parents" (primary-parent name) "spouse-name")
-      (with-default (db:read "clubs" club "parents" (primary-parent name) "spouse-name") "")))
+      (db:store (car parent) "clubs" club "parents" (primary-parent club name) "spouse-name")
+      (with-default (db:read "clubs" club "parents" (primary-parent club name) "spouse-name") "")))
 
 (define (update-meeting-date club date change)
   (let* ((c-meetings (club-meetings club))

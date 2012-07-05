@@ -1,3 +1,5 @@
+(use awful)
+
 (define (setup-demo u-name)
   ($session-set! 'user u-name)
   (user-name u-name "Demo User")

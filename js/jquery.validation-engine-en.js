@@ -23,8 +23,8 @@
                 },
                 "minSize": {
                     "regex": "none",
-                    "alertText": "* Minimum ",
-                    "alertText2": " characters allowed"
+                    "alertText": "* Please use at least ",
+                    "alertText2": " characters. An easy way to do this is via a passphrase like 'the dog jumped over the moon'."
                 },
                 "maxSize": {
                     "regex": "none",
@@ -165,7 +165,6 @@
 			      "alertText": "* Invalid Name Format<br>Correct Format: First Last"},
 		"ktr-phone": { "regex": /^\(?(\d{3})\)?[- \.]?(\d{3})[- \.]?(\d{4})$/,
 			       "alertText": "Invalid Phone Number<br>Correct Format: (xxx) xxx-xxxx"}
-			      
             };
             
         }

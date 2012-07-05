@@ -1,7 +1,7 @@
 ;;; WARNING user/club names should be cleaned, null and / are illegal characters
 
 (use numbers) ;; !IMPORTANT! needs to come before other eggs, may segfault otherwise (020111)
-(use awful message-digest-port sha2 posix http-session spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18)
+(use awful message-digest-port sha2 posix http-session spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt)
 
 (include "macs.scm")
 (load "utils")
@@ -182,7 +182,7 @@
                    (<span> class: "form-context" "Address") (<br>)
                    (<input> class: "text" type: "text" id: "address" name: "address") (<br>)
                    (<span> class: "form-context" "Password") (<br>)
-                   (<input> class: "text validate[required]" type: "password" id: "password" name: "password") (<br>)
+                   (<input> class: "text validate[required,minSize[16]]" type: "password" id: "password" name: "password") (<br>)
                    (<span> class: "form-context" "Password Again") (<br>)
                    (<input> class: "text validate[required,equals[password]]" type: "password" id: "password-again" name: "password-again") (<br>)
                    (<input> type: "submit" value: "Create Club" class: "create"))))
@@ -195,9 +195,15 @@
 
 ;;; user login/create
 
+(define (generate-password password)
+  (crypt password))
+
 (define (password-matches? user password)
-  (string=? (call-with-output-digest (sha512-primitive) (cut display password <>))
-            (user-pw user)))
+  (if (and (eq? (user-pw-type user) 'sha512) (string=? (call-with-output-digest (sha512-primitive) (cut display password <>)) (user-pw user)))
+      (begin (user-pw user (generate-password password))
+	     (user-pw-type user 'crypt)
+	     #t)
+      (string=? (crypt password (user-pw user)) (user-pw user))))
 
 (define (send-welcome-email email club name)
   (send-mail subject: "Welcome to Keep The Records - Awana Record Keeping"
@@ -286,7 +292,7 @@
            (u-phone ($ 'phone))
            (u-birthday ($ 'birthday))
            (u-address ($ 'address))
-           (u-pw ($ 'passwrd))
+           (u-pw ($ 'password))
            (u-pw2 ($ 'password-again)))
       (if (and (string=? u-pw u-pw2) (eq? (user-name u-email) 'not-found))
           (begin (club-name club church)
@@ -296,7 +302,8 @@
                  (user-phone u-email u-phone)
                  (user-birthday u-email u-birthday)
                  (user-address u-email u-address)
-                 (user-pw u-email (call-with-output-digest (sha512-primitive) (cut display (->string u-pw) <>)))
+                 (user-pw u-email (generate-password u-pw))
+		 (user-pw-type u-email 'crypt)
                  (club-users club (cons u-email (club-users club)))
                  (send-welcome-email u-email club u-name)
 		 (handle-exceptions

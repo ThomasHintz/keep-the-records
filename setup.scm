@@ -3,20 +3,20 @@
 (define is-production? (make-parameter (file-exists? "/keep-the-records/i-am-production")))
 
 ;;; production
-(if (is-production?) (load "production") #f)
+;(if (is-production?) (load "production") #f)
 ;;; end production
 
-(load "macs")
-(load "utils")
+;(load "macs.scm")
+(load "utils.scm")
 ;(load "mda.scm")
-(load "mda-client")
-(load "storage-funcs")
-(load "pdf")
-(load "handlers")
-(load "rest")
-(load "demo-data")
-(load "sections")
-(load "awana-data-dsl")
-(load "sessions")
+(load "mda-client.scm")
+(load "storage-funcs.scm")
+(load "pdf.scm")
+(load "handlers.scm")
+(load "rest.scm")
+(load "demo-data.scm")
+(load "sections.scm")
+(load "awana-data-dsl.scm")
+(load "sessions.scm")
 
-(load "keep-the-records")
+(load "keep-the-records.scm")

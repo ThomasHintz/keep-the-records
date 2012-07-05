@@ -131,6 +131,7 @@
 (db-user user-birthday "birthday" "")
 (db-user user-address "address" "")
 (db-user user-pw "pw" 'not-found)
+(db-user user-pw-type "user-pw-type" 'sha512)
 
 ; (club-address club . address)
 (db-club club-name "name" 'not-found)

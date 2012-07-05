@@ -452,7 +452,7 @@
                         required = true;
                         errorMsg = methods._required(field, rules, i, options);
                         break;
-                    case "custom":
+		    case "custom":
                         errorMsg = methods._customRegex(field, rules, i, options);
                         break;
 					case "groupRequired":

@@ -1,4 +1,4 @@
 ((egg "keep-the-records.egg")
  (license "BSD")
  (category web)
- (depends spiffy zmq srfi-19 http-session spiffy-cookies srfi-1 pdf intarweb srfi-69 uri-common srfi-18 numbers message-digest-port sha2 posix html-tags html-utils srfi-13 regex doctype))
+ (depends spiffy zmq srfi-19 http-session spiffy-cookies srfi-1 pdf intarweb srfi-69 uri-common srfi-18 numbers message-digest-port sha2 posix html-tags html-utils srfi-13 regex doctype crypt))

@@ -107,7 +107,7 @@
                                                                                     (string-downcase t)) actual-path))
                                             t))
                                      '(("Dashboard") ("Attendance")
-				       ("Awards")
+				       ;("Awards")
 				       ("Find") ("Release") ("Sections"))))
                             ((eq? tab 'leaders)
                              (folds* (lambda (t)

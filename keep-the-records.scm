@@ -536,7 +536,6 @@
 
 (define-awana-app-page (regexp "/[^/]*/clubbers/create")
   (lambda (path)
-;;; also add security within awana-app-page or something
     (let ((club (get-club path))
           (m-name ($ 'name))
           (from ($ 'from))
@@ -883,9 +882,20 @@
            (club (get-club path))
            (p-parent (primary-parent club clubber))
            (dates (attendance-dates club clubber)))
+      (ajax (++ "delete-clubber-" club "-" clubber) 'delete-clubber 'click
+	    (lambda ()
+	      (db:remove-from-list clubber "clubs" club "clubbers"))
+	    success: "$('#restore-clubber').show(); $('#delete-clubber').hide();")
+      (ajax (++ "restore-clubber-" club "-" clubber) 'restore-clubber 'click
+	    (lambda ()
+	      (db:update-list clubber "clubs" club "clubbers"))
+	    success: "$('#restore-clubber').hide(); $('#delete-clubber').show();")
       (++ (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
-                        (<a> href: (++ path "/edit") class: "edit" "Edit This Clubber")))
+                        (<a> href: (++ path "/edit") class: "edit" "Edit this clubber")
+			" - "
+			(<a> href: "#self" class: "edit delete" id: "delete-clubber" "Delete this clubber")
+			(<a> href: "#self" style: "display: none;" class: "edit restore" id: "restore-clubber" "Restore this clubber (un-delete)")))
           (<div> class: "clear")
           (<div> class: "grid_12" (<div> class: "column-header padding" (name club clubber)))
           (<div> class: "grid_12 column-body"
@@ -951,8 +961,9 @@
                                                            ("Sunday School" ,(lambda (c cl d) (sunday-school c cl d)))
                                                            ("Dues" ,(lambda (c cl d) (dues c cl d)))
                                                            ("On Time" ,(lambda (c cl d) (on-time c cl d))))))))))))))
-  css: '("/css/clubbers.css?ver=1")
+  css: '("/css/clubbers.css?ver=2")
   tab: 'clubbers
+  no-ajax: #f
   title: "Clubber Info - Club Night - KtR")
 
 (define (false->date e) (if (not e) (make-date 0 0 0 0 9 9 1999) e))

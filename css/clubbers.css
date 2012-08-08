@@ -51,3 +51,9 @@ tr:hover {
 .edit {
     font-family: "Verdana", sans;
     color: black; }
+
+.delete {
+    color: #830303; }
+
+.restore {
+    color: green; }

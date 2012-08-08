@@ -1,7 +1,8 @@
 ;;; WARNING user/club names should be cleaned, null and / are illegal characters
 
 (use numbers) ;; !IMPORTANT! needs to come before other eggs, may segfault otherwise (020111)
-(use awful message-digest-port sha2 posix http-session spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt)
+(use mda-client awful message-digest-port sha2 posix http-session
+     spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt uri-common spiffy intarweb)
 
 (include "macs.scm")
 (load "utils")
@@ -240,7 +241,7 @@
                    (<input> class: "text" type: "text" id: "user" name: "user") (<br>)
                    (<span> class: "form-context" "Password") (<br>)
                    (<input> class: "text" type: "password" id: "password" name: "password") (<br>)
-                   (<input> class: "create" type: "submit" value: "Enjoy KtR!"))))
+                   (<input> class: "button button-blue" type: "submit" value: "Enjoy KtR!"))))
   no-ajax: #f
   css: '("/css/club-register.css?ver=2")
   no-session: #t)

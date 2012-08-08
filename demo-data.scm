@@ -1,4 +1,4 @@
-(use awful)
+(use awful mda-client)
 
 (define (setup-demo u-name)
   ($session-set! 'user u-name)

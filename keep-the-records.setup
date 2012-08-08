@@ -1,9 +1,9 @@
 ;; ;; Compile the extension
-;; (compile -S -s -O3 -d1 -j awful awful.scm)
-;; (compile -S -s -O3 -d1 awful.import.scm)
+;; (compile -S -s -O3 -d2 -j awful awful.scm)
+;; (compile -S -s -O3 -d2 awful.import.scm)
 
 ;; ;; Compile the application (server)
-;; (compile -S -O3 -d1 awful-server.scm -o awful)
+;; (compile -S -O3 -d2 awful-server.scm -o awful)
 
 ;; (install-extension 'awful
 ;;                    '("awful.so" "awful.import.so")
@@ -14,20 +14,19 @@
 ;;                  `((version "0.35")))
 
 
-(compile -s -S -O3 -d1 utils.scm)
-(compile -s -S -O3 -d1 production.scm)
-(compile -s -S -O3 -d1 macs.scm)
-(compile -s -S -O3 -d1 mda-client.scm)
-(compile -s -S -O3 -d1 storage-funcs.scm)
-(compile -s -S -O3 -d1 pdf.scm)
-(compile -s -S -O3 -d1 handlers.scm)
-(compile -s -S -O3 -d1 rest.scm)
-(compile -s -S -O3 -d1 demo-data.scm)
-(compile -s -S -O3 -d1 sections.scm)
-(compile -s -S -O3 -d1 awana-data-dsl.scm)
-(compile -s -S -O3 -d1 sessions.scm)
+(compile -s -S -O3 -d2 utils.scm)
+(compile -s -S -O3 -d2 production.scm)
+(compile -s -S -O3 -d2 macs.scm)
+(compile -s -S -O3 -d2 storage-funcs.scm)
+(compile -s -S -O3 -d2 pdf.scm)
+(compile -s -S -O3 -d2 handlers.scm)
+(compile -s -S -O3 -d2 rest.scm)
+(compile -s -S -O3 -d2 demo-data.scm)
+(compile -s -S -O3 -d2 sections.scm)
+(compile -s -S -O3 -d2 awana-data-dsl.scm)
+(compile -s -S -O3 -d2 sessions.scm)
 
-(compile -s -S -O3 -d1 keep-the-records.scm)
+(compile -s -S -O3 -d2 keep-the-records.scm)
 
 
 ;; (load "macs")

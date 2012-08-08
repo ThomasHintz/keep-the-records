@@ -7,3 +7,4 @@ nohup.out
 send-grid-key
 send-grid-user
 stripe-username.scm
+*.so

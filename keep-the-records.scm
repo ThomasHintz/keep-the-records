@@ -163,34 +163,36 @@
 
 ;;; club/user create
 
-(define-awana-app-page "/club/register"
-  (lambda ()
+(define-awana-app-page (regexp "/sign-up/club-create/(free|basic|plus|premier|ultimate)")
+  (lambda (path)
     (add-javascript "$(document).ready(function() { $('#club-register-form').validationEngine('attach'); $('#church').focus(); });")
-    (<div> class: "grid_12"
-           (<form> action: "/club/create" id: "club-register-form"
-                   (<h1> class: "action" "Create Club")
-                   (<span> class: "form-context" "Church or Association Name") (<br>)
-                   (<input> class: "text validate[required,custom[onlyLetterSp]]" type: "text" id: "church" name: "church")
-                   (<h1> class: "action" "Create Your Account")
-                   (<span> class: "form-context" "Name") (<br>)
-                   (<input> class: "text validate[required,custom[onlyLetterSp],custom[ktr-name]]" type: "text" id: "name" name: "name") (<br>)
-                   (<span> class: "form-context" "Email") (<br>)
-                   (<input> class: "text validate[required,custom[email]" type: "text" id: "email" name: "email") (<br>)
-                   (<span> class: "form-context" "Phone") (<br>)
-                   (<input> class: "text validate[custom[ktr-phone]]" type: "text" id: "phone" name: "phone") (<br>)
-                   (<span> class: "form-context" "Birthday") (<br>)
-                   (<input> class: "text validate[custom[ktr-date]]" type: "text" id: "birthday" name: "birthday") (<br>)
-                   (<span> class: "form-context" "Address") (<br>)
-                   (<input> class: "text" type: "text" id: "address" name: "address") (<br>)
-                   (<span> class: "form-context" "Password") (<br>)
-                   (<input> class: "text validate[required,minSize[16]]" type: "password" id: "password" name: "password") (<br>)
-                   (<span> class: "form-context" "Password Again") (<br>)
-                   (<input> class: "text validate[required,equals[password]]" type: "password" id: "password-again" name: "password-again") (<br>)
-                   (<input> type: "submit" value: "Create Club" class: "create"))))
-  css: '("/css/validation-engine.jquery.css" "/css/club-register.css?v=2")
+    (let ((plan (third (string-split path "/"))))
+      (<div> class: "grid_12"
+	     (<form> action: (++ "/club/create/" plan) id: "club-register-form"
+		     (<h1> class: "action" "Create Club")
+		     (<span> class: "form-context" "Church or Association Name") (<br>)
+		     (<input> class: "text validate[required,custom[onlyLetterSp]]" type: "text" id: "church" name: "church")
+		     (<h1> class: "action" "Create Your Account")
+		     (<span> class: "form-context" "Name") (<br>)
+		     (<input> class: "text validate[required,custom[onlyLetterSp],custom[ktr-name]]" type: "text" id: "name" name: "name") (<br>)
+		     (<span> class: "form-context" "Email") (<br>)
+		     (<input> class: "text validate[required,custom[email]" type: "text" id: "email" name: "email") (<br>)
+		     ;; (<span> class: "form-context" "Phone") (<br>)
+		     ;; (<input> class: "text validate[custom[ktr-phone]]" type: "text" id: "phone" name: "phone") (<br>)
+		     ;; (<span> class: "form-context" "Birthday") (<br>)
+		     ;; (<input> class: "text validate[custom[ktr-date]]" type: "text" id: "birthday" name: "birthday") (<br>)
+		     ;; (<span> class: "form-context" "Address") (<br>)
+		     ;; (<input> class: "text" type: "text" id: "address" name: "address") (<br>)
+		     (<span> class: "form-context" "Password") (<br>)
+		     (<input> class: "text validate[required,minSize[16]]" type: "password" id: "password" name: "password") (<br>)
+		     (<span> class: "form-context" "Password Again") (<br>)
+		     (<input> class: "text validate[required,equals[password]]" type: "password" id: "password-again" name: "password-again") (<br>)
+		     (<input> type: "submit" value: "Create Club" class: "submit-button button button-blue")))))
+  css: '("/css/validation-engine.jquery.css" "/css/club-register.css?v=3")
   headers: (++ (include-javascript "/js/jquery.validation-engine.js")
 	       (include-javascript "/js/jquery.validation-engine-en.js"))
   no-ajax: #f
+  title: "Create club - KtR"
   no-session: #t
   tab: 'none)
 
@@ -222,8 +224,6 @@
 
 (define-login-trampoline "/login-trampoline"
   hook: (lambda (user)
-	  (print "logging in")
-	  (print "check1" (session-valid? (sid)))
           (if (sid)
               (begin ($session-set! 'user user)
                      ($session-set! 'club (user-club user)))
@@ -284,9 +284,10 @@
 
 ;;; club pages
 
-(define-awana-app-page "/club/create"
-  (lambda ()
-    (let* ((church ($ 'church))
+(define-awana-app-page (regexp "/club/create/(free|basic|plus|premier|ultimate)")
+  (lambda (path)
+    (let* ((plan (third (string-split path "/")))
+	   (church ($ 'church))
            (club (as-db-unique (lambda (c) (club-name c)) (name->id church) 0))
            (u-name ($ 'name))
            (u-email ($ 'email))
@@ -312,10 +313,7 @@
 		  'error
 		  (send-mail from: "momentum@keeptherecords.com" from-name: "Momentum" to: "t@thintz.com" reply-to: "momentum@keeptherecords.com" subject: "New Club Register!"
 			    html: (++ "Good work!\n\n" u-email " just registered " church " as " club)))
-                 (html-page
-                  ""
-                  headers: (<meta> http-equiv: "refresh"
-                                   content: (++ "0;url=" "/user/login"))))
+		 (redirect-to (++ "/sign-up/payment/" plan "?email=" u-email)))
           (if (eq? (user-name u-email) 'not-found)
               "Passwords don't match, please go back and re-enter your info."
               "Email already in use."))))

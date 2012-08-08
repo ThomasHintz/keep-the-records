@@ -1,62 +1,139 @@
+/* line 3, ../scss/_common.scss */
+.button {
+  border: 1px solid grey;
+  margin-left: 20px;
+  width: 304px;
+  color: white;
+  line-height: 14px;
+  font-size: 14px;
+  height: 44px;
+  -webkit-font-smoothing: antialiased;
+  font-weight: bold;
+  font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+  cursor: pointer;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.53);
+  -webkit-border-radius: 4px 4px;
+  -moz-border-radius: 4px / 4px;
+  border-radius: 4px / 4px;
+}
+
+/* line 18, ../scss/_common.scss */
+.button-blue {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #77b7ff), color-stop(100%, #017aff));
+  background-image: -webkit-linear-gradient(#77b7ff, #017aff);
+  background-image: -moz-linear-gradient(#77b7ff, #017aff);
+  background-image: -o-linear-gradient(#77b7ff, #017aff);
+  background-image: linear-gradient(#77b7ff, #017aff);
+}
+/* line 20, ../scss/_common.scss */
+.button-blue:active {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #017aff), color-stop(100%, #77b7ff));
+  background-image: -webkit-linear-gradient(#017aff, #77b7ff);
+  background-image: -moz-linear-gradient(#017aff, #77b7ff);
+  background-image: -o-linear-gradient(#017aff, #77b7ff);
+  background-image: linear-gradient(#017aff, #77b7ff);
+}
+
+/* line 23, ../scss/_common.scss */
+.button-green {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #9fc164), color-stop(100%, #146600));
+  background-image: -webkit-linear-gradient(#9fc164, #146600);
+  background-image: -moz-linear-gradient(#9fc164, #146600);
+  background-image: -o-linear-gradient(#9fc164, #146600);
+  background-image: linear-gradient(#9fc164, #146600);
+}
+/* line 25, ../scss/_common.scss */
+.button-green:active {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #146600), color-stop(100%, #9fc164));
+  background-image: -webkit-linear-gradient(#146600, #9fc164);
+  background-image: -moz-linear-gradient(#146600, #9fc164);
+  background-image: -o-linear-gradient(#146600, #9fc164);
+  background-image: linear-gradient(#146600, #9fc164);
+}
+
+/* line 28, ../scss/_common.scss */
+.column-header-grey {
+  background-color: grey;
+}
+
+/* line 4, ../scss/club-register.scss */
 .action {
-    margin-bottom: 10px;
-    margin-top: 10px;
-    font-family: "Vollkorn";
-    font-size: 36px; }
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-family: "Vollkorn";
+  font-size: 36px;
+}
 
+/* line 10, ../scss/club-register.scss */
 .form-context {
-    margin-bottom: 5px;
-    margin-left: 20px;
-    font-style: italic;
-    color: grey;
-    font-size: 16px; }
+  margin-bottom: 5px;
+  margin-left: 20px;
+  font-style: italic;
+  color: grey;
+  font-size: 16px;
+}
 
+/* line 17, ../scss/club-register.scss */
 .text {
-    padding: 2px;
-    line-height: 32px;
-    margin-left: 20px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    background-color: #ededed;
-    width: 300px;
-    font-size: 24px;
-    font-family: 'Neucha', arial, serif;
-    outline: none;
-    border: 2px solid #ededed;
-    border-bottom: 2px solid black; }
-
+  font-family: 'Helvetica', serif;
+  padding: 2px;
+  line-height: 24px;
+  margin-left: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  -webkit-border-radius: 4px 4px;
+  -moz-border-radius: 4px / 4px;
+  border-radius: 4px / 4px;
+  width: 300px;
+  font-size: 16px;
+  outline: none;
+  background: white url(/images/input-bg.jpg) repeat-x;
+  border: 1px solid #DDD;
+}
+/* line 30, ../scss/club-register.scss */
 .text:focus {
-    -webkit-box-shadow: 0px 0px 10px blue;
-    border: 2px solid black;
-    border-radius: 6px;
-    background-color: white; }
+  border: 1px solid #72b6e6;
+  -webkit-box-shadow: 0px 0px 10px #72b6e6;
+  -moz-box-shadow: 0px 0px 10px #72b6e6;
+  box-shadow: 0px 0px 10px #72b6e6;
+}
 
-.text:hover {
-    -webkit-box-shadow: 0px 0px 5px blue;
-    border: 2px solid white;
-    border-radius: 6px;
-    background-color: #eeeeee; }
-
-.create {
-    width: 330px;
-    font-size: 24px;
-    margin-top: 20px;
-    color: white;
-    background-color: green;
-    font-family: Verdana, sans;
-    border: 1px solid grey;
-    border-radius: 20px;
-    -webkit-box-shadow: 0px 0px 10px grey; }
-
-.create:hover {
-    cursor: pointer;
-    -webkit-box-shadow: 0px 0px 25px blue; }
-
-.create:focus {
-    -webkit-box-shadow: 0px 0px 25px blue;
-    border-radius: 20px;
-    background-color: green;
-    border: 1px solid grey; }
-
+/* line 34, ../scss/club-register.scss */
 .menu-frame {
-    display: none; }
+  display: none;
+}
+
+/* line 37, ../scss/club-register.scss */
+.plan-features {
+  font-size: 20px;
+  line-height: 40px;
+}
+
+/* line 42, ../scss/club-register.scss */
+.plan-features ul li {
+  font-family: 'Helvetica', serif;
+  border-top: solid 1px whiteSmoke;
+  border-bottom: solid 1px #D2D2D2;
+}
+
+/* line 47, ../scss/club-register.scss */
+.plan-features ul li:first-child {
+  border-top-color: transparent;
+}
+
+/* line 50, ../scss/club-register.scss */
+.plan-features ul li:last-child {
+  border-bottom-color: transparent;
+}
+
+/* line 53, ../scss/club-register.scss */
+.plan-aside {
+  color: grey;
+  font-style: italic;
+}
+
+/* line 57, ../scss/club-register.scss */
+.payment-errors {
+  color: red;
+  font-weight: bold;
+}

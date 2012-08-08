@@ -1,0 +1,29 @@
+@import "compass/css3";
+
+.button {
+    border: 1px solid grey;
+    margin-left: 20px;
+    width: 304px;
+    color: white;
+    line-height:14px;
+    font-size: 14px;
+    height: 44px;
+    -webkit-font-smoothing: antialiased;
+    font-weight: bold;
+    font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+    cursor: pointer;
+    @include text-shadow(0 1px 1px rgba(0, 0, 0, 0.53));
+    @include border-radius(4px, 4px); }
+
+.button-blue {
+    @include background-image(linear-gradient(#77B7FF, #017AFF));
+    &:active {
+	@include background-image(linear-gradient(#017AFF, #77B7FF)); }}
+
+.button-green {
+    @include background-image(linear-gradient(#9FC164, #146600));
+    &:active {
+	@include background-image(linear-gradient(#146600, #9FC164)); }}
+
+.column-header-grey {
+    background-color: grey; }

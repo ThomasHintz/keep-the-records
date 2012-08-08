@@ -11,6 +11,7 @@
 (load "pdf")
 (load "awana-data-dsl")
 (load "sections")
+(load "rest")
 
 (define is-production? (make-parameter (file-exists? "/keep-the-records/i-am-production")))
 
@@ -65,7 +66,7 @@
            "PERMISSION DENIED! If you think this is an error, please email me at t@thintz.com"
            (abort exn))
        (let ((club (first (string-split actual-path "/"))))
-         (when (and (not (or (string=? club "user") (string=? club "club")))
+         (when (and (not (or (string=? club "user") (string=? club "club") (string=? club "sign-up") (string=? club "process-sign-up")))
                     (not (or (string=? ($session 'club) club) (string=? ($session 'user) "t@thintz.com"))))
            (error 'permission-denied))
          (++ (if (and (session-valid? (read-cookie "awful-cookie")) ($session 'demo))
@@ -1736,6 +1737,10 @@
 
 ;;; loaders
 
+(define-page "/reload-app"
+  (lambda () (reload-apps (awful-apps)) "done")
+  no-session: #t)
+
 (define-page "/reload/index"
   (lambda ()
     (when (developer-access?)
@@ -1938,3 +1943,8 @@
               (<div> class: "tab-body padding"
                      (<div> class: "attendees" id: "attendees"
                             (attendees-html club date))))))
+
+
+;;; includes
+
+(include "payments.scm")

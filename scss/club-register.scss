@@ -1,0 +1,59 @@
+@import "compass/css3";
+@import "_common.scss";
+
+.action {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    font-family: "Vollkorn";
+    font-size: 36px; }
+
+.form-context {
+    margin-bottom: 5px;
+    margin-left: 20px;
+    font-style: italic;
+    color: grey;
+    font-size: 16px; }
+
+.text {
+    font-family: 'Helvetica', serif;
+    padding: 2px;
+    line-height: 24px;
+    margin-left: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    @include border-radius(4px, 4px);
+    width: 300px;
+    font-size: 16px;
+    outline: none;
+    background: white url(/images/input-bg.jpg) repeat-x;
+    border: 1px solid #DDD;
+    &:focus {
+	border: 1px solid #72b6e6;
+	@include box-shadow(0px 0px 10px #72b6e6); }}
+
+.menu-frame {
+    display: none; }
+
+.plan-features {
+    $size: 20px;
+    font-size: $size;
+    line-height: $size * 2; }
+
+.plan-features ul li {
+    font-family: 'Helvetica', serif;
+    border-top: solid 1px whiteSmoke;
+    border-bottom: solid 1px #D2D2D2; }
+
+.plan-features ul li:first-child {
+    border-top-color: transparent; }
+
+.plan-features ul li:last-child {
+    border-bottom-color: transparent; }
+
+.plan-aside {
+    color: grey;
+    font-style: italic; }
+
+.payment-errors {
+    color: red;
+    font-weight: bold; }

@@ -16,11 +16,13 @@
     @include border-radius(4px, 4px); }
 
 .button-blue {
+	background: #77B7FF;
     @include background-image(linear-gradient(#77B7FF, #017AFF));
     &:active {
 	@include background-image(linear-gradient(#017AFF, #77B7FF)); }}
 
 .button-green {
+	background: #9FC164;
     @include background-image(linear-gradient(#9FC164, #146600));
     &:active {
 	@include background-image(linear-gradient(#146600, #9FC164)); }}

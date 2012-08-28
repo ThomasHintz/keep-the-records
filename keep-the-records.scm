@@ -399,12 +399,15 @@
         ((string=? club "Trek") 5)
         ((string=? club "Journey") 6)))
 
+(define (escape-apostrophes string)
+  (irregex-replace/all "'" string "&#39"))
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/(add|info/[^/]*/edit)")
   (lambda (path)
     (let* ((club (get-club path))
            (edit (> (length (string-split path "/")) 3))
            (c-name (if edit (get-clubber path) #f)))
-      (ajax "lookup-parent" 'parent-name-1 '(change blur)
+      (ajax (++ "lookup-parent/" club) 'parent-name-1 '(change blur)
             (lambda ()
               (if ($ 'p-name)
                   (map (lambda (data)
@@ -502,10 +505,12 @@
                          (<div> class: "create-clubber-container"
                                 (<input> type: "submit" class: "create-clubber"
                                          value: (if edit "Update" "Create")))))
-          (hidden-input 'parent-names (fold (lambda (e o) (++ o "|" (parent-name club e)))
-                                            "" (db:list "clubs" club "parents")))
-          (hidden-input 'parent-ids (fold (lambda (e o) (++ o "|" e))
-                                          "" (db:list "clubs" club "parents"))))))
+          (<input> type: "hidden" id: "parent-names" value:
+		   (fold (lambda (e o) (++ o "|" (escape-apostrophes (parent-name club e))))
+			 "" (db:list "clubs" club "parents")))
+          (<input> type: "hidden" id: "parent-ids"
+		   value: (fold (lambda (e o) (++ o "|" (escape-apostrophes e)))
+			 "" (db:list "clubs" club "parents"))))))
   css: '("/css/validation-engine.jquery.css" "/css/add-clubber.css" "/css/autocomplete.css" "/css/clubbers-index.css")
   headers: (++ (include-javascript "/js/jquery.watermark.min.js")
 	       (include-javascript "/js/jquery.validation-engine.js")

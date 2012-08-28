@@ -508,7 +508,7 @@
                   (<div> class: "clear")
                   (<div> class: "grid_12"
                          (<div> class: "create-clubber-container"
-                                (<input> type: "submit" class: "create-clubber"
+                                (<input> type: "submit" class: "button button-blue"
                                          value: (if edit "Update" "Create")))))
           (<input> type: "hidden" id: "parent-names" value:
 		   (fold (lambda (e o) (++ o "|" (escape-apostrophes (parent-name club e))))
@@ -516,7 +516,7 @@
           (<input> type: "hidden" id: "parent-ids"
 		   value: (fold (lambda (e o) (++ o "|" (escape-apostrophes e)))
 			 "" (db:list "clubs" club "parents"))))))
-  css: '("/css/validation-engine.jquery.css" "/css/add-clubber.css" "/css/autocomplete.css" "/css/clubbers-index.css")
+  css: '("/css/validation-engine.jquery.css" "/css/add-clubber.css?ver=1" "/css/autocomplete.css" "/css/clubbers-index.css")
   headers: (++ (include-javascript "/js/jquery.watermark.min.js")
 	       (include-javascript "/js/jquery.validation-engine.js")
 	       (include-javascript "/js/jquery.validation-engine-en.js")

@@ -43,7 +43,7 @@
 
 (define-awana-app-page (regexp "/sign-up/payment/(free|basic|plus|premier|ultimate)")
   (lambda (path)
-    (add-javascript "Stripe.setPublishableKey('CG3MRYjCWmMz9pgZREFBOclg677UqOLS');")
+    (add-javascript "Stripe.setPublishableKey('pk_ms18MuOPFfilAzWkJCZG9TfXqBCV5');")
     (let ((plan (third (string-split path "/"))))
       (++ (<div> class: "grid_12"
 		 (<h1> class: "action" "Sign up for Keep the Records"))

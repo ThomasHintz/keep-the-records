@@ -169,6 +169,11 @@
     (add-javascript "$(document).ready(function() { $('#club-register-form').validationEngine('attach'); $('#church').focus(); });")
     (let ((plan (third (string-split path "/"))))
       (<div> class: "grid_12"
+	     (<span> class: "have-account"
+		     "* Want to use an existing account? "
+		     (<a> href: (++ "/sign-up/payment/" plan) "click here to do so"))
+	     (<br>)
+	     (<br>)
 	     (<form> action: (++ "/club/create/" plan) id: "club-register-form"
 		     (<h1> class: "action" "Create Club")
 		     (<span> class: "form-context" "Church or Association Name") (<br>)

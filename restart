@@ -1,0 +1,4 @@
+cd /keep-the-records
+
+killall -s 9 ktr-awful
+./start

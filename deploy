@@ -1,0 +1,3 @@
+cd /keep-the-records
+
+chicken-install keep-the-records.setup

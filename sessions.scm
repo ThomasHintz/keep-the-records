@@ -1,4 +1,4 @@
-(use http-session)
+(use http-session mda-client)
 
 (define (session-item->list session-item)
   (list (session-item-expiration session-item)

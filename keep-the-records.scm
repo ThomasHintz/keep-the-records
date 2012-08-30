@@ -13,6 +13,7 @@
 (load "awana-data-dsl")
 (load "sections")
 (load "rest")
+(load "sessions")
 
 (define is-production? (make-parameter (file-exists? "/keep-the-records/i-am-production")))
 

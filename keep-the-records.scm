@@ -610,7 +610,7 @@
   (lambda (path)
     (let ((club (get-club path))
           (date (++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))))
-      (ajax (++ "clubber-attendance-info-" club)  'clubbers '(change keypress)
+      (ajax (++ "clubber-attendance-info-" club) ".select-clubber-name" 'click
             (lambda ()
               (let ((n ($ 'name)))
                 (if n
@@ -633,52 +633,52 @@
             success: "loadClubberInfo(response);"
             update-targets: #t
             method: 'GET
-            arguments: '((name . "$('#clubbers').val()[0]")))
+            arguments: '((name . "$('li.selected').attr('id')")))
       (ajax (++ "save-present-" club) 'present 'click
             (lambda ()
               (present club ($ 'name) date (if (string=? ($ 'present) "false") #f #t)))
             method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (present . "stringToBoolean($('#present').val())")))
+            arguments: '((name . "$('li.selected').attr('id')") (present . "stringToBoolean($('#present').val())")))
       (ajax (++ "save-bible-" club) 'bible 'click
             (lambda ()
               (bible club ($ 'name) date (if (string=? ($ 'bible) "false") #f #t)))
             method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (bible . "stringToBoolean($('#bible').val())")))
+            arguments: '((name . "$('li.selected').attr('id')") (bible . "stringToBoolean($('#bible').val())")))
       (ajax (++ "save-handbook-" club) 'handbook 'click
             (lambda ()
               (handbook club ($ 'name) date (if (string=? ($ 'handbook) "false") #f #t)))
             method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (handbook . "stringToBoolean($('#handbook').val())")))
+            arguments: '((name . "$('li.selected').attr('id')") (handbook . "stringToBoolean($('#handbook').val())")))
       (ajax (++ "save-uniform-" club) 'uniform 'click
             (lambda ()
               (uniform club ($ 'name) date (if (string=? ($ 'uniform) "false") #f #t)))
             method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (uniform . "stringToBoolean($('#uniform').val())")))
+            arguments: '((name . "$('li.selected').attr('id')") (uniform . "stringToBoolean($('#uniform').val())")))
       (ajax (++ "save-friend-" club) 'friend 'click
             (lambda ()
               (friend club ($ 'name) date (if (string=? ($ 'friend) "false") #f #t)))
             method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (friend . "stringToBoolean($('#friend').val())")))
+            arguments: '((name . "$('li.selected').attr('id')") (friend . "stringToBoolean($('#friend').val())")))
       (ajax (++ "save-extra-" club) 'extra 'click
             (lambda ()
               (extra club ($ 'name) date (if (string=? ($ 'extra) "false") #f #t)))
             method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (extra . "stringToBoolean($('#extra').val())")))
+            arguments: '((name . "$('li.selected').attr('id')") (extra . "stringToBoolean($('#extra').val())")))
       (ajax (++ "save-sunday-school-" club) 'sunday-school 'click
             (lambda ()
               (sunday-school club ($ 'name) date (if (string=? ($ 'sunday-school) "false") #f #t)))
             method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (sunday-school . "stringToBoolean($('#sunday-school').val())")))
+            arguments: '((name . "$('li.selected').attr('id')") (sunday-school . "stringToBoolean($('#sunday-school').val())")))
       (ajax (++ "save-dues-" club) 'dues 'click
             (lambda ()
               (dues club ($ 'name) date (if (string=? ($ 'dues) "false") #f #t)))
             method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (dues . "stringToBoolean($('#dues').val())")))
+            arguments: '((name . "$('li.selected').attr('id')") (dues . "stringToBoolean($('#dues').val())")))
       (ajax (++ "on-time-" club) 'on-time 'click
             (lambda ()
               (on-time club ($ 'name) date (if (string=? ($ 'on-time) "false") #f #t)))
             method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (on-time . "stringToBoolean($('#on-time').val())")))
+            arguments: '((name . "$('li.selected').attr('id')") (on-time . "stringToBoolean($('#on-time').val())")))
       (++ (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
                         (<form> action: path  method: "GET"
@@ -701,11 +701,11 @@
           (<div> class: "grid_3 column-body"
                  (<div> class: "padding"
                         (<input> type: "text" class: "filter" id: "filter")
-                        (combo-box "clubbers"
-                                   (map (lambda (e)
-                                          `(,e . ,(name club e)))
-                                        (name-sort club (db:list "clubs" club "clubbers") "last"))
-                                   class: "clubbers" multiple: #t)))
+			(<ul> id: "clubber-names" class: "clubbers"
+			      (fold (lambda (e o)
+				      (++ o (<li> class: "select-clubber-name" id: e (name club e))))
+				    ""
+				    (name-sort club (db:list "clubs" club "clubbers") "last")))))
           (<div> class: "grid_6 column-body"
                  (<div> class: "padding"
                         (<div> class: "description-container" id: "description-container"
@@ -744,10 +744,10 @@
               (<div> class: "tab-body padding"
                      (<div> class: "attendees" id: "attendees"
                             (attendees-html club date)))))))
-  headers: (++ (include-javascript "/js/attendance.js?ver=2")
+  headers: (++ (include-javascript "/js/attendance.js?ver=3")
 	       (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"))
   no-ajax: #f
-  css: '("/css/attendance.css?ver=4" "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/ui-lightness/jquery-ui.css")
+  css: '("/css/attendance.css?ver=6" "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/ui-lightness/jquery-ui.css")
   tab: 'clubbers
   title: "Attendance - Club Night -KtR")
 

@@ -12,12 +12,10 @@
     font-size: 20px;
     margin-top: 0px;
     padding-top: 0px;
-    border-bottom: 2px solid grey;
-    border-right: 2px solid grey;
-    border-left: 2px solid grey;
+    border: 2px solid grey;
     background-color: white;
     height: 300px;
-    width: 200px; }
+    width: 196px; }
 
 .clubber-data {
     visibility: hidden; }
@@ -182,3 +180,24 @@
 
 .change-date:focus {
     -webkit-box-shadow: 0px 0px 1px black; }
+
+
+#clubber-names .ui-selecting {
+	background: #FECA40; }
+
+#clubber-names .ui-selected {
+	background: #F39814;
+	color: white; }
+
+#clubber-names {
+	overflow: auto;
+	list-style-type: none;
+	margin: 0;
+	padding: 0; }
+
+#clubber-names li {
+	margin: 3px;
+	padding: 6px; }
+
+#clubber-names li:hover {
+	cursor: pointer; }

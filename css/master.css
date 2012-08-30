@@ -88,19 +88,12 @@ body {
     float: left;
     background-color: #ededed; }
 
-.demo {
-    position: fixed;
-    width: 100%; }
-
 .demo-contents {
     text-align: center;
-    width: 400px;
-    margin-left: auto;
-    margin-right: auto;
     padding-top: 7px;
     padding-bottom: 7px;
     font-size: 20px;
-    border: 6px solid black;
+    border: 6px solid green;
     background-color: #eeeeee; }
 
 .demo-sign-up {

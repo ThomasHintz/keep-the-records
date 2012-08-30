@@ -72,11 +72,12 @@
                     (not (or (string=? ($session 'club) club) (string=? ($session 'user) "t@thintz.com"))))
            (error 'permission-denied))
          (++ (if (and (session-valid? (read-cookie "awful-cookie")) ($session 'demo))
-                 (<div> class: "demo"
+                 (<div> class: "demo container_12"
                         (<div> class: "demo-contents"
                                "This is a DEMO"
                                " "
-                               (<a> class: "demo-sign-up" href: (++ "/" club "/sign-up") "Interested in the full version?")))
+                               (<a> class: "demo-sign-up" href: "http://keeptherecords.com/plans-pricing"
+				    "Interested in the full version?")))
                  "")
              (<div> class: "container_12"
                     (if (and (session-valid? (read-cookie "awful-cookie")) ($session 'user))

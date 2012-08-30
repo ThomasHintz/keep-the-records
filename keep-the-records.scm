@@ -242,10 +242,19 @@
   (lambda ()
     (add-javascript "$(document).ready(function() { $('#user').focus(); });")
     (<div> class: "grid_12"
+           (<h1> class: "action" "Login to Keep the Records")
            (<form> action: "/login-trampoline" method: "POST"
-                   (<h1> class: "action" "Login to Keep the Records")
+		   (<div> style: (if (equal? ($ 'reason "") "invalid-password") "" "display: none;")
+			  (<span> class: "form-context" style: "color: red;"
+				  "Your user name or password is incorrect, please try again.")
+			  (<br>)
+			  (<span> class: "form-context" style: "color: red;"
+				  "If you need to reset your password, email t@keeptherecords.com.")
+			  (<br>)
+			  (<br>))
                    (<span> class: "form-context" "Email") (<br>)
-                   (<input> class: "text" type: "text" id: "user" name: "user") (<br>)
+                   (<input> class: "text" type: "text" id: "user" name: "user"
+			    value: (if (not (equal? #f ($ 'user #f))) ($ 'user) "")) (<br>)
                    (<span> class: "form-context" "Password") (<br>)
                    (<input> class: "text" type: "password" id: "password" name: "password") (<br>)
                    (<input> class: "button button-blue" type: "submit" value: "Enjoy KtR!"))))
@@ -256,8 +265,8 @@
 (define-page (regexp "/sign-out")
   (lambda (path)
     (session-destroy! (read-cookie "awful-cookie"))
-    (delete-cookie! "awful-cookie")
-    "You have been logged out"))
+    ; (delete-cookie! "awful-cookie") conflicts with http-session cookie
+    (redirect-to "/user/login")))
 
 (define-awana-app-page (regexp "/[^/]*/join-club")
   (lambda (path)
@@ -1529,7 +1538,7 @@
       (auth-url club link-url email)
       (handle-exceptions
        exn
-       "There was an error sending out the email. Please go back and try again later. If this problem persists, email me at t@keeptherecords.com or call me at 906.934.6413."
+       "There was an error sending out the email. Please go back and try again later. If this problem persists, email me at t@keeptherecords.com."
        (send-mail subject: "Response Needed - Authorization To Access Keep The Records - Awana Record Keeping"
                   from: "t@keeptherecords.com"
                   from-name: "Keep The Records"

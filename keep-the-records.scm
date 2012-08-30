@@ -346,7 +346,7 @@
           (date-start (week-start (current-date-0000)))
           (date-end (week-end (current-date-0000))))
       (add-javascript "$('#from-date').datepicker(); $('#to-date').datepicker();")
-      (ajax "get-birthdays" ".dt" 'change
+      (ajax (++ "get-birthdays-" club) ".dt" 'change
             (lambda ()
               (birthday-table club (birthdays-within club (db:list "clubs" club "clubbers")
                                                      (string->date ($ 'from-date)  "~m/~d/~Y")
@@ -999,7 +999,7 @@
                                (<td> class: "col-head" "Sent Thank You?")
                                (<td> class: "col-head" "Address"))
                          (fold (lambda (c o)
-                                 (ajax (++ "update-thank-you" c)
+                                 (ajax (++ "update-thank-you-" club c)
                                        (string->symbol (++ "thank-you" c))
                                        'click
                                        (lambda ()
@@ -1054,7 +1054,7 @@
                            (<tr> (<td> class: "col-head" "Clubber")
                                  (<td> class: "col-head" "Sent Miss You Card?"))
                            (fold (lambda (e o)
-                                   (ajax (++ "update-miss-you" e)
+                                   (ajax (++ "update-miss-you-" club e)
                                          (string->symbol (++ "miss-you" e))
                                          'click
                                          (lambda ()
@@ -1089,7 +1089,7 @@
                          (<tr> (<td> class: "col-head" "Clubber")
                                (<td> class: "col-head" "Receipt Number"))
                          (fold (lambda (e o)
-                                 (ajax (++ "dues-receipt" e)
+                                 (ajax (++ "dues-receipt-" club e)
                                        (string->symbol (++ "dues-receipt" e))
                                        'change
                                        (lambda ()
@@ -1317,7 +1317,7 @@
 (define-awana-app-page (regexp "/[^/]*/clubbers/sections")
   (lambda (path)
     (let ((club (get-club path)))
-      (ajax "clubber-books" 'clubbers '(change keypress)
+      (ajax (++ "clubber-books-" club) 'clubbers '(change keypress)
 	    (lambda ()
 	      (combo-box "change-book" (ad (club-level club ($ 'clubber)) 'book)
 			 selectedindex: (book-index club ($ 'clubber)) class: "change-book"
@@ -1328,7 +1328,7 @@
 	    live: #t
 	    method: 'GET
 	    target: "info-header")
-      (ajax "clubber-sections" "#change-book, #clubbers" '(change keypress)
+      (ajax (++ "clubber-sections-" club) "#change-book, #clubbers" '(change keypress)
 	    (lambda ()
 	      (if (string=? ($ 'book "false") "false") #f (book club ($ 'clubber) ($ 'book)))
 	      (if (string=? ($ 'book-index "false") "false") #f (book-index club ($ 'clubber) ($ 'book-index)))
@@ -1370,7 +1370,7 @@
                       $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['mark-id']).click(); }).text(response['mark-text']);"
 	    method: 'GET
 	    live: #t)
-      (ajax "mark-section" ".mark-section" 'click
+      (ajax (++ "mark-section" club) ".mark-section" 'click
 	    (lambda ()
 	      (let ((c-section (clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
 						($ 'book) ($ 'chapter) ($ 'section)))
@@ -1389,7 +1389,7 @@
                       $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['next-id']).click(); }).text(response['next-title']);"
 	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
 			 (chapter . "$(this).children().eq(0).val()") (section . "$(this).val()")))
-      (ajax "combo-clubbers" ".club-filter" 'change
+      (ajax (++ "combo-clubbers" club) ".club-filter" 'change
 	    (lambda ()
 	      (let ((c-out (remove (lambda (e) (not (any (lambda (e2) (string=? (club-level club e) e2)) (string-split ($ 'clubs) ",")))) (db:list "clubs" club "clubbers"))))
 		(combo-box "clubbers"
@@ -1821,151 +1821,6 @@
       (redirect-to "/reload/index")))
   title: "Reloaded storage-funcs.scm"
   no-session: #t)
-
-;;; dashboard
-
-
-;(define-awana-app-page (regexp "/[^/]*/clubbers/attendance")
-;  (lambda (path)
-(define (profile)
-    (let ((path "")
-	  (club "evangel-baptist-church1"))
-          (date (++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))))
-      (ajax "clubber-attendance-info" 'clubbers '(change keypress)
-            (lambda ()
-              (let ((n ($ 'name)))
-                (if n
-                    `((clubber-name . ,(name club n))
-                      (present . ,(present club n date))
-                      (bible . ,(bible club n date))
-                      (handbook . ,(handbook club n date))
-                      (uniform . ,(uniform club n date))
-                      (friend . ,(friend club n date))
-                      (extra . ,(extra club n date))
-                      (sunday-school . ,(sunday-school club n date))
-                      (dues . ,(dues club n date))
-                      (on-time . ,(on-time club n date))
-                      (points-total . ,(total-points club n))
-                      (allergies . ,(allergies club n))
-                      (club-level . ,(club-level club n))
-                      (notes . ,(notes club n))
-                      (attendees-html . ,(attendees-html club date)))
-                    '())))
-            success: "loadClubberInfo(response);"
-            update-targets: #t
-            method: 'GET
-            arguments: '((name . "$('#clubbers').val()[0]")))
-      (ajax "save-present" 'present 'click
-            (lambda ()
-              (present club ($ 'name) date (if (string=? ($ 'present) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (present . "stringToBoolean($('#present').val())")))
-      (ajax "save-bible" 'bible 'click
-            (lambda ()
-              (bible club ($ 'name) date (if (string=? ($ 'bible) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (bible . "stringToBoolean($('#bible').val())")))
-      (ajax "save-handbook" 'handbook 'click
-            (lambda ()
-              (handbook club ($ 'name) date (if (string=? ($ 'handbook) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (handbook . "stringToBoolean($('#handbook').val())")))
-      (ajax "save-uniform" 'uniform 'click
-            (lambda ()
-              (uniform club ($ 'name) date (if (string=? ($ 'uniform) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (uniform . "stringToBoolean($('#uniform').val())")))
-      (ajax "save-friend" 'friend 'click
-            (lambda ()
-              (friend club ($ 'name) date (if (string=? ($ 'friend) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (friend . "stringToBoolean($('#friend').val())")))
-      (ajax "save-extra" 'extra 'click
-            (lambda ()
-              (extra club ($ 'name) date (if (string=? ($ 'extra) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (extra . "stringToBoolean($('#extra').val())")))
-      (ajax "save-sunday-school" 'sunday-school 'click
-            (lambda ()
-              (sunday-school club ($ 'name) date (if (string=? ($ 'sunday-school) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (sunday-school . "stringToBoolean($('#sunday-school').val())")))
-      (ajax "save-dues" 'dues 'click
-            (lambda ()
-              (dues club ($ 'name) date (if (string=? ($ 'dues) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (dues . "stringToBoolean($('#dues').val())")))
-      (ajax "on-time" 'on-time 'click
-            (lambda ()
-              (on-time club ($ 'name) date (if (string=? ($ 'on-time) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('#clubbers').val()[0]") (on-time . "stringToBoolean($('#on-time').val())")))
-      (++ (<div> class: "grid_12 column-body"
-                 (<div> class: "padding"
-                        (<form> action: path  method: "GET"
-                                (<span> class: "date-label" "Date:")
-                                (<input> class: "date-input" name: "month" id: "month"
-                                         value: (or ($ 'month) (todays-mm))) "/"
-                                (<input> class: "date-input" name: "day" id: "day"
-                                         value: (or ($ 'day) (todays-dd))) "/"
-                                (<input> class: "date-input" name: "year" id: "year"
-                                         value: (or ($ 'year) (todays-yyyy)))
-                                (<a> href: (++ path "?month=" (todays-mm) "&day=" (todays-dd) "&year=" (todays-yyyy))
-                                     class: "preset-date" "Today")
-                                ;(<a> href: "#" class: "preset-date" "Last Club Meeting")
-                                (<input> class: "change-date" type: "submit" value: "Update Date"))))
-          (<div> class: "clear")
-          (<div> class: "grid_3 column-header" (<div> class: "padding" "Find Clubbers"))
-          (<div> class: "grid_6 column-header" id: "clubber-name-container"
-                 (<div> id: "clubber-name" class: "padding" "Mark Attendance"))
-          (<div> class: "grid_3 column-header" (<div> class: "padding" "View Attendees"))
-          (<div> class: "grid_3 column-body"
-                 (<div> class: "padding"
-                        (<input> type: "text" class: "filter" id: "filter")
-                        (combo-box "clubbers"
-                                   (map (lambda (e)
-                                          `(,e . ,(name club e)))
-                                        (name-sort club (db:list "clubs" club "clubbers") "last"))
-                                   class: "clubbers" multiple: #t)))
-          (<div> class: "grid_6 column-body"
-                 (<div> class: "padding"
-                        (<div> class: "description-container" id: "description-container"
-                                      "To begin, click on a name to the left" (<br>) (<br>)
-                                      "<--" (<br>) (<br>)
-                                      "You can also filter (sort of like search) the names by typing into the box above the clubbers")
-                        (<div> class: "clubber-data" id: "clubber-data"
-                               (<div> class: "attendance-container"
-                                      (<div> class: "attendance-button" id: "present" "Present"
-                                             (<input> class: "present" type: "button" id: "present" value: ""))
-                                      (<div> class: "attendance-button" id: "bible" "Bible"
-                                             (<input> class: "bible" type: "button" id: "bible" value: ""))
-                                      (<div> class: "attendance-button" id: "handbook" "Handbook"
-                                             (<input> class: "handbook" type: "button" id: "handbook" value: ""))
-                                      (<div> class: "attendance-button" id: "uniform" "Uniform"
-                                             (<input> class: "uniform" type: "button" id: "uniform" value: ""))
-                                      (<div> class: "attendance-button" id: "friend" "Friend"
-                                             (<input> class: "friend" type: "button" id: "friend" value: ""))
-                                      (<div> class: "attendance-button" id: "extra" "Extra"
-                                             (<input> class: "extra" type: "button" id: "extra" value: ""))
-				      (<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)
-                                      (<div> class: "attendance-button" id: "sunday-school" "Sunday"
-                                             (<input> class: "sunday-school" type: "button" id: "sunday-school" value: ""))
-                                      (<div> class: "attendance-button" id: "dues" "Dues"
-                                             (<input> class: "dues" type: "button" id: "dues" value: ""))
-                                      (<div> class: "attendance-button" id: "on-time" "On Time"
-                                             (<input> class: "on-time" type: "button" id: "on-time" value: "")))
-                               (<div> class: "points-container"
-                                      (<div> class: "points" id: "points-total")
-                                      (<div> class: "points points-label" " points"))
-                               (<div> class: "allergy-info" id: "allergy-container"
-                                      (<div> class: "allergic-to info" "Allergic To:") (<br>)
-                                      (<div> class: "allergic-to-item" id: "allergies" ""))
-                               (<div> class: "notes info" id: "notes" ""))))
-          (<div> class: "grid_3 column-body"
-              (<div> class: "tab-body padding"
-                     (<div> class: "attendees" id: "attendees"
-                            (attendees-html club date))))))
-
 
 ;;; includes
 

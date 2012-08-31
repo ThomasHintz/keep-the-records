@@ -8,6 +8,13 @@
   (lambda ()
     (let ((response (vector->list (add-customer ($ 'stripeToken) email: ($ 'email) plan: ($ 'plan)))))
       (stripe-customer-id ($ 'email) (assoc 'id response)))
+    (handle-exceptions
+     exn
+     'error
+     (send-mail from: "momentum@keeptherecords.com" from-name: "Momentum"
+		to: "momentum@keeptherecords.com" reply-to: "momentum@keeptherecords.com"
+		subject: "New account added!"
+		html: (++ "Good work!\n\n" ($ 'email) " is now on the " ($ 'plan) " plan.")))
     (redirect-to "/club/register-successful"))
   method: 'POST
   no-session: #t)

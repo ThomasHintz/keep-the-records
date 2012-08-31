@@ -1,6 +1,6 @@
 cd /keep-the-records
 
 nohup ktr-awful --port=12000 /keep-the-records/keep-the-records &
-nohup ktr-awful --port=12001 /keep-the-records/keep-the-records &
-nohup ktr-awful --port=12002 /keep-the-records/keep-the-records &
-nohup ktr-awful --port=8082 /keep-the-records/keep-the-records &
+#nohup ktr-awful --port=12001 /keep-the-records/keep-the-records &
+#nohup ktr-awful --port=12002 /keep-the-records/keep-the-records &
+#nohup ktr-awful --port=8082 /keep-the-records/keep-the-records &

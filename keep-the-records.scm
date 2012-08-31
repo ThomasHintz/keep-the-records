@@ -1592,7 +1592,8 @@
         (abort 'permission-denied))
       (if (string=? password password-again)
           (begin (user-name email name)
-                 (user-pw email (call-with-output-digest (sha512-primitive) (cut display (->string password) <>)))
+                 (user-pw email (generate-password password))
+		 (user-pw-type email 'crypt)
                  (user-email email email)
                  (user-phone email phone)
                  (user-birthday email birthday)
@@ -1719,7 +1720,8 @@
       (user-birthday user u-birthday)
       (if (string=? u-pw "")
           #f
-          (user-pw user (call-with-output-digest (sha512-primitive) (cut display (->string u-pw) <>))))
+          (begin (user-pw user (generate-password u-pw))
+		 (user-pw-type user 'crypt)))
       (redirect-to (++ "/" club "/clubbers/attendance?message=account-settings-update-successful")))))
 
 (define-awana-app-page (regexp "/[^/]*/account-settings")

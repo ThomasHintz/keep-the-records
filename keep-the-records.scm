@@ -868,6 +868,20 @@
   tab: 'clubbers
   title: "Clubbers - Club Night - KtR")
 
+(define (start-of-season date)
+    (if (> (date-month date) 6)
+	      (make-date 0 0 0 0 1 6 (date-year date))
+	            (make-date 0 0 0 0 1 6 (- (date-year date) 1))))
+
+(define (end-of-season date)
+    (if (> (date-month date) 6)
+	      (make-date 0 0 0 0 1 6 (+ (date-year date) 1))
+	            (make-date 0 0 0 0 1 6 (date-year date))))
+
+(define (current-season? date)
+    (and (date>=? date (start-of-season (current-date)))
+	        (date<=? date (end-of-season (current-date)))))
+
 (define (get-clubber path)
   (fourth (string-split path "/")))
 
@@ -884,12 +898,17 @@
   (if (> (length (db:list "clubs" club "clubbers" clubber "attendance")) 0)
       (concatenate (concatenate (map (lambda (year)
                                        (map (lambda (month)
-                                              (map (lambda (day)
+					      (map (lambda (day)
                                                      (list month day year))
-                                                   (sort (list-days club clubber year month) string<)))
-                                            (sort (list-months club clubber year) string<)))
-                                     (sort (list-years club clubber) string<))))
-      '()))
+                                                   (sort 
+						    (filter
+						     (lambda (day)
+						       (current-season? (db->date (++ month "/" day "/" year))))
+						     (list-days club clubber year month))
+						    string<)))
+					      (sort (list-months club clubber year) string<)))
+				       (sort (list-years club clubber) string<))))
+		   '()))
 
 (define (dates->filled-tds proc club clubber dates)
   (fold (lambda (date-l o)

@@ -65,11 +65,11 @@
       (handle-exceptions
        exn
        (if (eq? exn 'permission-denied)
-           "PERMISSION DENIED! If you think this is an error, please email me at t@thintz.com"
+           "PERMISSION DENIED! If you think this is an error, please email me at t@keeptherecords.com"
            (abort exn))
        (let ((club (first (string-split actual-path "/"))))
          (when (and (not (or (string=? club "user") (string=? club "club") (string=? club "sign-up") (string=? club "process-sign-up")))
-                    (not (or (string=? ($session 'club) club) (string=? ($session 'user) "t@keeptherecords.com"))))
+                    (not (or (string=? ($session 'club) club) (string=? ($session 'user) "t@thintz.com"))))
            (abort 'permission-denied))
          (++ (if (and (session-valid? (read-cookie "awful-cookie")) ($session 'demo))
                  (<div> class: "demo container_12"

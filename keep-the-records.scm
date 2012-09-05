@@ -328,8 +328,11 @@
 		 (handle-exceptions
 		  exn
 		  'error
-		  (send-mail from: "momentum@keeptherecords.com" from-name: "Momentum" to: "t@thintz.com" reply-to: "momentum@keeptherecords.com" subject: "New Club Register!"
-			    html: (++ "Good work!\n\n" u-email " just registered " church " as " club)))
+		  (send-mail from: "momentum@keeptherecords.com" from-name: "Momentum"
+			     to: "momentum@keeptherecords.com" reply-to: "momentum@keeptherecords.com"
+			     subject: "New Club Register!"
+			    html: (++ "Good work!\n\n" u-email " just registered " church " as " club
+				      " with the " plan " plan.")))
 		 (redirect-to (++ "/sign-up/payment/" plan "?email=" u-email)))
           (if (eq? (user-name u-email) 'not-found)
               "Passwords don't match, please go back and re-enter your info."

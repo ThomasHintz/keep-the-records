@@ -16,7 +16,7 @@
 (session-storage-ref
  (lambda (sid)
   (let ((r (db:read "sessions" sid)))
-    (if (equal? r 'not-found)
+    (if (or (equal? r 'not-found) (equal? r #f))
 	#f
 	(list->session-item r)))))
 

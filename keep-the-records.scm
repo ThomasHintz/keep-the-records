@@ -44,6 +44,21 @@
 
 ;(when (not (db:db)) (db:db (db:open-db "ktr-db")))
 
+(define (ktr-ajax club url selector action proc #!key (success #f) (arguments '()) (live #f) (method 'GET) (target #f)
+		  (update-targets #f) (prelude #f))
+  (ajax url selector action
+	(lambda ()
+	  (when (not (equal? ($session 'club) ($ 'club ""))) (abort 'permission-denied))
+	  (proc ($ 'club)))
+	success: success
+	arguments: (append arguments '((club . "club")))
+	live: live
+	method: method
+	update-targets: update-targets
+	prelude: prelude
+	target: target)
+      (++ "var club = '" club "';"))
+
 (define (is-current? url path)
   (if (string-match (regexp (++ url ".*")) path)
       #t
@@ -344,29 +359,34 @@
 (define (clubber->url club clubber #!key (class #f))
   (<a> href: (++ "/" club "/clubbers/info/" clubber) class: (if class class "") (name club clubber)))
 
-(define-awana-app-page (regexp "/[^/]*/clubbers/dashboard")
-  (lambda (path)
-    (define (birthday-table club clubbers)
-      (<table>
-       (fold (lambda (c o)
-               (++ o
-                   (<tr> (<td> class: "c-cell clubber-url-cell" (clubber->url club c class: "clubber-url"))
-                         (<td> class: "c-cell clubber-birthday" (birthday club c))
-                         (<td> class: "c-cell clubber-club-level" (club-level club c)))))
-             ""
-             clubbers)))
-    (let ((club (get-club path))
-          (date-start (week-start (current-date-0000)))
-          (date-end (week-end (current-date-0000))))
-      (add-javascript "$('#from-date').datepicker(); $('#to-date').datepicker();")
-      (ajax (++ "get-birthdays-" club) ".dt" 'change
-            (lambda ()
+(define (birthday-table club clubbers)
+  (<table>
+   (fold (lambda (c o)
+	   (++ o
+	       (<tr> (<td> class: "c-cell clubber-url-cell" (clubber->url club c class: "clubber-url"))
+		     (<td> class: "c-cell clubber-birthday" (birthday club c))
+		     (<td> class: "c-cell clubber-club-level" (club-level club c)))))
+	 ""
+	 clubbers)))
+
+(define (get-birthdays-ajax club)
+  (ktr-ajax club "get-birthdays" ".dt" 'change
+            (lambda (club)
               (birthday-table club (birthdays-within club (db:list "clubs" club "clubbers")
                                                      (string->date ($ 'from-date)  "~m/~d/~Y")
                                                      (string->date ($ 'to-date) "~m/~d/~Y"))))
             arguments: '((from-date . "$('#from-date').val()")
                          (to-date . "$('#to-date').val()"))
-            target: "birthdays")
+            target: "birthdays"))
+(get-birthdays-ajax "")
+
+(define-awana-app-page (regexp "/[^/]*/clubbers/dashboard")
+  (lambda (path)
+    (let ((club (get-club path))
+          (date-start (week-start (current-date-0000)))
+          (date-end (week-end (current-date-0000))))
+      (add-javascript "$('#from-date').datepicker(); $('#to-date').datepicker();")
+      (add-javascript (get-birthdays-ajax club))
       (++ (<div> class: "grid_12"
                  (<div> class: "column-header padding" (club-name club))
                  (<div> class: "column-body padding"
@@ -421,25 +441,29 @@
 (define (escape-apostrophes string)
   (irregex-replace/all "'" string "&#39"))
 
+(define (lookup-parent-ajax club)
+  (ktr-ajax club "lookup-parent" 'parent-name-1 '(change blur)
+	(lambda (club)
+	  (if ($ 'p-name)
+	      (map (lambda (data)
+		     (cond ((string=? data "name") `(parent-name-1 . ,(parent-name club ($ 'p-name))))
+			   ((string=? data "spouse") `(parent-name-2 . ,(parent-spouse club ($ 'p-name))))
+			   (#t `(,(string->symbol data) .
+				 ,(db:read "clubs" club "parents" ($ 'p-name) data)))))
+		   (db:list "clubs" club "parents" ($ 'p-name)))
+	      '()))
+	success: "$.each(response, function(id, html) { $('#' + id).val(html).addClass('filled').watermark(''); })"
+	update-targets: #t
+	method: 'GET
+	arguments: '((p-name . "parentIds[parentNames.indexOf($('#parent-name-1').val())]"))))
+(lookup-parent-ajax "")
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/(add|info/[^/]*/edit)")
   (lambda (path)
     (let* ((club (get-club path))
            (edit (> (length (string-split path "/")) 3))
            (c-name (if edit (get-clubber path) #f)))
-      (ajax (++ "lookup-parent/" club) 'parent-name-1 '(change blur)
-            (lambda ()
-              (if ($ 'p-name)
-                  (map (lambda (data)
-                         (cond ((string=? data "name") `(parent-name-1 . ,(parent-name club ($ 'p-name))))
-                               ((string=? data "spouse") `(parent-name-2 . ,(parent-spouse club ($ 'p-name))))
-                               (#t `(,(string->symbol data) .
-                                     ,(db:read "clubs" club "parents" ($ 'p-name) data)))))
-                       (db:list "clubs" club "parents" ($ 'p-name)))
-                  '()))
-            success: "$.each(response, function(id, html) { $('#' + id).val(html).addClass('filled').watermark(''); })"
-            update-targets: #t
-            method: 'GET
-            arguments: '((p-name . "parentIds[parentNames.indexOf($('#parent-name-1').val())]")))
+      (add-javascript (lookup-parent-ajax club))
       (++ (<div> class: "clear")
           (<div> class: "grid_12" (<div> class: "success" id: "success" (if ($ 'success) "Clubber Added Successfully" "")))
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Child"))
@@ -619,13 +643,11 @@
 
 ;;; attendance
 
-(define-awana-app-page (regexp "/[^/]*/clubbers/attendance")
-  (lambda (path)
-    (let ((club (get-club path))
-          (date (++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))))
-      (ajax (++ "clubber-attendance-info-" club) ".select-clubber-name" 'click
-            (lambda ()
-              (let ((n ($ 'name)))
+(define (clubber-attendance-info-ajax club)
+  (ktr-ajax club "clubber-attendance-info" ".select-clubber-name" 'click
+            (lambda (club)
+              (let ((n ($ 'name))
+		    (date (++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))))
                 (if n
                     `((clubber-name . ,(name club n))
                       (present . ,(present club n date))
@@ -646,52 +668,30 @@
             success: "loadClubberInfo(response);"
             update-targets: #t
             method: 'GET
-            arguments: '((name . "$('li.selected').attr('id')")))
-      (ajax (++ "save-present-" club) 'present 'click
-            (lambda ()
-              (present club ($ 'name) date (if (string=? ($ 'present) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('li.selected').attr('id')") (present . "stringToBoolean($('#present').val())")))
-      (ajax (++ "save-bible-" club) 'bible 'click
-            (lambda ()
-              (bible club ($ 'name) date (if (string=? ($ 'bible) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('li.selected').attr('id')") (bible . "stringToBoolean($('#bible').val())")))
-      (ajax (++ "save-handbook-" club) 'handbook 'click
-            (lambda ()
-              (handbook club ($ 'name) date (if (string=? ($ 'handbook) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('li.selected').attr('id')") (handbook . "stringToBoolean($('#handbook').val())")))
-      (ajax (++ "save-uniform-" club) 'uniform 'click
-            (lambda ()
-              (uniform club ($ 'name) date (if (string=? ($ 'uniform) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('li.selected').attr('id')") (uniform . "stringToBoolean($('#uniform').val())")))
-      (ajax (++ "save-friend-" club) 'friend 'click
-            (lambda ()
-              (friend club ($ 'name) date (if (string=? ($ 'friend) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('li.selected').attr('id')") (friend . "stringToBoolean($('#friend').val())")))
-      (ajax (++ "save-extra-" club) 'extra 'click
-            (lambda ()
-              (extra club ($ 'name) date (if (string=? ($ 'extra) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('li.selected').attr('id')") (extra . "stringToBoolean($('#extra').val())")))
-      (ajax (++ "save-sunday-school-" club) 'sunday-school 'click
-            (lambda ()
-              (sunday-school club ($ 'name) date (if (string=? ($ 'sunday-school) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('li.selected').attr('id')") (sunday-school . "stringToBoolean($('#sunday-school').val())")))
-      (ajax (++ "save-dues-" club) 'dues 'click
-            (lambda ()
-              (dues club ($ 'name) date (if (string=? ($ 'dues) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('li.selected').attr('id')") (dues . "stringToBoolean($('#dues').val())")))
-      (ajax (++ "on-time-" club) 'on-time 'click
-            (lambda ()
-              (on-time club ($ 'name) date (if (string=? ($ 'on-time) "false") #f #t)))
-            method: 'PUT
-            arguments: '((name . "$('li.selected').attr('id')") (on-time . "stringToBoolean($('#on-time').val())")))
+            arguments: '((name . "$('li.selected').attr('id')"))))
+(clubber-attendance-info-ajax "")
+
+(define (save-clubber-attendance-info club proc id)
+  (ktr-ajax club (++ "save-" (symbol->string id)) id 'click
+	(lambda (club)
+	  (proc club ($ 'name)
+		(++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))
+		(if (string=? ($ id) "false") #f #t)))
+	method: 'PUT
+	arguments: `((name . "$('li.selected').attr('id')") (,id . ,(++ "stringToBoolean($('#" (symbol->string id) "').val())")))))
+
+(map (lambda (l) (save-clubber-attendance-info "" (car l) (cadr l)))
+     `((,present present) (,bible bible) (,uniform uniform) (,friend friend) (,extra extra) (,sunday-school sunday-school)
+       (,dues dues) (,on-time on-time) (,handbook handbook)))
+
+(define-awana-app-page (regexp "/[^/]*/clubbers/attendance")
+  (lambda (path)
+    (let ((club (get-club path)))
+      (add-javascript (clubber-attendance-info-ajax club))
+      (map (lambda (l)
+	     (add-javascript (save-clubber-attendance-info club (car l) (cadr l))))
+	   `((,present present) (,bible bible) (,uniform uniform) (,friend friend) (,extra extra) (,sunday-school sunday-school)
+	     (,dues dues) (,on-time on-time) (,handbook handbook)))
       (++ (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
                         (<form> action: path  method: "GET"
@@ -756,7 +756,9 @@
           (<div> class: "grid_3 column-body"
               (<div> class: "tab-body padding"
                      (<div> class: "attendees" id: "attendees"
-                            (attendees-html club date)))))))
+                            (attendees-html club (++ (or ($ 'year) (todays-yyyy)) "/"
+						     (or ($ 'month) (todays-mm)) "/"
+						     (or ($ 'day) (todays-dd))))))))))
   headers: (++ (include-javascript "/js/attendance.js?ver=3")
 	       (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"))
   no-ajax: #f
@@ -921,20 +923,32 @@
         ""
         dates))
 
+(define (delete-clubber-ajax club clubber)
+  (++ "clubber = '" clubber "';"
+      (ktr-ajax club "delete-clubber" 'delete-clubber 'click
+		(lambda (club)
+		  (db:remove-from-list ($ 'clubber) "clubs" club "clubbers"))
+		arguments: '((clubber . "clubber"))
+		success: "$('#restore-clubber').show(); $('#delete-clubber').hide();")))
+(delete-clubber-ajax "" "")
+
+(define (restore-clubber-ajax club clubber)
+  (++ "clubber = '" clubber "';"
+      (ktr-ajax club "restore-clubber" 'restore-clubber 'click
+		(lambda (club)
+		  (db:update-list ($ 'clubber) "clubs" club "clubbers"))
+		arguments: '((clubber . "clubber"))
+		success: "$('#restore-clubber').hide(); $('#delete-clubber').show();")))
+(restore-clubber-ajax "" "")
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/info/[^/]*")
   (lambda (path)
     (let* ((clubber (get-clubber path))
            (club (get-club path))
            (p-parent (primary-parent club clubber))
            (dates (attendance-dates club clubber)))
-      (ajax (++ "delete-clubber-" club "-" clubber) 'delete-clubber 'click
-	    (lambda ()
-	      (db:remove-from-list clubber "clubs" club "clubbers"))
-	    success: "$('#restore-clubber').show(); $('#delete-clubber').hide();")
-      (ajax (++ "restore-clubber-" club "-" clubber) 'restore-clubber 'click
-	    (lambda ()
-	      (db:update-list clubber "clubs" club "clubbers"))
-	    success: "$('#restore-clubber').hide(); $('#delete-clubber').show();")
+      (add-javascript (delete-clubber-ajax club clubber))
+      (add-javascript (restore-clubber-ajax club clubber))
       (++ (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
                         (<a> href: (++ path "/edit") class: "edit" "Edit this clubber")
@@ -1346,22 +1360,22 @@
 	       (#t (->string c)))))
    "" s))
 
-(define-awana-app-page (regexp "/[^/]*/clubbers/sections")
-  (lambda (path)
-    (let ((club (get-club path)))
-      (ajax (++ "clubber-books-" club) 'clubbers '(change keypress)
-	    (lambda ()
+(define (clubber-books-ajax club)
+  (ktr-ajax club "clubber-books" 'clubbers '(change keypress)
+	    (lambda (club)
 	      (combo-box "change-book" (ad (club-level club ($ 'clubber)) 'book)
 			 selectedindex: (book-index club ($ 'clubber)) class: "change-book"
 			 default: (book club ($ 'clubber))))
-	    ; hack to fix apparent bug in combo-box
 	    success: "$('#info-header').html(response); $('#change-book').attr('selectedIndex', $('#change-book').attr('selectedindex'));"
 	    arguments: '((clubber . "$('#clubbers').val()[0]"))
 	    live: #t
 	    method: 'GET
-	    target: "info-header")
-      (ajax (++ "clubber-sections-" club) "#change-book, #clubbers" '(change keypress)
-	    (lambda ()
+	    target: "info-header"))
+(clubber-books-ajax "")
+
+(define (clubber-sections-ajax club)
+  (ktr-ajax club "clubber-sections" "#change-book, #clubbers" '(change keypress)
+	    (lambda (club)
 	      (if (string=? ($ 'book "false") "false") #f (book club ($ 'clubber) ($ 'book)))
 	      (if (string=? ($ 'book-index "false") "false") #f (book-index club ($ 'clubber) ($ 'book-index)))
 	      (if (string=? (book club ($ 'clubber)) "") (book club ($ 'clubber) (first (ad (club-level club ($ 'clubber)) 'b))) #f)
@@ -1381,10 +1395,10 @@
 								   class: (++ "mark-section" (if (string=? c-section "") "" " done"))
 								   value: (->string s)
 								   id: (->html-id (++ (first chapter/sections) "-" s))
-								   ; no dates for now
-								   ;(if (string=? c-section "")
-								   ;    (->string s)
-								   ;    c-section)
+					; no dates for now
+					;(if (string=? c-section "")
+					;    (->string s)
+					;    c-section)
 								   s
 								   (hidden-input 'chapter (first chapter/sections)))
 						       " ")))
@@ -1401,9 +1415,12 @@
 	    success: "$('#sections-container').html(response['sections']);
                       $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['mark-id']).click(); }).text(response['mark-text']);"
 	    method: 'GET
-	    live: #t)
-      (ajax (++ "mark-section" club) ".mark-section" 'click
-	    (lambda ()
+	    live: #t))
+(clubber-sections-ajax "")
+
+(define (mark-section-ajax club)
+  (ktr-ajax club "mark-section" ".mark-section" 'click
+	    (lambda (club)
 	      (let ((c-section (clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
 						($ 'book) ($ 'chapter) ($ 'section)))
 		    (next (next-section club ($ 'clubber) (club-level club ($ 'clubber)) ($ 'book) ($ 'chapter) ($ 'section))))
@@ -1420,16 +1437,30 @@
 	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).text(response['text']).append(book);
                       $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['next-id']).click(); }).text(response['next-title']);"
 	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
-			 (chapter . "$(this).children().eq(0).val()") (section . "$(this).val()")))
-      (ajax (++ "combo-clubbers" club) ".club-filter" 'change
-	    (lambda ()
-	      (let ((c-out (remove (lambda (e) (not (any (lambda (e2) (string=? (club-level club e) e2)) (string-split ($ 'clubs) ",")))) (db:list "clubs" club "clubbers"))))
-		(combo-box "clubbers"
-			   (zip c-out (clubbers->names club c-out))
-			   class: "clubbers" multiple: #t)))
-	    success: "$('#clubbers-c').html(response); MyUtil.selectFilterData = new Object();"
-	    live: #t
-	    arguments: '((clubs . "(function () { var chked = ''; $('.club-filter:checked').each(function(i,v) { chked += ',' + v.id; }); return chked; })()")))
+			 (chapter . "$(this).children().eq(0).val()") (section . "$(this).val()"))))
+(mark-section-ajax "")
+
+(define (combo-clubbers-ajax club)
+  (ktr-ajax club "combo-clubbers" ".club-filter" 'change
+  	    (lambda (club)
+  	      (let ((c-out (remove (lambda (e)
+  				     (not (any (lambda (e2) (string=? (club-level club e) e2)) (string-split ($ 'clubs) ","))))
+  				   (db:list "clubs" club "clubbers"))))
+  		(combo-box "clubbers"
+  			   (zip c-out (clubbers->names club c-out))
+  			   class: "clubbers" multiple: #t)))
+  	    success: "$('#clubbers-c').html(response); MyUtil.selectFilterData = new Object();"
+  	    live: #t
+  	    arguments: '((clubs . "(function () { var chked = ''; $('.club-filter:checked').each(function(i,v) { chked += ',' + v.id; }); return chked; })()"))))
+(combo-clubbers-ajax "")
+
+(define-awana-app-page (regexp "/[^/]*/clubbers/sections")
+  (lambda (path)
+    (let ((club (get-club path)))
+      (add-javascript (clubber-books-ajax club))
+      (add-javascript (clubber-sections-ajax club))
+      (add-javascript (mark-section-ajax club))
+      (add-javascript (combo-clubbers-ajax club))
       (++ (<div> class: "grid_3"
                  (<div> class: "column-header padding" "Find Clubber")
                  (<div> class: "padding column-body"

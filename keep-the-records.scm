@@ -49,8 +49,8 @@
   (ajax url selector action
 	(lambda ()
 	  (when (not (or (equal? ($session 'club) ($ 'club ""))
-			 (string=? ($session 'user) "t@thintz.com")))
-		(abort 'permission-denied))
+	  		 (string=? ($session 'user) "t@thintz.com")))
+	  	(abort 'permission-denied))
 	  (proc ($ 'club)))
 	success: success
 	arguments: (append arguments '((club . "club")))
@@ -246,6 +246,13 @@
                        (<p>)
                        (<p> "Thanks and God Bless!")
                        (<p> "Thomas Hintz - Creator of KtR"))))
+
+(define-awana-app-page "/user/status"
+  (lambda ()
+    (db:store "status-val" "status-key")
+    (db:read "status-key")
+    "up")
+  no-session: #t)
 
 (define-login-trampoline "/login-trampoline"
   hook: (lambda (user)

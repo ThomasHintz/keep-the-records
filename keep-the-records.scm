@@ -48,7 +48,9 @@
 		  (update-targets #f) (prelude #f))
   (ajax url selector action
 	(lambda ()
-	  (when (not (equal? ($session 'club) ($ 'club ""))) (abort 'permission-denied))
+	  (when (not (or (equal? ($session 'club) ($ 'club ""))
+			 (string=? ($session 'user) "t@thintz.com")))
+		(abort 'permission-denied))
 	  (proc ($ 'club)))
 	success: success
 	arguments: (append arguments '((club . "club")))

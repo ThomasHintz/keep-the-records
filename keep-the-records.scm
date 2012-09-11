@@ -282,7 +282,7 @@
 (define-page (regexp "/sign-out")
   (lambda (path)
     (session-destroy! (read-cookie "awful-cookie"))
-    ; (delete-cookie! "awful-cookie") conflicts with http-session cookie
+    (delete-cookie! "awful-cookie") ;  conflicts with http-session cookie
     (redirect-to "/user/login")))
 
 (define-awana-app-page (regexp "/[^/]*/join-club")

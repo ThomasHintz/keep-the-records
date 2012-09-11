@@ -169,7 +169,7 @@
     title: title
     no-session: no-session
     no-ajax: no-ajax
-    headers: (++ (insert-file "analytics.html") headers)
+    headers: headers ; (++ (insert-file "analytics.html") headers)
     doctype: doctype-html))
 
 ;;; development reload

@@ -29,7 +29,7 @@
 
 (session-cookie-setter
  (lambda (sid)
-   (set-cookie! (session-cookie-name) sid secure: (is-production?) httponly: #t)))
+   (set-cookie! (session-cookie-name) sid secure: (is-production?) http-only: #t)))
 
 (define (developer-access?)
   (or (development-mode?) (string=? ($session 'user) "t@thintz.com")))

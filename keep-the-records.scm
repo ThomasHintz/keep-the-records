@@ -1818,6 +1818,16 @@
 
 ;;; loaders
 
+(define-awana-app-page "/user/status"
+  (lambda ()
+    (handle-exceptions
+     exn
+     (send-status 500 "db down")
+    (db:store "test-db-value" "test-db-key")
+    (db:read "test-db-key"))
+    "ok")
+  no-session: #t)
+
 (define-page "/reload-app"
   (lambda () (reload-apps (awful-apps)) "done")
   no-session: #t)

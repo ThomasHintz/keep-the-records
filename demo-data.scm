@@ -3,7 +3,7 @@
 (define (setup-demo u-name)
   ($session-set! 'user u-name)
   (user-name u-name "Demo User")
-  (let ((c-name (as-db-unique (lambda (c-n) (club-name c-n)) "demo-club" 0)))
+  (let ((c-name (as-db-unique (lambda (c-n) (club-name c-n)) "demo-club" 1000)))
     ($session-set! 'club c-name)
     
     (user-club u-name c-name)

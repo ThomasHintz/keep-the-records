@@ -295,7 +295,7 @@
               (<li> (<a> href: "/club/register" "Create a new club"))))))
 
 (define (as-db-unique proc unique-val start-val)
-  (when (> start-val 2000) (abort 'no-unique-val-found))
+  (when (> start-val 20000) (abort 'no-unique-val-found))
   (if (eq? (proc (++ unique-val (number->string start-val))) 'not-found)
       (++ unique-val (number->string start-val))
       (as-db-unique proc unique-val (+ start-val 1))))
@@ -308,7 +308,7 @@
       (sid new-sid)
       (set-cookie! (session-cookie-name) new-sid)
       ($session-set! 'demo #t)
-      (let ((u-name (as-db-unique (lambda (u-n) (user-email u-n)) "demo" 1)))
+      (let ((u-name (as-db-unique (lambda (u-n) (user-email u-n)) "demo" 1000)))
         (setup-demo u-name)
         (html-page
          ""

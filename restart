@@ -1,4 +1,7 @@
-cd /keep-the-records
+#!/bin/bash
+
+source /etc/profile
+source ~/.bashrc
 
 killall -s 9 ktr-awful
-./start
+~/keep-the-records/start

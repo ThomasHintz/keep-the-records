@@ -670,7 +670,7 @@
             success: "loadClubberInfo(response);"
             update-targets: #t
             method: 'GET
-            arguments: '((name . "$('li.selected').attr('id')"))))
+            arguments: '((name . "$('li.selected').attr('id')") (month . "month") (day . "day") (year . "year"))))
 (clubber-attendance-info-ajax "")
 
 (define (save-clubber-attendance-info club proc id)
@@ -680,7 +680,8 @@
 		(++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))
 		(if (string=? ($ id) "false") #f #t)))
 	method: 'PUT
-	arguments: `((name . "$('li.selected').attr('id')") (,id . ,(++ "stringToBoolean($('#" (symbol->string id) "').val())")))))
+	arguments: `((name . "$('li.selected').attr('id')") (,id . ,(++ "stringToBoolean($('#" (symbol->string id) "').val())"))
+		      (month . "month") (day . "day") (year . "year"))))
 
 (map (lambda (l) (save-clubber-attendance-info "" (car l) (cadr l)))
      `((,present present) (,bible bible) (,uniform uniform) (,friend friend) (,extra extra) (,sunday-school sunday-school)
@@ -690,6 +691,8 @@
   (lambda (path)
     (let ((club (get-club path)))
       (add-javascript (clubber-attendance-info-ajax club))
+      (add-javascript (++ "var month = '" (or ($ 'month) (todays-mm)) "'; var day = '"
+			                            (or ($ 'day) (todays-dd)) "'; var year = '" (or ($ 'year) (todays-yyyy)) "';"))
       (map (lambda (l)
 	     (add-javascript (save-clubber-attendance-info club (car l) (cadr l))))
 	   `((,present present) (,bible bible) (,uniform uniform) (,friend friend) (,extra extra) (,sunday-school sunday-school)

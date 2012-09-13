@@ -2,7 +2,7 @@
 
 (use striped-zebra)
 
-(include "stripe-username.scm")
+(include "config/stripe-username.scm")
 
 (define-page "/add-account"
   (lambda ()

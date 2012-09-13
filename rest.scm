@@ -1,8 +1,8 @@
 (use http-client uri-common intarweb json srfi-1 srfi-18)
 (load "utils")
 
-(define *api-user* (insert-file "send-grid-user"))
-(define *api-key* (insert-file "send-grid-key"))
+(define *api-user* (insert-file "config/send-grid-user"))
+(define *api-key* (insert-file "config/send-grid-key"))
 
 (define (rest-action url method parameters)
   (vector->list (with-input-from-request

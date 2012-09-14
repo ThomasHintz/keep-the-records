@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source /etc/profile
+cd $(dirname $0)
 
 nohup ktr-awful --port=12000 ~/keep-the-records/keep-the-records &
 nohup ktr-awful --port=12001 ~/keep-the-records/keep-the-records &

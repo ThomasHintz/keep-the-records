@@ -487,7 +487,7 @@
                                                                 selectedindex: (if edit (grade-index (grade club c-name)) 0)
                                                                 name: "grade" class: "grade validate[required]" first-empty: #t)))
                                          (<tr> (<td> class: "label" (<span> class: "label birthday" "Birthday"))
-                                               (<td> (<input> class: "jq_watermark birthday validate[required,custom[ktr-date]]" id: "birthday"
+                                               (<td> (<input> class: "jq_watermark birthday validate[custom[ktr-date]]" id: "birthday"
                                                               value: (if edit (birthday club c-name) "")
                                                               title: "mm/dd/yyyy" name: "birthday")))
                                          (<tr> (<td> class: "label" (<span> class: "label club" id: "label-club" "Club"))
@@ -516,13 +516,13 @@
                                                                          (parent-spouse club (primary-parent club c-name))
                                                                          ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label email" "Email"))
-                                               (<td> (<input> class: "jq_watermark email validate[required,custom[email]]" id: "email"
+                                               (<td> (<input> class: "jq_watermark email validate[custom[email]]" id: "email"
                                                               title: "address@mail.com" name: "email"
                                                               value: (if edit
                                                                          (parent-email club (primary-parent club c-name))
                                                                          ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label phone" "Phone 1"))
-                                               (<td> (<input> class: "jq_watermark phone validate[required,custom[ktr-phone]]" id: "phone-1"
+                                               (<td> (<input> class: "jq_watermark phone validate[custom[ktr-phone]]" id: "phone-1"
                                                               title: "123.456.7890" name: "phone-1"
                                                               value: (if edit
                                                                          (parent-phone-1 club (primary-parent club c-name))
@@ -534,7 +534,7 @@
                                                                          (parent-phone-2 club (primary-parent club c-name))
                                                                          ""))))
                                          (<tr> (<td> class: "label" (<span> class: "label address" "Address"))
-                                               (<td> (<input> class: "jq_watermark address validate[required]" id: "address"
+                                               (<td> (<input> class: "jq_watermark address" id: "address"
                                                               title: "123 Food St Donut MI 49494" name: "address"
                                                               value: (if edit
                                                                          (parent-address club (primary-parent club c-name))
@@ -670,7 +670,7 @@
             success: "loadClubberInfo(response);"
             update-targets: #t
             method: 'GET
-            arguments: '((name . "$('li.selected').attr('id')"))))
+            arguments: '((name . "$('li.selected').attr('id')") (month . "month") (day . "day") (year . "year"))))
 (clubber-attendance-info-ajax "")
 
 (define (save-clubber-attendance-info club proc id)
@@ -680,7 +680,8 @@
 		(++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))
 		(if (string=? ($ id) "false") #f #t)))
 	method: 'PUT
-	arguments: `((name . "$('li.selected').attr('id')") (,id . ,(++ "stringToBoolean($('#" (symbol->string id) "').val())")))))
+	arguments: `((name . "$('li.selected').attr('id')") (,id . ,(++ "stringToBoolean($('#" (symbol->string id) "').val())"))
+		      (month . "month") (day . "day") (year . "year"))))
 
 (map (lambda (l) (save-clubber-attendance-info "" (car l) (cadr l)))
      `((,present present) (,bible bible) (,uniform uniform) (,friend friend) (,extra extra) (,sunday-school sunday-school)
@@ -690,6 +691,8 @@
   (lambda (path)
     (let ((club (get-club path)))
       (add-javascript (clubber-attendance-info-ajax club))
+      (add-javascript (++ "var month = '" (or ($ 'month) (todays-mm)) "'; var day = '"
+			                            (or ($ 'day) (todays-dd)) "'; var year = '" (or ($ 'year) (todays-yyyy)) "';"))
       (map (lambda (l)
 	     (add-javascript (save-clubber-attendance-info club (car l) (cadr l))))
 	   `((,present present) (,bible bible) (,uniform uniform) (,friend friend) (,extra extra) (,sunday-school sunday-school)

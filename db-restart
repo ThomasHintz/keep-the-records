@@ -1,13 +1,13 @@
 #!/bin/sh
 # this is /etc/cron.daily/checkrealserver.cron, chmod 0750
 email=error.notify@keeptherecords.com
-progname=mda-server
+progname=mda-server.scm
 
 for ((a=1; a <= 58 ; a++))
 do
 
     if [ "$(pidof $progname)" = "" ]
-    then nohup /keep-the-records/mda-server /keep-the-records/ktr-db -:h50000000 &
+    then nohup /keep-the-records/mda-server.scm /keep-the-records/ktr-db &
     fi
     sleep 1
 done

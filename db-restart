@@ -4,6 +4,9 @@ source /etc/profile
 cd $(dirname $0)
 
 #email=error.notify@keeptherecords.com
+#!/bin/sh
+# this is /etc/cron.daily/checkrealserver.cron, chmod 0750
+email=error.notify@keeptherecords.com
 progname=mda-server.scm
 
 for ((a=1; a <= 58 ; a++))

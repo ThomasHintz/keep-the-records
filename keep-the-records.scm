@@ -44,7 +44,7 @@
 
 ;(when (not (db:db)) (db:db (db:open-db "ktr-db")))
 
-(define (ktr-ajax club url selector action proc #!key (success #f) (arguments '()) (live #f) (method 'GET) (target #f)
+(define (ktr-ajax club url selector action proc #!key (success #f) (arguments '()) (live #f) (method 'POST) (target #f)
 		  (update-targets #f) (prelude #f))
   (ajax url selector action
 	(lambda ()
@@ -75,6 +75,7 @@
           (no-session #f)
           (login-path #f)
           (headers "")
+	  (method 'GET)
           (no-ajax #t)
           (tab 'none))
   (define-page (if (regexp? path) path (regexp path))
@@ -167,6 +168,7 @@
                    "https://fonts.googleapis.com/css?family=Permanent+Marker"
                    "/css/reset.css" "/css/960.css" "/css/master.css?ver=5") css)
     title: title
+    method: method
     no-session: no-session
     no-ajax: no-ajax
     headers: headers ; (++ (insert-file "analytics.html") headers)
@@ -193,7 +195,7 @@
 		     (<a> href: (++ "/sign-up/payment/" plan) "click here to do so"))
 	     (<br>)
 	     (<br>)
-	     (<form> action: (++ "/club/create/" plan) id: "club-register-form"
+	     (<form> action: (++ "/club/create/" plan) id: "club-register-form" method: 'POST
 		     (<h1> class: "action" "Create Club")
 		     (<span> class: "form-context" "Church or Association Name") (<br>)
 		     (<input> class: "text validate[required,custom[onlyLetterSp]]" type: "text" id: "church" name: "church")
@@ -260,7 +262,7 @@
     (add-javascript "$(document).ready(function() { $('#user').focus(); });")
     (<div> class: "grid_12"
            (<h1> class: "action" "Login to Keep the Records")
-           (<form> action: "/login-trampoline" method: "POST"
+           (<form> action: "/login-trampoline" method: 'POST
 		   (<div> style: (if (equal? ($ 'reason "") "invalid-password") "" "display: none;")
 			  (<span> class: "form-context" style: "color: red;"
 				  "Your user name or password is incorrect, please try again.")
@@ -354,6 +356,7 @@
           (if (eq? (user-name u-email) 'not-found)
               "Passwords don't match, please go back and re-enter your info."
               "Email already in use."))))
+  method: 'POST
   no-session: #t)
 
 ;;; clubber pages
@@ -471,7 +474,7 @@
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Child"))
           (<div> class: "grid_6 column-header" (<div> class: "padding" "Parent/Guardian"))
           (<div> class: "clear clear-no-space")
-          (<form> action: (++ "/" club  "/clubbers/create") id: "add-clubber-form"
+          (<form> action: (++ "/" club  "/clubbers/create") id: "add-clubber-form" method: 'POST
                   (if edit (hidden-input 'edit (++ "/" club "/clubbers/info/" c-name)) "")
                   (if ($ 'from) (hidden-input 'from ($ 'from)) "")
                   (<div> class: "grid_6 column-body on-top"
@@ -622,7 +625,8 @@
         (db:update-list (name->id p-name) "clubs" club "parents"))
       (cond (from (redirect-to from))
             (($ 'edit) (redirect-to edit))
-            (#t (redirect-to (++ "/" club "/clubbers/add?success=true")))))))
+            (#t (redirect-to (++ "/" club "/clubbers/add?success=true"))))))
+  method: 'POST)
 
 (define (present-clubbers club date)
   (filter (lambda (m-name)
@@ -1398,7 +1402,7 @@
 										   (book club ($ 'clubber)) (first chapter/sections) (->string s))))
 						   (++ o (<button> type: "button"
 								   class: (++ "mark-section" (if (string=? c-section "") "" " done"))
-								   value: (->string s)
+								   value: (++ (->string s) "|" (first chapter/sections))
 								   id: (->html-id (++ (first chapter/sections) "-" s))
 					; no dates for now
 					;(if (string=? c-section "")
@@ -1438,11 +1442,11 @@
 	    update-targets: #t
 	    method: 'PUT
 	    live: #t
-	    prelude: "var ele = this;"
+	    prelude: "var ele = this;;"
 	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).text(response['text']).append(book);
                       $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['next-id']).click(); }).text(response['next-title']);"
 	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
-			 (chapter . "$(this).children().eq(0).val()") (section . "$(this).val()"))))
+			 (chapter . "$(this).val().split('|')[1]") (section . "$(this).val().split('|')[0]"))))
 (mark-section-ajax "")
 
 (define (combo-clubbers-ajax club)
@@ -1552,7 +1556,7 @@
                                  (<a> class: "main-logo" href: "http://keeptherecords.com" "Keep The Records")))
                    (<div> class: "grid_12 selected-tab-container"
                           (<div> class: "padding"
-                                 (<form> action: (++ "/" club "/user/create") id: "add-user-form"
+                                 (<form> action: (++ "/" club "/user/create") id: "add-user-form" method: 'POST
                                          (hidden-input 'orig-email email)
                                          (hidden-input 'auth-url path)
                                          (<h1> class: "action" (club-name club))
@@ -1608,7 +1612,8 @@
                                       (++ "https://a.keeptherecords.com" link-url)))
                             (<p> "Keep The Records is an Awana Record Keeping application that runs on the Internet. This email is just to notify you that the administrator for " (club-name club) " has granted the person with this email address access to " (club-name club) "'s Keep The Records account.")
                             (<p> "If you think you recieved this message in error, please reply to this email, or email me at " (<a> href: "mailto:t@keeptherecors.com" "t@keeptherecords.com")))))
-      (redirect-to (++ "/" club "/admin/leader-access")))))
+      (redirect-to (++ "/" club "/admin/leader-access"))))
+  method: 'POST)
 
 (define-awana-app-page (regexp "/[^/]*/admin/leader-access")
   (lambda (path)
@@ -1616,7 +1621,7 @@
       (++ (<div> class: "grid_6"
                  (<div> class: "padding column-header" "Grant Access To Leader")
                  (<div> class: "padding column-body"
-                        (<form> action: (++ path "/send-email") method: "GET"
+                        (<form> action: (++ path "/send-email") method: 'POST
                                 (<span> class: "context" "Leader's Email Address")
                                 (<br>)
                                 (<input> class: "email" id: "email" name: "email")
@@ -1661,6 +1666,7 @@
                  (send-welcome-email email club name)
                  (redirect-to "/user/login"))
           (redirect-to (++ incoming-url "?reason=passwords-dont-match")))))
+  method: 'POST
   no-session: #t)
 
 ;;; sign up!
@@ -1772,7 +1778,8 @@
           #f
           (begin (user-pw user (generate-password u-pw))
 		 (user-pw-type user 'crypt)))
-      (redirect-to (++ "/" club "/clubbers/attendance?message=account-settings-update-successful")))))
+      (redirect-to (++ "/" club "/clubbers/attendance?message=account-settings-update-successful"))))
+  method: 'POST)
 
 (define-awana-app-page (regexp "/[^/]*/account-settings")
   (lambda (path)
@@ -1783,7 +1790,7 @@
           (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
                         (<form> action: (++ "/" club "/account-settings-trampoline")
-                                autocomplete: "off"
+                                autocomplete: "off" method: 'POST
                                 (<span> class: "form-context" "Name") (<br>)
                                 (<input> class: "jq_watermark text name" type: "text" id: "name" name: "name"
                                          title: "John Smith" value: (user-name user)) (<br>)

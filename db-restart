@@ -13,7 +13,7 @@ for ((a=1; a <= 58 ; a++))
 do
 
     if [ "$(pidof $progname)" = "" ]
-    then nohup ~/mda/mda-server.scm keep-the-records/ktr-db &
+    then nohup ~/db/mda-server.scm ktr-db &
     fi
     sleep 1
 done

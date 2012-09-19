@@ -790,8 +790,8 @@
                    (if (and sort-value (string=? sort-value "last"))
                        (let ((n1 (string-split e1 "-"))
                              (n2 (string-split e2 "-")))
-			 (string< (++ (second n1) "-" (first n1))
-				  (++ (second n2) "-" (first n2))))
+			 (string< (++ (if (> (length n1) 1) (second n1) "") "-" (first n1))
+				  (++ (if (> (length n2) 1) (second n2) "") "-" (first n2))))
                        (string< e1 e2)))))
 
 (define (clubbers->names club clubbers)

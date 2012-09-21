@@ -10,7 +10,7 @@
 (db:pause)
 (print "paused")
 (print "begin copying")
-(process-wait (process-run "cp ~/db/ktr-db ~/"))
+(process-wait (process-run "cp ~/db/ktr-db ~/db/ktr-db-auto-backup"))
 (print "done copying")
 (send-message socket "unpause")
 (receive-message* socket)

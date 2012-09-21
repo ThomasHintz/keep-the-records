@@ -15,7 +15,7 @@
 (load "rest")
 (load "sessions")
 
-(define is-production? (make-parameter (file-exists? "/keep-the-records/i-am-production")))
+(define is-production? (make-parameter (file-exists? "~/keep-the-records/i-am-production")))
 
 ;;; production
 (if (is-production?) (load "production") #f)

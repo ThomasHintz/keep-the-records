@@ -14,3 +14,5 @@ i-am-production
 query-log
 /.emacs.desktop
 /last-backup
+/.emacs.desktop.lock
+/i-am-staging

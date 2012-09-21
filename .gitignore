@@ -12,3 +12,5 @@ config
 i-am-production
 *.pdf
 query-log
+/.emacs.desktop
+/last-backup

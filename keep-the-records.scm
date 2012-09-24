@@ -855,6 +855,13 @@
                 (if (> (length trek) 0) (<div> class: "grid_2 column-header" (<div> class: "padding" "Trek")) "")
                 (if (> (length journey) 0) (<div> class: "grid_2 column-header" (<div> class: "padding" "Journey")) "")
                 (<div> class: "clear clear-no-space")
+		(if (> (length puggles) 0) (<div> class: "grid_2 info-header" (<div> class: "padding" (number->string (length puggles)) " clubbers")) "")
+                (if (> (length cubbies) 0) (<div> class: "grid_2 info-header" (<div> class: "padding" (number->string (length cubbies)) " clubbers")) "")
+                (if (> (length sparks) 0) (<div> class: "grid_2 info-header" (<div> class: "padding" (number->string (length sparks)) " clubbers")) "")
+                (if (> (length tnt) 0) (<div> class: "grid_2 info-header" (<div> class: "padding" (number->string (length tnt)) " clubbers")) "")
+                (if (> (length trek) 0) (<div> class: "grid_2 info-header" (<div> class: "padding" (number->string (length trek)) " clubbers")) "")
+                (if (> (length journey) 0) (<div> class: "grid_2 info-header" (<div> class: "padding" (number->string (length journey)) " clubbers")) "")
+                (<div> class: "clear clear-no-space")
                 (if (> (length puggles) 0) (<div> class: "grid_2 column-body"
                                                   (<div> class: "padding"
                                                          (clubbers->urls club puggles sort-by-first))) "")
@@ -875,6 +882,8 @@
                                                          (clubbers->urls club journey sort-by-first))) "")
                 (<div> class: "clear")
                 (if (> (length clubbers) 0) (<div> class: "grid_2 column-header" (<div> class: "padding" "All Clubs")) "")
+                (<div> class: "clear clear-no-space")
+                (if (> (length clubbers) 0) (<div> class: "grid_2 info-header" (<div> class: "padding" (number->string (length clubbers)) " clubbers")) "")
                 (<div> class: "clear clear-no-space")
                 (if (> (length clubbers) 0) (<div> class: "grid_2 column-body"
                                                    (<div> class: "padding"

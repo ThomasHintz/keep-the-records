@@ -16,3 +16,4 @@ query-log
 /last-backup
 /.emacs.desktop.lock
 /i-am-staging
+/logs/debug.log

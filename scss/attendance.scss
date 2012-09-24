@@ -1,0 +1,201 @@
+@import "_common.scss";
+
+.filter {
+    font-size: 20px;
+    border-top: 2px solid grey;
+    border-right: 2px solid grey;
+    border-left: 2px solid grey;
+    border-bottom: 0px solid white;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    width: 196px; }
+
+.clubbers {
+    font-size: 20px;
+    margin-top: 0px;
+    padding-top: 0px;
+    border: 2px solid grey;
+    background-color: white;
+    height: 400px;
+    width: 196px; }
+
+.clubber-data {
+    visibility: hidden; }
+
+.visible {
+    visibility: visible; }
+
+.hidden {
+    visibility: hidden; }
+
+.clubber-name {
+    font-family: "Josefin Sans Std Light", arial, sans;
+    font-size: 50px; }
+
+.attendance-container {
+    font-size: 9px;
+    font-family: "Verdana", arial, sans;
+    float: left;
+    display: inline;
+    width: 460px;
+    margin-top: 15px; }
+
+.attendance-button {
+    margin-right: 5px;
+    text-align: center;
+    width: 72px;
+    float: left; }
+
+.attendance-button input {
+    background-color: white;
+    height: 60px;
+    margin: 5px;
+    width: 60px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    border: 1px solid #ccc;
+    @include border-radius(8px, 8px);
+    @include box-shadow(grey 3px 3px p3x); }
+
+.attendance-button input:hover {
+    @include box-shadow(grey 0px 0px 10px);
+    cursor: pointer; }
+
+.selected {
+    font-weight: bold;
+    @include border-radius(6px, 6px);
+    background-color: #0c6; }
+
+.present {
+    background-image: url("/images/present.png"); }
+
+.bible {
+    background-image: url("/images/bible.png"); }
+
+.handbook {
+    background-image: url("/images/handbook.png"); }
+
+.uniform {
+    background-image: url("/images/uniform.png"); }
+
+.friend {
+    background-image: url("/images/friend.png"); }
+
+.extra {
+    background-image: url("/images/extra.png"); }
+
+.sunday-school {
+    background-image: url("/images/sunday-school.png"); }
+
+.dues {
+    background-image: url("/images/dues-attendance.png"); }
+
+.on-time {
+    background-image: url("/images/on-time.png"); }
+
+.cubbies {
+    background-color: #99CCFF; }
+
+.sparks {
+    background-color: red; }
+
+.tnt {
+    background-color: green; }
+
+.trek {
+    background-color: #00ff66; }
+
+.allergy-info {
+    padding: 10px;
+    font-family: "Verdana", sans;
+    color: white;
+    width: 405px;
+    border: 8px solid black;
+    float: left;
+    display: inline;
+    background-color: red;
+    margin-top: 20px;
+    margin-bottom: 30px; }
+
+.allergic-to-item {
+    font-size: 30px; }
+
+.attendees {
+    line-height: 24px;
+    font-size: 14px; }
+
+.attendees a {
+    color: black; }
+
+.gone {
+    display: none; }
+
+.points-container {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: inline;
+    float: left; }
+
+.points {
+    display: inline;
+    float: left;
+    height: 52px;
+    font-size: 24px; }
+
+.points-label {
+    margin-left: 5px;
+    display: inline;
+    float: left;
+    font-size: 12px; }
+
+.date-input {
+    text-align: center;
+    border: 1px solid grey;
+    margin-right: 3px;
+    margin-left: 3px;
+    width: 30px; }
+
+.date-label {
+    color: grey;
+    margin-right: 5px; }
+
+.preset-date {
+    color: black;
+    margin-right: 5px;
+    margin-left: 5px; }
+
+.change-date {
+    @include border-radius(4px, 4px);
+    @include box-shadow(black 1px 1px 1px);
+    border: 1px solid grey;
+    background-color: #eeeeee;
+    margin-left: 10px; }
+
+.change-date:hover {
+    @include box-shadow(black 0px 0px 1px);
+    cursor: pointer;
+    background-color: white; }
+
+.change-date:focus {
+    @include box-shadow(black 0px 0px 1px); }
+
+
+#clubber-names .ui-selecting {
+    background: #FECA40; }
+
+#clubber-names .ui-selected {
+    background: #F39814;
+    color: white; }
+
+#clubber-names {
+    overflow: auto;
+    list-style-type: none;
+    margin: 0;
+    padding: 0; }
+
+#clubber-names li {
+    margin: 3px;
+    padding: 6px; }
+
+#clubber-names li:hover {
+    cursor: pointer; }

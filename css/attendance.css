@@ -1,203 +1,360 @@
+/* line 3, ../scss/_common.scss */
+.button {
+  border: 1px solid grey;
+  margin-left: 20px;
+  width: 304px;
+  color: white;
+  line-height: 14px;
+  font-size: 14px;
+  height: 44px;
+  -webkit-font-smoothing: antialiased;
+  font-weight: bold;
+  font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+  cursor: pointer;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.53);
+  -webkit-border-radius: 4px 4px;
+  -moz-border-radius: 4px / 4px;
+  border-radius: 4px / 4px;
+}
+
+/* line 18, ../scss/_common.scss */
+.button-blue {
+  background: #77B7FF;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #77b7ff), color-stop(100%, #017aff));
+  background-image: -webkit-linear-gradient(#77b7ff, #017aff);
+  background-image: -moz-linear-gradient(#77b7ff, #017aff);
+  background-image: -o-linear-gradient(#77b7ff, #017aff);
+  background-image: linear-gradient(#77b7ff, #017aff);
+}
+/* line 21, ../scss/_common.scss */
+.button-blue:active {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #017aff), color-stop(100%, #77b7ff));
+  background-image: -webkit-linear-gradient(#017aff, #77b7ff);
+  background-image: -moz-linear-gradient(#017aff, #77b7ff);
+  background-image: -o-linear-gradient(#017aff, #77b7ff);
+  background-image: linear-gradient(#017aff, #77b7ff);
+}
+
+/* line 24, ../scss/_common.scss */
+.button-green {
+  background: #9FC164;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #9fc164), color-stop(100%, #146600));
+  background-image: -webkit-linear-gradient(#9fc164, #146600);
+  background-image: -moz-linear-gradient(#9fc164, #146600);
+  background-image: -o-linear-gradient(#9fc164, #146600);
+  background-image: linear-gradient(#9fc164, #146600);
+}
+/* line 27, ../scss/_common.scss */
+.button-green:active {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #146600), color-stop(100%, #9fc164));
+  background-image: -webkit-linear-gradient(#146600, #9fc164);
+  background-image: -moz-linear-gradient(#146600, #9fc164);
+  background-image: -o-linear-gradient(#146600, #9fc164);
+  background-image: linear-gradient(#146600, #9fc164);
+}
+
+/* line 30, ../scss/_common.scss */
+.column-header-grey {
+  background-color: grey;
+}
+
+/* line 3, ../scss/attendance.scss */
 .filter {
-    font-size: 20px;
-    border-top: 2px solid grey;
-    border-right: 2px solid grey;
-    border-left: 2px solid grey;
-    border-bottom: 0px solid white;
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-    width: 196px; }
+  font-size: 20px;
+  border-top: 2px solid grey;
+  border-right: 2px solid grey;
+  border-left: 2px solid grey;
+  border-bottom: 0px solid white;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  width: 196px;
+}
 
+/* line 13, ../scss/attendance.scss */
 .clubbers {
-    font-size: 20px;
-    margin-top: 0px;
-    padding-top: 0px;
-    border: 2px solid grey;
-    background-color: white;
-    height: 300px;
-    width: 196px; }
+  font-size: 20px;
+  margin-top: 0px;
+  padding-top: 0px;
+  border: 2px solid grey;
+  background-color: white;
+  height: 400px;
+  width: 196px;
+}
 
+/* line 22, ../scss/attendance.scss */
 .clubber-data {
-    visibility: hidden; }
+  visibility: hidden;
+}
 
+/* line 25, ../scss/attendance.scss */
 .visible {
-    visibility: visible; }
+  visibility: visible;
+}
 
+/* line 28, ../scss/attendance.scss */
 .hidden {
-    visibility: hidden; }
+  visibility: hidden;
+}
 
+/* line 31, ../scss/attendance.scss */
 .clubber-name {
-    font-family: "Josefin Sans Std Light", arial, sans;
-    font-size: 50px; }
+  font-family: "Josefin Sans Std Light", arial, sans;
+  font-size: 50px;
+}
 
+/* line 35, ../scss/attendance.scss */
 .attendance-container {
-    font-size: 9px;
-    font-family: "Verdana", arial, sans;
-    float: left;
-    display: inline;
-    width: 460px;
-    margin-top: 15px; }
+  font-size: 9px;
+  font-family: "Verdana", arial, sans;
+  float: left;
+  display: inline;
+  width: 460px;
+  margin-top: 15px;
+}
 
+/* line 43, ../scss/attendance.scss */
 .attendance-button {
-    margin-right: 5px;
-    text-align: center;
-    width: 62px;
-    float: left; }
+  margin-right: 5px;
+  text-align: center;
+  width: 72px;
+  float: left;
+}
 
+/* line 49, ../scss/attendance.scss */
 .attendance-button input {
-    background-color: white;
-    border: 2px solid white;
-    border-radius: 8px;
-    -moz-border-radius: 8px;
-    height: 52px;
-    margin: 5px;
-    width: 52px;
-    box-shadow: 3px 3px 3px grey;
-    -moz-box-shadow: 3px 3px 3px grey;
-    -webkit-box-shadow: 3px 3px 3px grey; }
+  background-color: white;
+  height: 60px;
+  margin: 5px;
+  width: 60px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 8px 8px;
+  -moz-border-radius: 8px / 8px;
+  border-radius: 8px / 8px;
+  -webkit-box-shadow: grey 3px 3px p3x;
+  -moz-box-shadow: grey 3px 3px p3x;
+  box-shadow: grey 3px 3px p3x;
+}
 
+/* line 60, ../scss/attendance.scss */
 .attendance-button input:hover {
-    box-shadow: 0px 0px 10px grey;
-    -moz-box-shadow: 0px 0px 10px grey;
-    -webkit-box-shadow: 0px 0px 10px grey;
-    cursor: pointer; }
+  -webkit-box-shadow: grey 0px 0px 10px;
+  -moz-box-shadow: grey 0px 0px 10px;
+  box-shadow: grey 0px 0px 10px;
+  cursor: pointer;
+}
 
+/* line 64, ../scss/attendance.scss */
 .selected {
-    font-weight: bold;
-    border-radius: 6px;
-    -moz-border-radius: 6px;
-    background-color: #0c6; }
+  font-weight: bold;
+  -webkit-border-radius: 6px 6px;
+  -moz-border-radius: 6px / 6px;
+  border-radius: 6px / 6px;
+  background-color: #0c6;
+}
 
+/* line 69, ../scss/attendance.scss */
 .present {
-    background-image: url("/images/present.png"); }
+  background-image: url("/images/present.png");
+}
 
+/* line 72, ../scss/attendance.scss */
 .bible {
-    background-image: url("/images/bible.png"); }
+  background-image: url("/images/bible.png");
+}
 
+/* line 75, ../scss/attendance.scss */
 .handbook {
-    background-image: url("/images/handbook.png"); }
+  background-image: url("/images/handbook.png");
+}
 
+/* line 78, ../scss/attendance.scss */
 .uniform {
-    background-image: url("/images/uniform.png"); }
+  background-image: url("/images/uniform.png");
+}
 
+/* line 81, ../scss/attendance.scss */
 .friend {
-    background-image: url("/images/friend.png"); }
+  background-image: url("/images/friend.png");
+}
 
+/* line 84, ../scss/attendance.scss */
 .extra {
-    background-image: url("/images/extra.png"); }
+  background-image: url("/images/extra.png");
+}
 
+/* line 87, ../scss/attendance.scss */
 .sunday-school {
-    background-image: url("/images/sunday-school.png"); }
+  background-image: url("/images/sunday-school.png");
+}
 
+/* line 90, ../scss/attendance.scss */
 .dues {
-    background-image: url("/images/dues-attendance.png"); }
+  background-image: url("/images/dues-attendance.png");
+}
 
+/* line 93, ../scss/attendance.scss */
 .on-time {
-    background-image: url("/images/on-time.png"); }
+  background-image: url("/images/on-time.png");
+}
 
+/* line 96, ../scss/attendance.scss */
 .cubbies {
-    background-color: #99CCFF; }
+  background-color: #99CCFF;
+}
 
+/* line 99, ../scss/attendance.scss */
 .sparks {
-    background-color: red; }
+  background-color: red;
+}
 
+/* line 102, ../scss/attendance.scss */
 .tnt {
-    background-color: green; }
+  background-color: green;
+}
 
+/* line 105, ../scss/attendance.scss */
 .trek {
-    background-color: #00ff66; }
+  background-color: #00ff66;
+}
 
+/* line 108, ../scss/attendance.scss */
 .allergy-info {
-    padding: 10px;
-    font-family: "Verdana", sans;
-    color: white;
-    width: 405px;
-    border: 8px solid black;
-    float: left;
-    display: inline;
-    background-color: red;
-    margin-top: 20px;
-    margin-bottom: 30px; }
+  padding: 10px;
+  font-family: "Verdana", sans;
+  color: white;
+  width: 405px;
+  border: 8px solid black;
+  float: left;
+  display: inline;
+  background-color: red;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
 
+/* line 120, ../scss/attendance.scss */
 .allergic-to-item {
-    font-size: 30px; }
+  font-size: 30px;
+}
 
+/* line 123, ../scss/attendance.scss */
 .attendees {
-    line-height: 24px;
-    font-size: 14px; }
+  line-height: 24px;
+  font-size: 14px;
+}
 
+/* line 127, ../scss/attendance.scss */
 .attendees a {
-    color: black; }
+  color: black;
+}
 
+/* line 130, ../scss/attendance.scss */
 .gone {
-    display: none; }
+  display: none;
+}
 
+/* line 133, ../scss/attendance.scss */
 .points-container {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    display: inline;
-    float: left; }
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: inline;
+  float: left;
+}
 
+/* line 139, ../scss/attendance.scss */
 .points {
-    display: inline;
-    float: left;
-    height: 52px;
-    font-size: 24px; }
+  display: inline;
+  float: left;
+  height: 52px;
+  font-size: 24px;
+}
 
+/* line 145, ../scss/attendance.scss */
 .points-label {
-    margin-left: 5px;
-    display: inline;
-    float: left;
-    font-size: 12px; }
+  margin-left: 5px;
+  display: inline;
+  float: left;
+  font-size: 12px;
+}
 
+/* line 151, ../scss/attendance.scss */
 .date-input {
-    text-align: center;
-    border: 1px solid grey;
-    margin-right: 3px;
-    margin-left: 3px;
-    width: 30px; }
+  text-align: center;
+  border: 1px solid grey;
+  margin-right: 3px;
+  margin-left: 3px;
+  width: 30px;
+}
 
+/* line 158, ../scss/attendance.scss */
 .date-label {
-    color: grey;
-    margin-right: 5px; }
+  color: grey;
+  margin-right: 5px;
+}
 
+/* line 162, ../scss/attendance.scss */
 .preset-date {
-    color: black;
-    margin-right: 5px;
-    margin-left: 5px; }
+  color: black;
+  margin-right: 5px;
+  margin-left: 5px;
+}
 
+/* line 167, ../scss/attendance.scss */
 .change-date {
-    border-radius: 4px;
-    -webkit-box-shadow: 1px 1px 1px black;
-    border: 1px solid grey;
-    background-color: #eeeeee;
-    margin-left: 10px; }
+  -webkit-border-radius: 4px 4px;
+  -moz-border-radius: 4px / 4px;
+  border-radius: 4px / 4px;
+  -webkit-box-shadow: black 1px 1px 1px;
+  -moz-box-shadow: black 1px 1px 1px;
+  box-shadow: black 1px 1px 1px;
+  border: 1px solid grey;
+  background-color: #eeeeee;
+  margin-left: 10px;
+}
 
+/* line 174, ../scss/attendance.scss */
 .change-date:hover {
-    -webkit-box-shadow: 0px 0px 1px black;
-    cursor: pointer;
-    background-color: white; }
+  -webkit-box-shadow: black 0px 0px 1px;
+  -moz-box-shadow: black 0px 0px 1px;
+  box-shadow: black 0px 0px 1px;
+  cursor: pointer;
+  background-color: white;
+}
 
+/* line 179, ../scss/attendance.scss */
 .change-date:focus {
-    -webkit-box-shadow: 0px 0px 1px black; }
+  -webkit-box-shadow: black 0px 0px 1px;
+  -moz-box-shadow: black 0px 0px 1px;
+  box-shadow: black 0px 0px 1px;
+}
 
-
+/* line 183, ../scss/attendance.scss */
 #clubber-names .ui-selecting {
-	background: #FECA40; }
+  background: #FECA40;
+}
 
+/* line 186, ../scss/attendance.scss */
 #clubber-names .ui-selected {
-	background: #F39814;
-	color: white; }
+  background: #F39814;
+  color: white;
+}
 
+/* line 190, ../scss/attendance.scss */
 #clubber-names {
-	overflow: auto;
-	list-style-type: none;
-	margin: 0;
-	padding: 0; }
+  overflow: auto;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
 
+/* line 196, ../scss/attendance.scss */
 #clubber-names li {
-	margin: 3px;
-	padding: 6px; }
+  margin: 3px;
+  padding: 6px;
+}
 
+/* line 200, ../scss/attendance.scss */
 #clubber-names li:hover {
-	cursor: pointer; }
+  cursor: pointer;
+}

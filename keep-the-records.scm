@@ -722,7 +722,7 @@
           (<div> class: "grid_3 column-header" (<div> class: "padding" "View Attendees"))
           (<div> class: "grid_3 column-body"
                  (<div> class: "padding"
-                        (<input> type: "text" class: "filter" id: "filter")
+                        (<input> type: "text" class: "jq_watermark filter" title: "search" id: "filter")
 			(<ul> id: "clubber-names" class: "clubbers"
 			      (fold (lambda (e o)
 				      (++ o (<li> class: "select-clubber-name" id: e (name club e))))
@@ -769,9 +769,10 @@
 						     (or ($ 'month) (todays-mm)) "/"
 						     (or ($ 'day) (todays-dd))))))))))
   headers: (++ (include-javascript "/js/attendance.js?ver=3")
+	       (include-javascript "/js/jquery.watermark.min.js")
 	       (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"))
   no-ajax: #f
-  css: '("/css/attendance.css?ver=6" "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/ui-lightness/jquery-ui.css")
+  css: '("/css/attendance.css?ver=7" "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/ui-lightness/jquery-ui.css")
   tab: 'clubbers
   title: "Attendance - Club Night -KtR")
 

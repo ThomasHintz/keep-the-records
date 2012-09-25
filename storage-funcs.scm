@@ -1,5 +1,5 @@
 ;;; utilities
-(use srfi-19 http-session spiffy-cookies http-session spiffy-cookies mda-client)
+(use srfi-19 mda-client)
 (include "macs.scm")
 
 (define (todays-date)

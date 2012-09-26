@@ -903,7 +903,7 @@
 	            (make-date 0 0 0 0 1 6 (date-year date))))
 
 (define (current-season? date)
-    (and (date>=? date (start-of-season (current-date)))
+    (and date (date>=? date (start-of-season (current-date)))
 	        (date<=? date (end-of-season (current-date)))))
 
 (define (get-clubber path)

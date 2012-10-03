@@ -1,5 +1,8 @@
 (use srfi-1)
 
+; fold and return as string
+; (fold* (lambda (id, group) (string-append (name group id) (<br>))) "" '(('group1 "123") ('group2 "456")))
+
 (define-syntax fold*
   (syntax-rules ()
     ((fold* proc s l)
@@ -9,6 +12,8 @@
                           (loop (cdr rl) (apply proc (append (car rl) (list o))))))))
        (loop l s)))))
 
+; same as fold*, but can handle multiple lists
+
 (define-syntax folds*
   (syntax-rules ()
     ((folds* proc l)
@@ -17,6 +22,7 @@
                           o
                           (string-append o (loop (cdr rl) (apply proc (car rl))))))))
        (loop l "")))))
+; not equal
 
 (define-syntax neq?
   (syntax-rules ()

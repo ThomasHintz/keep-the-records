@@ -1,0 +1,2 @@
+#!/usr/local/bin/csi
+(load "~/keep-the-records/services/log.scm")

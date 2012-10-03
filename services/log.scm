@@ -1,4 +1,4 @@
-(use zmq)
+(use zmq posix)
 
 (include "lookup-port.scm")
 
@@ -12,6 +12,6 @@
 
 (define (process)
   (let ((msg (receive-message* socket)))
-    (print msg))
+    (with-output-to-file "the-log" (lambda () (print "[" (seconds->string (- (current-seconds) (* 7 60 60))) "] " msg)) append:))
   (process))
 (process)

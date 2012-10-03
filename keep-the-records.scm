@@ -769,7 +769,7 @@
                             (attendees-html club (++ (or ($ 'year) (todays-yyyy)) "/"
 						     (or ($ 'month) (todays-mm)) "/"
 						     (or ($ 'day) (todays-dd))))))))))
-  headers: (++ (include-javascript "/js/attendance.js?ver=3")
+  headers: (++ (include-javascript "/js/attendance.js?ver=4")
 	       (include-javascript "/js/jquery.watermark.min.js")
 	       (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"))
   no-ajax: #f
@@ -1511,7 +1511,7 @@
 			       (<div> id: "sections-container")))))))
   css: '("/css/sections.css?ver=0")
   no-ajax: #f
-  headers: (include-javascript "/js/sections.js?ver=0")
+  headers: (include-javascript "/js/sections.js?ver=1")
   tab: 'clubbers)
 
 ;;; stats

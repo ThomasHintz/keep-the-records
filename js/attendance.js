@@ -14,7 +14,9 @@ $(document).ready(function() {
 				  ' the rest of the site functions correctly, please let me know at t@keeptherecords.com'); }
 		else {
 			alert('There has been an unexpected error. Please check your network connection and reload the page.' +
-				  ' If the error persists, please let me know at t@keeptherecords.com'); } } });
+				  ' If the error persists, please let me know at t@keeptherecords.com'); }
+        throw new Error("no server response");
+    } });
     
 	$('#clubber-names').selectable({ 'distance': 100000 });
 	$("#clubber-names li").click(function() {

@@ -89,7 +89,8 @@
          (when (and (not (or (string=? club "user") (string=? club "club") (string=? club "sign-up") (string=? club "process-sign-up")))
                     (not (or (string=? ($session 'club) club) (string=? ($session 'user) "t@thintz.com"))))
            (abort 'permission-denied))
-         (++ (if (and (session-valid? (read-cookie "awful-cookie")) ($session 'demo))
+         (++ (include-javascript "/js/errorception.js")
+             (if (and (session-valid? (read-cookie "awful-cookie")) ($session 'demo))
                  (<div> class: "demo container_12"
                         (<div> class: "demo-contents"
                                "This is a DEMO"

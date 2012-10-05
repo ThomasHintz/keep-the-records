@@ -1,4 +1,5 @@
 (use srfi-1 srfi-69)
+(load "sections")
 
 ; filters result of ad based on specifics given as strings
 ; ex: (ad-filter (ad "TnT" 'book) '("TnT" 'book)) equals (ad "TnT" 'book)

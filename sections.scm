@@ -1,3 +1,5 @@
+(load "utils")
+
 (define (e->s l)
   (map (cut number->string <>) l))
 

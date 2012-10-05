@@ -48,10 +48,39 @@
 		  (update-targets #f) (prelude #f))
   (ajax url selector action
 	(lambda ()
+           (with-output-to-file "first" (lambda () (print "good")))
 	  (when (not (or (equal? ($session 'club) ($ 'club ""))
 			 (string=? ($session 'user) "t@thintz.com")))
 		(abort 'permission-denied))
-	  (proc ($ 'club)))
+	  (handle-exceptions
+           exn
+           (let ((c (with-output-to-string (lambda () (print-call-chain)))))
+             (thread-start!
+              (make-thread
+               (lambda ()
+                 (send-mail subject: "KtR Error"
+                            text: (with-output-to-string
+                                    (lambda ()
+                                      (display c)
+                                      (print-error-message exn)
+                                      (newline)
+                                      (when uri-path (write (uri-path (request-uri (current-request)))))
+                                      (newline)
+                                      (if (session-valid? (read-cookie (session-cookie-name)))
+                                          (let ((user ($session 'user)))
+                                            (newline)
+                                            (display (++ "user: " (->string user)))
+                                            (newline)
+                                            (display (++ " user name: " (->string (user-name user))))
+                                            (newline)
+                                            (display (++ " user club: " (->string (user-club user)))))
+                                          (write ""))))
+                            from: "errors@keeptherecords.com"
+                            from-name: "Thomas Hintz"
+                            to: "errors@keeptherecords.com"
+                            reply-to: "errors@keeptherecords.com"))))
+             (abort exn))
+           (proc ($ 'club))))
 	success: success
 	arguments: (append arguments '((club . "club")))
 	live: live
@@ -59,7 +88,7 @@
 	update-targets: update-targets
 	prelude: prelude
 	target: target)
-      (++ "var club = '" club "';"))
+  (++ "var club = '" club "';"))
 
 (define (is-current? url path)
   (if (string-match (regexp (++ url ".*")) path)
@@ -599,6 +628,10 @@
       (grade club m-name ($ 'grade))
       (birthday club m-name ($ 'birthday))
       (club-level club m-name ($ 'club-level))
+      ; fix me
+      (book club m-name (car (ad (club-level club m-name) 'book)))
+      (last-section club m-name #f)
+      ; end fix me
       (allergies club m-name ($ 'allergies))
       (primary-parent club m-name ($ 'parent-name-1))
       (and (not edit) (date-registered club m-name (date->db (current-date))))
@@ -1383,6 +1416,15 @@
 (define (clubber-books-ajax club)
   (ktr-ajax club "clubber-books" 'clubbers '(change keypress)
 	    (lambda (club)
+              ;;; FIX ME need to map/reduce db for consistency
+              ; this resets inconsistent book/club combos to default
+              ; club book
+              (when (null-list? (let ((book (book club ($ 'clubber))))
+                            (filter (lambda (e) (string=? e book))
+                                    (ad (club-level club ($ 'clubber)) 'book))))
+                    (book club ($ 'clubber) (car (ad (club-level club ($ 'clubber)) 'book)))
+                    (last-section club ($ 'clubber) #f))
+              (book club ($ 'clubber))
 	      (combo-box "change-book" (ad (club-level club ($ 'clubber)) 'book)
 			 selectedindex: (book-index club ($ 'clubber)) class: "change-book"
 			 default: (book club ($ 'clubber))))
@@ -1463,12 +1505,16 @@
 (define (combo-clubbers-ajax club)
   (ktr-ajax club "combo-clubbers" ".club-filter" 'change
   	    (lambda (club)
+              (handle-exceptions
+               exn
+               (print "error")
+               (print "hi")
   	      (let ((c-out (remove (lambda (e)
   				     (not (any (lambda (e2) (string=? (club-level club e) e2)) (string-split ($ 'clubs) ","))))
   				   (db:list "clubs" club "clubbers"))))
   		(combo-box "clubbers"
   			   (zip c-out (clubbers->names club c-out))
-  			   class: "clubbers" multiple: #t)))
+  			   class: "clubbers" multiple: #t))))
   	    success: "$('#clubbers-c').html(response); MyUtil.selectFilterData = new Object();"
   	    live: #t
   	    arguments: '((clubs . "(function () { var chked = ''; $('.club-filter:checked').each(function(i,v) { chked += ',' + v.id; }); return chked; })()"))))

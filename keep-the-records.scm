@@ -1420,7 +1420,7 @@
               ; this resets inconsistent book/club combos to default
               ; club book
               (when (null-list? (let ((book (book club ($ 'clubber))))
-                            (filter (lambda (e) (string=? e book))
+                            (filter (lambda (e) (equal? e book))
                                     (ad (club-level club ($ 'clubber)) 'book))))
                     (book club ($ 'clubber) (car (ad (club-level club ($ 'clubber)) 'book)))
                     (last-section club ($ 'clubber) #f))

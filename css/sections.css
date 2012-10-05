@@ -1,55 +1,71 @@
+/* line 1, ../scss/sections.scss */
 .filter {
-    font-size: 20px;
-    border-top: 2px solid grey;
-    border-right: 2px solid grey;
-    border-left: 2px solid grey;
-    border-bottom: 0px solid white;
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-    width: 196px; }
+  font-size: 20px;
+  border-top: 2px solid grey;
+  border-right: 2px solid grey;
+  border-left: 2px solid grey;
+  border-bottom: 0px solid white;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  width: 196px;
+}
 
+/* line 11, ../scss/sections.scss */
 .clubbers {
-    font-size: 20px;
-    margin-top: 0px;
-    padding-top: 0px;
-    border-bottom: 2px solid grey;
-    border-right: 2px solid grey;
-    border-left: 2px solid grey;
-    background-color: white;
-    height: 300px;
-    width: 200px; }
+  font-size: 20px;
+  margin-top: 0px;
+  padding-top: 0px;
+  border-bottom: 2px solid grey;
+  border-right: 2px solid grey;
+  border-left: 2px solid grey;
+  background-color: white;
+  height: 300px;
+  width: 200px;
+}
 
+/* line 22, ../scss/sections.scss */
 .change-book {
-    border: 0px solid grey;
-    color: white;
-    background-color: grey;
-    font-family: "Verdana", arial, sans;
-    font-size: 20px; }
+  border: 0px solid grey;
+  color: white;
+  background-color: grey;
+  font-family: "Verdana", arial, sans;
+  font-size: 20px;
+}
 
+/* line 29, ../scss/sections.scss */
 .easy-mark {
-    margin-bottom: 10px;
-    font-size: 18px; }
+  margin-bottom: 10px;
+  font-size: 18px;
+}
 
+/* line 33, ../scss/sections.scss */
 .easy-mark-button {
-    width: 320px;
-    font-size: 20px; }
+  width: 320px;
+  font-size: 20px;
+}
 
+/* line 37, ../scss/sections.scss */
 .section-focus-c {
-    font-family: "Verdana", sans-serif;
-    line-height: 34px;
-    border-radius: 8px;
-    padding: 10px; }
+  font-family: "Verdana", sans-serif;
+  line-height: 34px;
+  border-radius: 8px;
+  padding: 10px;
+}
 
+/* line 43, ../scss/sections.scss */
 .mark-section {
-    width: 70px;
-    border: 1px solid black;
-    border-radius: 4px;
-    background-color: #ffecd9; }
+  width: 70px;
+  border: 1px solid black;
+  border-radius: 4px;
+  background-color: #ffecd9;
+}
 
+/* line 49, ../scss/sections.scss */
 .mark-section:hover {
-    background-color: #736b62;
-    color: white;
-    cursor: pointer; }
+  cursor: pointer;
+}
 
+/* line 52, ../scss/sections.scss */
 .done {
-    background-color: #736b62; }
+  background-color: #736b62;
+}

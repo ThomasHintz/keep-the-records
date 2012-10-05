@@ -1,0 +1,53 @@
+.filter {
+    font-size: 20px;
+    border-top: 2px solid grey;
+    border-right: 2px solid grey;
+    border-left: 2px solid grey;
+    border-bottom: 0px solid white;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    width: 196px; }
+
+.clubbers {
+    font-size: 20px;
+    margin-top: 0px;
+    padding-top: 0px;
+    border-bottom: 2px solid grey;
+    border-right: 2px solid grey;
+    border-left: 2px solid grey;
+    background-color: white;
+    height: 300px;
+    width: 200px; }
+
+.change-book {
+    border: 0px solid grey;
+    color: white;
+    background-color: grey;
+    font-family: "Verdana", arial, sans;
+    font-size: 20px; }
+
+.easy-mark {
+    margin-bottom: 10px;
+    font-size: 18px; }
+
+.easy-mark-button {
+    width: 320px;
+    font-size: 20px; }
+
+.section-focus-c {
+    font-family: "Verdana", sans-serif;
+    line-height: 34px;
+    border-radius: 8px;
+    padding: 10px; }
+
+.mark-section {
+    width: 70px;
+    border: 1px solid black;
+    border-radius: 4px;
+    background-color: #ffecd9; }
+
+.mark-section:hover {
+    cursor: pointer; }
+
+.done {
+    background-color: #736b62; }

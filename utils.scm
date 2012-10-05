@@ -39,3 +39,6 @@
           (string-append o (db:sep) e))
         ""
         list))
+
+(define (html-escape s)
+  (string-fold (lambda (c o) (string-append o (if (char=? #\' c) "&apos;" (->string c)))) "" s))

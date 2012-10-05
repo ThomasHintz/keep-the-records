@@ -639,7 +639,7 @@
         (number->string (fold (lambda (m c) (+ c 1)) 0 present-clubbers))
         (<br>) (<br>)
         (fold (lambda (m-name o)
-                (++ o (<a> href: (++ "/" club "/clubbers/info/" m-name) (name club m-name)) (<br>)))
+                (++ o (<a> href: (++ "/" club "/clubbers/info/" (html-escape m-name)) (html-escape (name club m-name))) (<br>)))
               ""
               present-clubbers))))
 
@@ -726,7 +726,7 @@
                         (<input> type: "text" class: "jq_watermark filter" title: "search" id: "filter")
 			(<ul> id: "clubber-names" class: "clubbers"
 			      (fold (lambda (e o)
-				      (++ o (<li> class: "select-clubber-name" id: e (name club e))))
+				      (++ o (<li> class: "select-clubber-name" id: (html-escape e) (html-escape (name club e)))))
 				    ""
 				    (name-sort club (db:list "clubs" club "clubbers") "last")))))
           (<div> class: "grid_6 column-body"
@@ -1498,7 +1498,7 @@
 								      '("Cubbies" "Sparks" "TnT"))))
 							      (db:list "clubs" club "clubbers")) "last")))
 			       (combo-box "clubbers"
-					  (zip c-out (clubbers->names club c-out))
+					  (zip (map (lambda (id) (html-escape id)) c-out) (clubbers->names club c-out))
 					  class: "clubbers" multiple: #t)))))
           (<div> class: "grid_9" id: "info-container"
                  (<div> class: "padding column-header" id: "clubber-name" "Clubber Name")

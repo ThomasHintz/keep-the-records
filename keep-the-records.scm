@@ -340,7 +340,7 @@
       (sid new-sid)
       (set-cookie! (session-cookie-name) new-sid)
       ($session-set! 'demo #t)
-      (let ((u-name (as-db-unique (lambda (u-n) (user-email u-n)) "demo" 1000)))
+      (let ((u-name (number->string (random 1000000000))))
         (setup-demo u-name)
         (html-page
          ""

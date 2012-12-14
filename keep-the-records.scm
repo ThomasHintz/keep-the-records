@@ -2,7 +2,9 @@
 
 (use numbers) ;; !IMPORTANT! needs to come before other eggs, may segfault otherwise (020111)
 (use mda-client awful message-digest-port sha2 posix http-session
-     spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt uri-common spiffy intarweb)
+     spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt uri-common spiffy intarweb
+
+     ktr-utils)
 
 (include "macs.scm")
 (load "utils")
@@ -404,6 +406,15 @@
 	 ""
 	 clubbers)))
 
+(define (birthdays-within club clubbers d1 d2)
+    (filter (lambda (c)
+              (let* ((c-b (birthday club c))
+                     (c-bd (and c-b (db->date c-b)))
+                     (c-bd-c (and c-b c-bd (date-as-year (clear-date-time c-bd)
+                                                         (string->number (todays-yyyy))))))
+                (and c-bd-c (date>=? c-bd-c d1) (date<=? c-bd-c d2))))
+            clubbers))
+
 (define (get-birthdays-ajax club)
   (ktr-ajax club "get-birthdays" ".dt" 'change
             (lambda (club)
@@ -418,8 +429,8 @@
 (define-awana-app-page (regexp "/[^/]*/clubbers/dashboard")
   (lambda (path)
     (let ((club (get-club path))
-          (date-start (week-start (current-date-0000)))
-          (date-end (week-end (current-date-0000))))
+          (date-start (week-start (clear-date-time (current-date))))
+          (date-end (week-end (clear-date-time (current-date)))))
       (add-javascript "$('#from-date').datepicker(); $('#to-date').datepicker();")
       (add-javascript (get-birthdays-ajax club))
       (++ (<div> class: "grid_12"
@@ -675,11 +686,6 @@
                 (++ o (<a> href: (++ "/" club "/clubbers/info/" (html-escape m-name)) (html-escape (name club m-name))) (<br>)))
               ""
               present-clubbers))))
-
-(define (todays-mm) (date->string (current-date) "~m"))
-(define (todays-dd) (date->string (current-date) "~d"))
-(define (todays-yy) (date->string (current-date) "~y"))
-(define (todays-yyyy) (date->string (current-date) "~Y"))
 
 ;;; attendance
 
@@ -1209,32 +1215,6 @@
   tab: 'clubbers
   css: '("/css/clubbers-index.css?ver=2" "/css/clubbers-dues.css?ver=0")
   title: "Dues - Club Night - KtR")
-
-(define (date->date-year d yyyy)
-  (if d (make-date 0 0 0 0 (date-day d) (date-month d) yyyy) #f))
-
-(define (in-week? d1 d2)
-  ; is d2 within the same week as d1
-  (let ((week-start (date-subtract-duration d1 (make-duration days: (date-week-day d1))))
-        (week-end (date-add-duration d1 (make-duration days: (- 6 (date-week-day d1))))))
-    (and (date>=? d2 week-start) (date<=? d2 week-end))))
-
-(define (birthdays-within club clubbers d1 d2)
-    (filter (lambda (c)
-              (let* ((c-b (birthday club c))
-                     (c-bd (and c-b (db->date c-b)))
-                     (c-bd-c (and c-b (date->date-year c-bd (string->number (todays-yyyy))))))
-                (and c-bd-c (date>=? c-bd-c d1) (date<=? c-bd-c d2))))
-            clubbers))
-
-(define (week-start d)
-  (date-subtract-duration d (make-duration days: (date-week-day d))))
-
-(define (week-end d)
-  (date-add-duration d (make-duration days: (- 6 (date-week-day d)))))
-
-(define (current-date-0000)
-  (make-date 0 0 0 0 (string->number (todays-dd)) (string->number (todays-mm)) (string->number (todays-yyyy))))
 
 (define-awana-app-page (regexp "/[^/]*/clubbers/points")
   (lambda (path)

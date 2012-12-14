@@ -17,3 +17,5 @@ query-log
 /.emacs.desktop.lock
 /i-am-staging
 /logs/debug.log
+/src/utils/ktr-utils.import.scm
+/src/utils/ktr-utils.o

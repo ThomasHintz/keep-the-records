@@ -2,9 +2,7 @@
 
 (use numbers) ;; !IMPORTANT! needs to come before other eggs, may segfault otherwise (020111)
 (use mda-client awful message-digest-port sha2 posix http-session
-     spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt uri-common spiffy intarweb
-
-     ktr-utils)
+     spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt uri-common spiffy intarweb)
 
 (include "macs.scm")
 (load "utils")
@@ -16,6 +14,7 @@
 (load "sections")
 (load "rest")
 (load "sessions")
+(load "src/utils/ktr-utils")
 
 (define is-production? (make-parameter (file-exists? "~/keep-the-records/i-am-production")))
 

@@ -19,3 +19,4 @@ query-log
 /logs/debug.log
 /src/utils/ktr-utils.import.scm
 /src/utils/ktr-utils.o
+/ktr-utils.import.scm

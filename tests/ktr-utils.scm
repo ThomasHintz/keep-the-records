@@ -45,7 +45,30 @@
             ; across month boundary
             (test "12/01/12" (date->string (week-end (make-date 0 0 0 0 25 11 2012)) "~D"))
             ; across year boundary
-            (test "01/05/13" (date->string (week-end (make-date 0 0 0 0 30 12 2012)) "~D"))
-            )
+            (test "01/05/13" (date->string (week-end (make-date 0 0 0 0 30 12 2012)) "~D")))
+
+(test-group "date-year+"
+            (test "01/01/13" (date->string (date-year+ (make-date 0 0 0 0 1 1 2012) 1) "~D")))
+
+(test-group "date-between?"
+            (test #t (day/month-between? (make-date 0 0 0 0 10 1 2012)    ; 01/10/2012
+                                    (make-date 0 0 0 0 05 1 2012)         ; 01/05/2012
+                                    (make-date 0 0 0 0 12 1 2012)))       ; 01/12/2012
+
+            (test #t (day/month-between? (make-date 0 0 0 0 10 1 2012)    ; 01/10/2012
+                                    (make-date 0 0 0 0 05 1 2012)         ; 01/05 2012
+                                    (make-date 0 0 0 0 12 2 2012)))       ; 01/12/2012
+
+            (test #t (day/month-between? (make-date 0 0 0 0 10 1 2012)    ; 01/10/2012
+                                    (make-date 0 0 0 0 05 1 2011)         ; 01/05/2011
+                                    (make-date 0 0 0 0 12 2 2013)))       ; 02/12/2013
+
+            (test #f (day/month-between? (make-date 0 0 0 0 10 1 2012)    ; 01/10/2012
+                                    (make-date 0 0 0 0 15 1 2012)         ; 01/15/2012
+                                    (make-date 0 0 0 0 12 2 2012)))       ; 02/12/2012
+
+            (test #f (day/month-between? (make-date 0 0 0 0 10 10 2012)   ; 10/10/2012
+                                    (make-date 0 0 0 0 15 1 2012)         ; 01/15/2012
+                                    (make-date 0 0 0 0 12 2 2012))))      ; 02/12/2012
 
 (test-end "all")

@@ -407,13 +407,20 @@
 	 clubbers)))
 
 (define (birthdays-within club clubbers d1 d2)
-    (filter (lambda (c)
-              (let* ((c-b (birthday club c))
-                     (c-bd (and c-b (db->date c-b)))
-                     (c-bd-c (and c-b c-bd (date-as-year (clear-date-time c-bd)
-                                                         (string->number (todays-yyyy))))))
-                (and c-bd-c (date>=? c-bd-c d1) (date<=? c-bd-c d2))))
-            clubbers))
+  (filter (lambda (c)
+            (day/month-between? (clear-date-time (date-as-year (db->date (birthday club c))
+                                                               (string->number (todays-yyyy))))
+                                d1
+                                d2))
+          (filter (lambda (c) (birthday club c)) clubbers)))
+
+    ;; (filter (lambda (c)
+    ;;           (let* ((c-b (birthday club c))
+    ;;                  (c-bd (and c-b (db->date c-b)))
+    ;;                  (c-bd-c (and c-b c-bd (date-as-year (clear-date-time c-bd)
+    ;;                                                      (string->number (todays-yyyy))))))
+    ;;             (and c-bd-c (date>=? c-bd-c d1) (date<=? c-bd-c d2))))
+    ;;         clubbers))
 
 (define (get-birthdays-ajax club)
   (ktr-ajax club "get-birthdays" ".dt" 'change

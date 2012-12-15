@@ -4,7 +4,7 @@
 
    ;; procs
    week-start week-end todays-mm todays-dd todays-yy todays-yyyy clear-date-time
-   date-as-year in-week?
+   date-as-year in-week? day/month-between? date-year+ date-year-
    )
 
 (import scheme chicken)
@@ -34,6 +34,17 @@
 
 (define (week-end d)
   (date-add-duration d (make-duration days: (- 6 (date-week-day d)))))
+
+(define (date-year+ d num)
+  (make-date (date-nanosecond d) (date-second d) (date-minute d) (date-hour d)
+             (date-day d) (date-month d) (+ (date-year d) num)))
+
+(define (date-year- d num) (date-year+ d (- num)))
+
+(define (day/month-between? d from to)
+  ; checks if a date is in between two dates without regard for the year
+  (let ((d2 (if (date<=? d from) (date-year+ d 1) d)))
+    (date>=? d2 from) (date<=? d2 to)))
 
 
 )

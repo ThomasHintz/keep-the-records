@@ -1,4 +1,0 @@
-#!/bin/bash
-
-rsync -aur -t -e ssh . webaccess@thintz.com:/keep-the-records
-#rsync -aur -t -e ssh . webaccess@staging.keeptherecords.com:/keep-the-records

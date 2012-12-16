@@ -14,7 +14,7 @@
 (load "sections")
 (load "rest")
 (load "sessions")
-(load "utils/ktr-utils")
+(load "src/utils/ktr-utils")
 
 (import ktr-utils)
 

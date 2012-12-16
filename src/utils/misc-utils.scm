@@ -23,11 +23,12 @@
 (define (range from/to . to)
   (let ((f (if (= (length to) 0) -1 (- from/to 1)))
         (t (if (> (length to) 0) (first to) from/to)))
+    (when (< t f) (error "to must be greater than from"))
     (do ((i (- t 1) (- i 1))
          (l '() (cons i l)))
         ((= i f) l))))
 
-(define (empty? l) (eq? l '()))
+(define empty? null?)
 
 (define (dash->space s)
   (string-fold (lambda (c o) (string-append o (if (char=? #\- c) " " (->string c)))) "" s))

@@ -1,4 +1,5 @@
-(load "utils")
+(load "src/utils/misc-utils")
+(import misc-utils)
 
 (define (e->s l)
   (map (cut number->string <>) l))

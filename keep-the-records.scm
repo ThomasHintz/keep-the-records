@@ -5,7 +5,7 @@
      spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt uri-common spiffy intarweb)
 
 (include "macs.scm")
-(load "utils")
+(load "src/utils/misc-utils") (import misc-utils)
 (load "storage-funcs")
 (load "demo-data")
 (load "handlers")
@@ -14,9 +14,7 @@
 (load "sections")
 (load "rest")
 (load "sessions")
-(load "src/utils/ktr-utils")
-
-(import ktr-utils)
+(load "src/utils/date-time-utils") (import date-time-utils)
 
 (define is-production? (make-parameter (file-exists? "~/keep-the-records/i-am-production")))
 

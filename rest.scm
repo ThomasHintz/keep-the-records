@@ -1,5 +1,6 @@
 (use http-client uri-common intarweb json srfi-1 srfi-18)
-(load "utils")
+(load "src/utils/misc-utils")
+(import misc-utils)
 
 (define *api-user* (insert-file "config/send-grid-user"))
 (define *api-key* (insert-file "config/send-grid-key"))

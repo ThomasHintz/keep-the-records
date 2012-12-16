@@ -1,9 +1,0 @@
-(
-(license "BSD")
-
-(category utils)
-
-(needs srfi-19)
-
-(author "Thomas Hintz")
-(synopsis "ktr-utils."))

@@ -5,21 +5,23 @@
 (define-system ktr
   (file "macs")
   (file "payments")
-  (compiled-scheme-file "ktr-utils" options: cflags path: "src/utils/ktr-utils.scm")
-  (compiled-scheme-file "utils" options: cflags)
+  (compiled-scheme-file "date-time-utils" options: cflags
+                        path: "src/utils/time-date-utils.scm")
+  (compiled-scheme-file "misc-utils" options: cflags
+                        path: "src/utils/misc-utils.scm")
   (compiled-scheme-file "production" options: cflags)
   (compiled-scheme-file "macs" options: cflags)
   (compiled-scheme-file "storage-funcs" includes: '("macs") options: cflags)
   (compiled-scheme-file "pdf" options: cflags)
   (compiled-scheme-file "handlers" options: cflags)
-  (compiled-scheme-file "rest" depends: '("utils") options: cflags)
+  (compiled-scheme-file "rest" depends: '("misc-utils") options: cflags)
   (compiled-scheme-file "demo-data" options: cflags)
-  (compiled-scheme-file "sections" depends: '("utils") options: cflags)
+  (compiled-scheme-file "sections" depends: '("misc-utils") options: cflags)
   (compiled-scheme-file "awana-data-dsl" depends: '("sections") options: cflags)
   (compiled-scheme-file "sessions" options: cflags)
   (compiled-scheme-file "keep-the-records"
                         options: cflags
                         includes: '("macs" "payments")
-                        depends: '("utils" "storage-funcs" "demo-data" "handlers"
-                                   "ktr-utils"
+                        depends: '("misc-utils" "storage-funcs" "demo-data" "handlers"
+                                   "time-date-utils"
                                    "pdf" "awana-data-dsl" "sections" "rest" "sessions")))

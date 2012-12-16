@@ -1,4 +1,11 @@
-(use srfi-1)
+(module misc-utils
+  (
+   insert-file fold-sep string-fold-sep range empty? dash->space space->dash
+   id->name name->id list->path html-escape
+   )
+
+(import scheme chicken extras data-structures)
+(use srfi-1 srfi-13)
 
 (define (insert-file path)
   (with-input-from-file path (lambda () (read-string))))
@@ -34,11 +41,13 @@
 (define (name->id name)
   (string-downcase (space->dash name)))
 
-(define (list->path list)
+(define (list->path list separator)
   (fold (lambda (e o)
-          (string-append o (db:sep) e))
+          (string-append o separator e))
         ""
         list))
 
 (define (html-escape s)
   (string-fold (lambda (c o) (string-append o (if (char=? #\' c) "&apos;" (->string c)))) "" s))
+
+)

@@ -1,9 +1,8 @@
-(use test)
+(use srfi-19)
 
-(load "../src/utils/ktr-utils.scm")
-(use ktr-utils srfi-19)
+(import date-time-utils)
 
-(test-begin "all")
+(test-begin "date-time-utils")
 
 (test-group "clear-date-times"
             (test "12.20.3000:00:00:00"
@@ -71,4 +70,4 @@
                                     (make-date 0 0 0 0 15 1 2012)         ; 01/15/2012
                                     (make-date 0 0 0 0 12 2 2012))))      ; 02/12/2012
 
-(test-end "all")
+(test-end "date-time-utils")

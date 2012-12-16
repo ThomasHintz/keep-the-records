@@ -16,6 +16,8 @@
 (load "sessions")
 (load "src/utils/ktr-utils")
 
+(import ktr-utils)
+
 (define is-production? (make-parameter (file-exists? "~/keep-the-records/i-am-production")))
 
 ;;; production

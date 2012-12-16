@@ -10,4 +10,4 @@
        (range from/to)
        (range from/to (car to)))))
 
-(define section-data (make-parameter (with-input-from-file "section.data.scm" (lambda () (eval (read))))))
+(define section-data (make-parameter (include "section.data.scm")))

@@ -6,7 +6,7 @@
   (file "macs")
   (file "payments")
   (compiled-scheme-file "date-time-utils" options: cflags
-                        path: "src/utils/time-date-utils.scm")
+                        path: "src/utils/date-time-utils.scm")
   (compiled-scheme-file "misc-utils" options: cflags
                         path: "src/utils/misc-utils.scm")
   (compiled-scheme-file "production" options: cflags)
@@ -23,5 +23,5 @@
                         options: cflags
                         includes: '("macs" "payments")
                         depends: '("misc-utils" "storage-funcs" "demo-data" "handlers"
-                                   "time-date-utils"
+                                   "date-time-utils"
                                    "pdf" "awana-data-dsl" "sections" "rest" "sessions")))

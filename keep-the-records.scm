@@ -1110,13 +1110,13 @@
                                (<td> class: "col-head" "Sent Thank You?")
                                (<td> class: "col-head" "Address"))
                          (fold (lambda (c o)
-                                 (ajax (++ "update-thank-you-" club c)
-                                       (string->symbol (++ "thank-you" c))
+                                 (ajax (++ "update-thank-you-" club (js-filter c))
+                                       (string->symbol (++ "thank-you" (js-filter c)))
                                        'click
                                        (lambda ()
                                          (thank-you club c (date->db (current-date)))
                                          (date->db (current-date)))
-                                       target: (++ "thank-you" c)
+                                       target: (++ "thank-you" (js-filter c))
                                        method: 'PUT)
                                  (++ o
                                      (<tr> (<td> (<a> href: (++ "/" club "/clubbers/info/" c)
@@ -1126,7 +1126,7 @@
                                            (<td> (let ((t (thank-you club c)))
                                                    (if t
                                                        (<div> class: "yes" t)
-                                                       (<div> class: "no" id: (++ "thank-you" c) "No"))))
+                                                       (<div> class: "no" id: (++ "thank-you" (js-filter c)) "No"))))
                                            (<td> (parent-address club (primary-parent club c))))))
                                ""
                                (sort (db:list "clubs" club "clubbers") (make-registration-sort club)))))))))
@@ -1165,13 +1165,13 @@
                            (<tr> (<td> class: "col-head" "Clubber")
                                  (<td> class: "col-head" "Sent Miss You Card?"))
                            (fold (lambda (e o)
-                                   (ajax (++ "update-miss-you-" club e)
-                                         (string->symbol (++ "miss-you" e))
+                                   (ajax (++ "update-miss-you-" club (js-filter e))
+                                         (string->symbol (++ "miss-you" (js-filter e)))
                                          'click
                                          (lambda ()
                                            (miss-you club e (date->db (current-date)))
                                            (date->db (current-date)))
-                                         target: (++ "miss-you" e)
+                                         target: (++ "miss-you" (js-filter e))
                                          method: 'PUT)
                                    (++ o
                                        (if (missed-clubs? club e c-meetings)
@@ -1180,7 +1180,7 @@
                                                  (<td> (let ((t (miss-you club e)))
                                                          (if t
                                                              (<div> class: "yes" t)
-                                                             (<div> class: "no" id: (++ "miss-you" e) "No")))))
+                                                             (<div> class: "no" id: (++ "miss-you" (js-filter e)) "No")))))
                                            "")))
                                  ""
                                  (db:list "clubs" club "clubbers")))))))))
@@ -1200,20 +1200,20 @@
                          (<tr> (<td> class: "col-head" "Clubber")
                                (<td> class: "col-head" "Receipt Number"))
                          (fold (lambda (e o)
-                                 (ajax (++ "dues-receipt-" club e)
-                                       (string->symbol (++ "dues-receipt" e))
+                                 (ajax (++ "dues-receipt-" club (js-filter e))
+                                       (string->symbol (++ "dues-receipt" (js-filter e)))
                                        'change
                                        (lambda ()
                                          (dues-receipt club e ($ 'dues-receipt)))
-                                       arguments: `((dues-receipt . ,(++ "$('#dues-receipt" e "').val()")))
+                                       arguments: `((dues-receipt . ,(++ "$('#dues-receipt" (js-filter e) "').val()")))
                                        method: 'PUT)
                                  (++ o
                                      (<tr> (<td> (<a> href: (++ "/" club "/clubbers/info/" e)
                                                       class: "clubber-url" (name club e)))
                                            (<td> (let ((t (dues-receipt club e)))
                                                    (if t
-                                                       (<input> class: "yes" id: (++ "dues-receipt" e) value: t)
-                                                       (<input> class: "no" id: (++ "dues-receipt" e))))))
+                                                       (<input> class: "yes" id: (++ "dues-receipt" (js-filter e)) value: t)
+                                                       (<input> class: "no" id: (++ "dues-receipt" (js-filter e)))))))
                                      ""))
                                ""
                                (name-sort club (db:list "clubs" club "clubbers") "last"))))))))

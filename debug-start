@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source /etc/profile
+cd $(dirname $0)
+
+ktr-awful --port=12000 --development-mode ~/keep-the-records/keep-the-records

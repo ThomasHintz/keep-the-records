@@ -411,7 +411,7 @@
                                                                (string->number (todays-yyyy))))
                                 d1
                                 d2))
-          (filter (lambda (c) (birthday club c)) clubbers)))
+          (filter (lambda (c) (db->date (birthday club c))) clubbers)))
 
     ;; (filter (lambda (c)
     ;;           (let* ((c-b (birthday club c))

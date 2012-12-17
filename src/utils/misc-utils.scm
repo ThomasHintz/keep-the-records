@@ -1,7 +1,7 @@
 (module misc-utils
   (
    insert-file fold-sep string-fold-sep range empty? dash->space space->dash
-   id->name name->id list->path html-escape
+   id->name name->id list->path html-escape js-filter
    )
 
 (import scheme chicken extras data-structures)
@@ -47,6 +47,9 @@
           (string-append o separator e))
         ""
         list))
+
+(define (js-filter s)
+  (string-fold (lambda (c o) (string-append o (if (char=? #\' c) "" (->string c)))) "" s))
 
 (define (html-escape s)
   (string-fold (lambda (c o) (string-append o (if (char=? #\' c) "&apos;" (->string c)))) "" s))

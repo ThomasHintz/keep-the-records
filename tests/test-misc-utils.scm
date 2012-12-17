@@ -42,4 +42,8 @@
  "html-escape"
  (test "eat&apos;stuff&apos; food" (html-escape "eat'stuff' food")))
 
+(test-group
+ "js-filter"
+ (test "eatstuff food" (js-filter "eat'stuff' food")))
+
 (test-end "misc-utils")

@@ -1,4 +1,6 @@
 (use awful mda-client)
+(load "src/utils/misc-utils")
+(import misc-utils)
 
 (define (setup-demo u-name)
   ($session-set! 'user u-name)

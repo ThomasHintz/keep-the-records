@@ -765,7 +765,7 @@
           (<div> class: "grid_3 column-header" (<div> class: "padding" "Find Clubbers"))
           (<div> class: "grid_6 column-header" id: "clubber-name-container"
                  (<div> id: "clubber-name" class: "padding" "Mark Attendance"))
-          (<div> class: "grid_3 column-header" (<div> class: "padding" "View Attendees"))
+          (<div> class: "grid_3 column-header" (<div> class: "padding" "Attendees"))
           (<div> class: "grid_3 column-body"
                  (<div> class: "padding"
                         (<input> type: "text" class: "jq_watermark filter" title: "search" id: "filter")

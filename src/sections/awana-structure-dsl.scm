@@ -1,5 +1,9 @@
+(module awana-structure-dsl
+  (
+   awana-structure-lookup
+  )
+(import chicken scheme)
 (use srfi-1 srfi-69)
-(load "sections")
 
 ; filters result of ad based on specifics given as strings
 ; ex: (ad-filter (ad "TnT" 'book) '("TnT" 'book)) equals (ad "TnT" 'book)
@@ -12,7 +16,7 @@
 
 (define *mem-ht* (make-hash-table))
 
-(define (ad . rest)
+(define (awana-structure-lookup section-data . rest)
   (if (hash-table-ref/default *mem-ht* rest #f)
       (hash-table-ref *mem-ht* rest)
       (let ((r (letrec ((ad-internal
@@ -27,6 +31,7 @@
 				      `(,(first l)
 					,(ad-internal l (cdr params))))
 				    (second ol))))))
-		 (ad-filter (ad-internal (section-data) rest) rest))))
+		 (ad-filter (ad-internal section-data rest) rest))))
 	(hash-table-set! *mem-ht* rest r)
 	r)))
+)

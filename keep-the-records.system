@@ -5,7 +5,7 @@
 (define-system ktr
   (file "macs")
   (file "payments")
-  (file "section.data")
+  (file "src/sections/awana-structure.data")
   (compiled-scheme-file "date-time-utils" options: cflags
                         path: "src/utils/date-time-utils.scm")
   (compiled-scheme-file "misc-utils" options: cflags
@@ -17,13 +17,14 @@
   (compiled-scheme-file "handlers" options: cflags)
   (compiled-scheme-file "rest" depends: '("misc-utils") options: cflags)
   (compiled-scheme-file "demo-data" options: cflags)
-  (compiled-scheme-file "sections" depends: '("misc-utils") options: cflags
-                        includes: "section.data")
-  (compiled-scheme-file "awana-data-dsl" depends: '("sections") options: cflags)
+  (compiled-scheme-file "src/sections/awana-structure-dsl" options: cflags)
+  (compiled-scheme-file "src/sections/sections" depends: '("misc-utils"
+                                              "src/sections/awana-structure-dsl")
+                        options: cflags includes: "src/sections/awana-structure.data")
   (compiled-scheme-file "sessions" options: cflags)
   (compiled-scheme-file "keep-the-records"
                         options: cflags
                         includes: '("macs" "payments")
                         depends: '("misc-utils" "storage-funcs" "demo-data" "handlers"
                                    "date-time-utils"
-                                   "pdf" "awana-data-dsl" "sections" "rest" "sessions")))
+                                   "pdf" "src/sections/sections" "rest" "sessions")))

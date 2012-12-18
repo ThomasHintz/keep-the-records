@@ -1,6 +1,0 @@
-#!/bin/bash
-
-source /etc/profile
-
-cd ~/keep-the-records
-chicken-install keep-the-records.setup

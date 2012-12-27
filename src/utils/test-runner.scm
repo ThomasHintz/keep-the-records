@@ -19,7 +19,8 @@
 (run-tests
  (test-filter
   '(("utils/date-time-utils" "test-date-time-utils")
-    ("utils/misc-utils" "test-misc-utils"))
+    ("utils/misc-utils" "test-misc-utils")
+    ("sections/sections" "test-sections"))
   (filter-by))
  "src/" "tests/" (if (compiled) "" ".scm"))
 (test-end "all")

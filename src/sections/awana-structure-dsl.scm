@@ -8,12 +8,21 @@
 (import chicken scheme)
 (use srfi-1 srfi-69)
 
+(define (find-list l first-element)
+  (let ((r (filter (lambda (e)
+                     (equal? (car e) first-element))
+                   l)))
+    (if (null? r)
+        (error "element not found")
+        r)))
+
 ; filters result of awana structure data based on specifics given as strings
 ; ex: (as-filter (as-filter "TnT" 'book) '("TnT" 'book)) equals (as-filter "TnT" 'book)
 (define (as-filter data-l params)
-  (if (> (length params) 0)
-      (if (string? (first params))
-	  (as-filter (second (first (filter (lambda (e) (string=? (first params) (first e))) data-l))) (cdr params))
+  (if (not (null? params))
+      (if (string? (car params))
+	  (as-filter (cadar (find-list data-l (car params)))
+                     (cdr params))
 	  data-l)
       data-l))
 

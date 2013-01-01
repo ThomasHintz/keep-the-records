@@ -176,12 +176,13 @@ input:focus, select:focus {
 
 /* line 84, ../scss/add-clubber.scss */
 .notes-input {
+  margin-top: 4px;
   width: 258px;
   margin: 0px;
   min-height: 40px;
 }
 
-/* line 89, ../scss/add-clubber.scss */
+/* line 90, ../scss/add-clubber.scss */
 .edit-clubber-box {
   height: 260px;
 }

@@ -8,16 +8,16 @@ function pointsPlus() {
 
 $(document).ready(function() {
     $.ajaxSetup({ cache: false });
-    $.ajaxSetup({ timeout: 4000, error: function (jqxhr, msg, err) {
-		if (msg == 'timeout') {
-			alert('The server could not be reached, check your network connection. If this message persists, and' +
-				  ' the rest of the site functions correctly, please let me know at t@keeptherecords.com'); }
-		else {
-			alert('There has been an unexpected error. Please check your network connection and reload the page.' +
-				  ' If the error persists, please let me know at t@keeptherecords.com'); }
-        throw new Error("no server response");
+    $.ajaxSetup({ timeout: 60000, error: function (jqxhr, msg, err) {
+	if (msg == 'timeout') {
+	    alert('The server could not be reached, check your network connection. If this message persists, and' +
+		  ' the rest of the site functions correctly, please let me know at support@keeptherecords.com'); }
+	else {
+	    alert('There has been an unexpected error. Please check your network connection and reload the page.' +
+		  ' If the error persists, please let me know at support@keeptherecords.com');
+            throw new Error("no server response"); }
     } });
-    
+
 	$('#clubber-names').selectable({ 'distance': 100000 });
 	$("#clubber-names li").click(function() {
 		$(this).addClass("selected").siblings().removeClass("selected");
@@ -35,7 +35,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-    
+
     $('#present').click(function() {
 		if ($('#present').val() == "true") { $('#present').val("false"); pointsMinus(); }
 		else { $('#present').val("true"); pointsPlus(); }
@@ -74,6 +74,7 @@ $(document).ready(function() {
 		$('#friend').toggleClass('selected'); }); });
 
 function loadClubberInfo(response) {
+    $('.attendance-saving-notifier').hide();
     $('#clubber-name-container').removeClass('cubbies').removeClass('sparks').removeClass('tnt').removeClass('trek');
     $.each(response, function(id, html) {
 	if (id == "present") { if (html == false) { $('#present').removeClass('selected'); $('#present').val("false"); }
@@ -113,3 +114,13 @@ function loadClubberInfo(response) {
 
 function stringToBoolean(s) {
     return s == "true" ? true : false; }
+
+function setSaving(buttonId) {
+    $('#' + buttonId).children('.attendance-saving-notifier')
+        .attr('id', Math.floor(Math.random() * 100000000) + '').fadeIn(); }
+
+function requestId(buttonId) {
+    return $('#' + buttonId).children('.attendance-saving-notifier').attr('id'); }
+
+function clearSaving(requestId) {
+    $('#' + requestId).fadeOut(); }

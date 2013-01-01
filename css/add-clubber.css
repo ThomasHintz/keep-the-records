@@ -173,3 +173,15 @@ input:focus, select:focus {
   margin-bottom: 5px;
   background-color: yellow;
 }
+
+/* line 84, ../scss/add-clubber.scss */
+.notes-input {
+  width: 258px;
+  margin: 0px;
+  min-height: 40px;
+}
+
+/* line 89, ../scss/add-clubber.scss */
+.edit-clubber-box {
+  height: 260px;
+}

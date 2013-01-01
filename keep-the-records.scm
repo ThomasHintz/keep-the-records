@@ -523,7 +523,7 @@
           (<form> action: (++ "/" club  "/clubbers/create") id: "add-clubber-form" method: 'POST
                   (if edit (hidden-input 'edit (++ "/" club "/clubbers/info/" c-name)) "")
                   (if ($ 'from) (hidden-input 'from ($ 'from)) "")
-                  (<div> class: "grid_6 column-body on-top"
+                  (<div> class: "grid_6 column-body on-top edit-clubber-box"
                          (<div> class: "padding"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label-name" id: "label-name" "Name"))
                                                (<td> (<input> id: "name" class: "jq_watermark name validate[required,custom[onlyLetterSp],custom[ktr-name]]"
@@ -549,8 +549,12 @@
                                                                 name: "club-level" class: "club validate[required]" first-empty: #t)))
                                          (<tr> (<td> class: "label" (<span> class: "label allergies" "Allergies"))
                                                (<td> (<input> class: "allergies" id: "allergies" name: "allergies"
-                                                              value: (if edit (allergies club c-name) "")))))))
-                  (<div> class: "grid_6 column-body on-top"
+                                                              value: (if edit (allergies club c-name) ""))))
+                                         (<tr> (<td> class: "label" (<span> class: "label notes" "Notes"))
+                                               (<td> (<textarea> class: "notes notes-input" id: "notes" name: "notes"
+                                                              (if edit (notes club c-name) ""))))
+                                         )))
+                  (<div> class: "grid_6 column-body on-top edit-clubber-box"
                          (<div> class: "padding"
                                 (<table> (<tr> (<td> class: "label" (<span> class: "label parent-name" "Parent Name 1"))
                                                (<td> (<input> class: "jq_watermark parent-name validate[required,custom[onlyLetterSp],custom[ktr-name]]" id: "parent-name-1"
@@ -649,6 +653,7 @@
       (last-section club m-name #f)
       ; end fix me
       (allergies club m-name ($ 'allergies))
+      (notes club m-name ($ 'notes))
       (primary-parent club m-name ($ 'parent-name-1))
       (and (not edit) (date-registered club m-name (date->db (current-date))))
       (db:update-list (name->id m-name) "clubs" club "clubbers")
@@ -736,12 +741,21 @@
      `((,present present) (,bible bible) (,uniform uniform) (,friend friend) (,extra extra) (,sunday-school sunday-school)
        (,dues dues) (,on-time on-time) (,handbook handbook)))
 
+(define (save-note-attendance-info club)
+  (ktr-ajax club "save-attendance-note" 'notes 'change
+            (lambda (club)
+              (notes club ($ 'name) ($ 'note)))
+            method: 'PUT
+            arguments: `((name . "$('li.selected').attr('id')") (note . "$('#notes').val()"))))
+(save-note-attendance-info "")
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/attendance")
   (lambda (path)
     (let ((club (get-club path)))
       (add-javascript (clubber-attendance-info-ajax club))
       (add-javascript (++ "var month = '" (or ($ 'month) (todays-mm)) "'; var day = '"
 			                            (or ($ 'day) (todays-dd)) "'; var year = '" (or ($ 'year) (todays-yyyy)) "';"))
+      (add-javascript (save-note-attendance-info club))
       (map (lambda (l)
 	     (add-javascript (save-clubber-attendance-info club (car l) (cadr l))))
 	   `((,present present) (,bible bible) (,uniform uniform) (,friend friend) (,extra extra) (,sunday-school sunday-school)
@@ -806,7 +820,9 @@
                                (<div> class: "allergy-info" id: "allergy-container"
                                       (<div> class: "allergic-to info" "Allergic To:") (<br>)
                                       (<div> class: "allergic-to-item" id: "allergies" ""))
-                               (<div> class: "notes info" id: "notes" ""))))
+                               (<div> class: "clear")
+                               (<div> class: "notes-header" "Notes")
+                               (<textarea> class: "notes info" id: "notes"))))
           (<div> class: "grid_3 column-body"
               (<div> class: "tab-body padding"
                      (<div> class: "attendees" id: "attendees"
@@ -1055,7 +1071,7 @@
                                       (<br>) (<br>)
                                       (<span> class: "phone" (parent-phone-1 club p-parent)) " "
                                       (<span> class: "phone" (parent-phone-2 club p-parent))
-                                      (<br>) 
+                                      (<br>)
                                       (<span> class: "email" (<a> href: (++ "mailto:" (parent-email club p-parent))
                                                                   (parent-email club p-parent)))
                                       (<br>)
@@ -1083,7 +1099,13 @@
                                                            ("Extra" ,(lambda (c cl d) (extra c cl d)))
                                                            ("Sunday School" ,(lambda (c cl d) (sunday-school c cl d)))
                                                            ("Dues" ,(lambda (c cl d) (dues c cl d)))
-                                                           ("On Time" ,(lambda (c cl d) (on-time c cl d))))))))))))))
+                                                           ("On Time" ,(lambda (c cl d) (on-time c cl d))))))))))
+                 (<div> class: "grid_4 no-margins"
+                        (<div> class: "grid_4 margin-right" (<div> class: "info-header padding" "Notes"))
+                        (<div> class: "clear clear-no-space")
+                        (<div> class: "grid_4 margins-right"
+                               (<div> class: "padding info-body" (notes club clubber))))
+                 ))))
   css: '("/css/clubbers.css?ver=2")
   tab: 'clubbers
   no-ajax: #f

@@ -104,9 +104,10 @@ function loadClubberInfo(response) {
 	    case "Trek": { $('#clubber-name-container').addClass('trek'); break; }}}
 	else if (id == "attendees-html") {
 	    $('#attendees').html(html); }
+        else if (id === 'notes') { $('#notes').val(html); }
 	else { $('#' + id).text(html); }});
-    if ($('#allergies').text() == "") { $('#allergy-container').addClass('hidden'); }
-    else { $('#allergy-container').removeClass('hidden'); }
+    if ($('#allergies').text() == "") { $('#allergy-container').css('display', 'none'); }
+    else { $('#allergy-container').css('display', 'inline'); }
     $('#clubber-data').addClass('visible');
     $('#description-container').addClass('gone'); }
 

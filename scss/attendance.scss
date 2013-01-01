@@ -113,9 +113,7 @@
     border: 8px solid black;
     float: left;
     display: inline;
-    background-color: red;
-    margin-top: 20px;
-    margin-bottom: 30px; }
+    background-color: red; }
 
 .allergic-to-item {
     font-size: 30px; }
@@ -139,7 +137,6 @@
 .points {
     display: inline;
     float: left;
-    height: 52px;
     font-size: 24px; }
 
 .points-label {
@@ -199,3 +196,16 @@
 
 #clubber-names li:hover {
     cursor: pointer; }
+
+.notes {
+    width: 432px;
+    height: 53px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border: 1px solid #DDD;
+    float: left;
+    padding: 4px; }
+
+.notes-header {
+    font-weight: bold;
+    font-family: "Verdana", arial, serif; }

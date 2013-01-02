@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source /etc/profile
+cd $(dirname $0)
+
+rm nohup.out
+touch nohup.out
+
+ktr-awful --port=12000 ~/keep-the-records/keep-the-records.scm --development-mode &
+
+sleep 1
+tail -n 30 nohup.out

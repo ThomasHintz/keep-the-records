@@ -43,9 +43,9 @@
 
 (define *sep* "/")
 (define (sep . val)
-  (if (> (length val) 0)
-      (set! *sep* (first val))
-      *sep*))
+  (if (null? val)
+      *sep*
+      (set! *sep* (first val))))
 
 ; all keys that start with this are for indexes
 ; keeps indexes from clashing with db data

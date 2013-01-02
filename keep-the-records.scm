@@ -4,7 +4,7 @@
 (use awful message-digest-port sha2 posix http-session
      spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt uri-common spiffy intarweb)
 
-(include "macs.scm")
+(load "src/utils/macs") (import macs)
 (load "src/db/db-interface") (import db-interface)
 (load "src/utils/misc-utils") (import misc-utils)
 (load "storage-funcs")

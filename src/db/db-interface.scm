@@ -38,14 +38,11 @@
 
 (import scheme chicken ports srfi-13 data-structures)
 (use tokyocabinet srfi-1 srfi-13 srfi-18)
+(load "src/utils/macs") (import macs)
 
 ;;; utils
-
-(define *sep* "/")
-(define (sep . val)
-  (if (null? val)
-      *sep*
-      (set! *sep* (first val))))
+(define sep (make-global-parameter "/"))
+(define db:path (make-global-parameter "ktr-db"))
 
 ; all keys that start with this are for indexes
 ; keeps indexes from clashing with db data

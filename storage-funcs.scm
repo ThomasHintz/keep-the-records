@@ -1,5 +1,6 @@
 ;;; utilities
-(use srfi-19 http-session spiffy-cookies http-session spiffy-cookies mda-client)
+(use srfi-19 http-session spiffy-cookies http-session spiffy-cookies)
+(load "src/db/db-interface") (import db-interface)
 (include "macs.scm")
 
 (define (todays-date)

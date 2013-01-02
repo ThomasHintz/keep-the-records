@@ -1,6 +1,6 @@
-(use awful mda-client)
-(load "src/utils/misc-utils")
-(import misc-utils)
+(use awful)
+(load "src/utils/misc-utils") (import misc-utils)
+(load "src/db/db-interface") (import db-interface)
 
 (define (setup-demo u-name)
   ($session-set! 'user u-name)

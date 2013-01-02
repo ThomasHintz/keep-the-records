@@ -47,7 +47,9 @@
       (set! *sep* (first val))
       *sep*))
 
-(define list-index (make-parameter "the-list-index"))
+; all keys that start with this are for indexes
+; keeps indexes from clashing with db data
+(define list-index-prefix (make-parameter "the-list-index"))
 
 (define (contains? l e)
   (not (eq? (filter (lambda (le) (string=? le e)) l) '())))
@@ -95,19 +97,19 @@
         'not-found)))
 
 (define (db:list . path-list)
-  (let ((r (apply db:read (append path-list `(,(list-index))))))
+  (let ((r (apply db:read (append path-list `(,(list-index-prefix))))))
     (if (eq? r 'not-found)
 	'()
 	r)))
 
 (define (db:update-list data . path-list)
-  (let* ((p (append path-list `(,(list-index))))
+  (let* ((p (append path-list `(,(list-index-prefix))))
 	 (l (apply db:read p))
 	 (ls (if (eq? l 'not-found) '() l)))
     (or (contains? ls data) (apply db:store (cons data ls) p))))
 
 (define (db:remove-from-list data . path-list)
-  (let* ((p (append path-list `(,(list-index))))
+  (let* ((p (append path-list `(,(list-index-prefix))))
 	 (l (apply db:read p))
 	 (ls (if (eq? l 'not-found) '() l)))
     (apply db:store

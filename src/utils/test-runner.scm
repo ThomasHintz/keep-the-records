@@ -20,7 +20,9 @@
  (test-filter
   '(("utils/date-time-utils" "test-date-time-utils")
     ("utils/misc-utils" "test-misc-utils")
-    ("sections/sections" "test-sections"))
+    ("sections/sections" "test-sections")
+    ("db/db-interface" "test-db-interface")
+    ("utils/macs" "test-macs"))
   (filter-by))
  "src/" "tests/" (if (compiled) "" ".scm"))
 (test-end "all")

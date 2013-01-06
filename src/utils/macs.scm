@@ -16,7 +16,7 @@
        (lambda (#!rest new-val)
          (if (null? new-val)
              internal-val
-             (set! internal-val new-val)))))))
+             (set! internal-val (car new-val))))))))
 
 (define-syntax fold*
   (syntax-rules ()

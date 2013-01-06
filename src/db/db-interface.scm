@@ -40,13 +40,13 @@
 (use tokyocabinet srfi-1 srfi-13 srfi-18)
 (load "src/utils/macs") (import macs)
 
-;;; utils
-(define sep (make-global-parameter "/"))
+;;; params
+(define db:sep (make-global-parameter "/"))
 (define db:path (make-global-parameter "ktr-db"))
 
 ; all keys that start with this are for indexes
-; keeps indexes from clashing with db data
-(define list-index-prefix (make-parameter "the-list-index"))
+; to keep indexes from clashing with db data
+(define list-index-prefix (make-global-parameter "the-list-index"))
 
 (define (contains? l e)
   (not (eq? (filter (lambda (le) (string=? le e)) l) '())))
@@ -65,20 +65,18 @@
 
 (define (list->path list)
   (fold (lambda (e o)
-          (string-append o (sep) e))
+          (string-append o (db:sep) e))
         ""
         list))
 
 ;;; db funcs
 
 (define db (make-parameter #f))
-(setup-db)
 
 (define (setup-db)
   (db (tc-hdb-open "ktr-db" flags:
                    (fx+ TC_HDBONOLCK (fx+ TC_HDBOWRITER (fx+ TC_HDBOREADER TC_HDBOCREAT))))))
-
-(define db:sep (make-parameter "/"))
+(setup-db)
 
 (define (db:store data . path-list)
   (when (not (db)) (setup-db))

@@ -16,6 +16,9 @@
 (load "sessions")
 (load "src/utils/date-time-utils") (import date-time-utils)
 
+(include "etc/database.scm")
+(db:connect)
+
 (define is-production? (make-parameter (file-exists? "~/keep-the-records/i-am-production")))
 
 ;;; production

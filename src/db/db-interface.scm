@@ -29,11 +29,11 @@
 
 (module db-interface
   (;; params
-   db:sep
+   db:sep db:path db:flags
 
    ;; procs
    db:store db:read db:list db:update-list db:remove-from-list db:delete
-   db:pause
+   db:pause db:connect db:disconnect
    )
 
 (import scheme chicken ports srfi-13 data-structures)
@@ -42,14 +42,18 @@
 
 ;;; params
 (define db:sep (make-global-parameter "/"))
-(define db:path (make-global-parameter "ktr-db"))
+(define db:path (make-global-parameter 'undefined))
+(define db:flags (make-global-parameter
+                  (fx+ TC_HDBONOLCK (fx+ TC_HDBOWRITER (fx+ TC_HDBOREADER TC_HDBOCREAT)))))
+
+(define db (make-parameter 'undefined))
 
 ; all keys that start with this are for indexes
 ; to keep indexes from clashing with db data
 (define list-index-prefix (make-global-parameter "the-list-index"))
 
 (define (contains? l e)
-  (not (eq? (filter (lambda (le) (string=? le e)) l) '())))
+  (not (eq? (filter (lambda (le) (equal? le e)) l) '())))
 
 (define (dash->space s)
   (string-fold (lambda (c o) (string-append o (if (char=? #\- c) " " (->string c)))) "" s))
@@ -71,21 +75,12 @@
 
 ;;; db funcs
 
-(define db (make-parameter #f))
-
-(define (setup-db)
-  (db (tc-hdb-open "ktr-db" flags:
-                   (fx+ TC_HDBONOLCK (fx+ TC_HDBOWRITER (fx+ TC_HDBOREADER TC_HDBOCREAT))))))
-(setup-db)
-
 (define (db:store data . path-list)
-  (when (not (db)) (setup-db))
   (let ((k (name->id (list->path path-list)))
 	(v (with-output-to-string (lambda () (write data)))))
     (tc-hdb-put! (db) k v) #t))
 
 (define (db:read . path-list)
-  (when (not (db)) (setup-db))
   (let ((val (tc-hdb-get (db) (name->id (list->path path-list)))))
     (if val
         (with-input-from-string val (lambda () (read)))
@@ -114,12 +109,18 @@
            p)))
 
 (define (db:delete . path-list)
-  (when (not (db)) (setup-db))
   (let ((k (name->id (list->path path-list))))
     (tc-hdb-delete! (db) k)))
 
 (define (db:pause)
   'not-implemented)
   ;(do-op `(pause)))
+
+(define (db:connect)
+  (db (tc-hdb-open (db:path) flags: (db:flags))))
+
+(define (db:disconnect)
+  (tc-hdb-close (db))
+  (db 'undefined))
 
 )

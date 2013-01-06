@@ -1,7 +1,7 @@
 ;;; utilities
 (use srfi-19 http-session spiffy-cookies http-session spiffy-cookies)
 (load "src/db/db-interface") (import db-interface)
-(include "macs.scm")
+(load "src/utils/macs") (import macs)
 
 (define (todays-date)
   (date->string (current-date) "~Y/~m/~d"))

@@ -119,30 +119,34 @@
          'not-found))))
 
 (define (db:list . path-list)
-  (let ((r (apply db:read (append path-list `(,(list-index-prefix))))))
-    (if (eq? r 'not-found)
-	'()
-	r)))
+  (with-db
+   (let ((r (apply db:read (append path-list `(,(list-index-prefix))))))
+     (if (eq? r 'not-found)
+         '()
+         r))))
 
 (define (db:update-list data . path-list)
-  (let* ((p (append path-list `(,(list-index-prefix))))
-	 (l (apply db:read p))
-	 (ls (if (eq? l 'not-found) '() l)))
-    (or (contains? ls data) (apply db:store (cons data ls) p))))
+  (with-db
+   (let* ((p (append path-list `(,(list-index-prefix))))
+          (l (apply db:read p))
+          (ls (if (eq? l 'not-found) '() l)))
+     (or (contains? ls data) (apply db:store (cons data ls) p)))))
 
 (define (db:remove-from-list data . path-list)
-  (let* ((p (append path-list `(,(list-index-prefix))))
+  (with-db
+   (let* ((p (append path-list `(,(list-index-prefix))))
 	 (l (apply db:read p))
 	 (ls (if (eq? l 'not-found) '() l)))
     (apply db:store
            (filter (lambda (e)
                      (not (equal? e data)))
                    ls)
-           p)))
+           p))))
 
 (define (db:delete . path-list)
-  (let ((k (name->id (list->path path-list))))
-    (tc-hdb-delete! (db) k)))
+  (with-db
+   (let ((k (name->id (list->path path-list))))
+     (tc-hdb-delete! (db) k))))
 
 (define (db:pause)
   (mutex-lock *paused-mutex*)

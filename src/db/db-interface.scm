@@ -33,7 +33,7 @@
 
    ;; procs
    db:store db:read db:list db:update-list db:remove-from-list db:delete
-   db:pause db:connect db:disconnect
+   db:pause db:resume db:connect db:disconnect
 
    ;; constants
    db:flag-no-lock db:flag-writer db:flag-reader db:flag-create
@@ -82,18 +82,41 @@
         ""
         list))
 
+(define *active-db-queries* 0)
+(define *active-db-queries-mutex* (make-mutex))
+(define *paused* #f)
+(define *paused-mutex* (make-mutex))
+
+(define-syntax with-db
+  (syntax-rules ()
+    ((_ f ...)
+     (begin
+       (if *paused*
+           (mutex-lock! *paused-mutex*)
+           (mutex-unlock! *paused-mutex*))
+       (mutex-lock! *active-db-queries-mutex*)
+       (set! *active-db-queries* (+ *active-db-queries* 1))
+       (mutex-unlock! *active-db-queries-mutex*)
+       (let ((r (begin f ...)))
+         (mutex-lock! *active-db-queries-mutex*)
+         (set! *active-db-queries* (- *active-db-queries* 1))
+         (mutex-unlock! *active-db-queries-mutex*)
+         r)))))
+
 ;;; db funcs
 
 (define (db:store data . path-list)
-  (let ((k (name->id (list->path path-list)))
-	(v (with-output-to-string (lambda () (write data)))))
-    (tc-hdb-put! (db) k v) #t))
+  (with-db
+   (let ((k (name->id (list->path path-list)))
+         (v (with-output-to-string (lambda () (write data)))))
+     (tc-hdb-put! (db) k v) #t)))
 
 (define (db:read . path-list)
-  (let ((val (tc-hdb-get (db) (name->id (list->path path-list)))))
-    (if val
-        (with-input-from-string val (lambda () (read)))
-        'not-found)))
+  (with-db
+   (let ((val (tc-hdb-get (db) (name->id (list->path path-list)))))
+     (if val
+         (with-input-from-string val (lambda () (read)))
+         'not-found))))
 
 (define (db:list . path-list)
   (let ((r (apply db:read (append path-list `(,(list-index-prefix))))))
@@ -122,8 +145,19 @@
     (tc-hdb-delete! (db) k)))
 
 (define (db:pause)
-  'not-implemented)
-  ;(do-op `(pause)))
+  (mutex-lock *paused-mutex*)
+  (set! *paused* #t)
+  (let loop ()
+    (when (> *active-db-queries* 0)
+          (loop)))
+  (db:disconnect)
+  #t)
+
+(define (db:resume)
+  (db:connect)
+  (set! *paused* #f)
+  (mutex-unlock *paused-mutex*)
+  #t)
 
 (define (db:connect)
   (db (tc-hdb-open (db:path) flags: (db:flags))))

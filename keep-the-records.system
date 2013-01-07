@@ -25,7 +25,7 @@
   (compiled-scheme-file "sessions" options: cflags depends: '("src/db/db-interface"))
   (compiled-scheme-file "keep-the-records"
                         options: cflags
-                        includes: '("payments")
+                        includes: '("payments" "etc/database")
                         depends: '("misc-utils" "storage-funcs" "demo-data" "handlers"
                                    "date-time-utils" "src/db/db-interface"
                                    "src/utils/macs"

@@ -2,10 +2,14 @@
 
 (test-begin "db-interface")
 
-(when (file-exists? "test-db")
-      (delete-file "test-db"))
-(db:path "test-db")
-(db:connect)
+(test-group "setup"
+            (when (file-exists? "test-db")
+                  (delete-file "test-db"))
+            (test-assert (db:path "test-db"))
+            (test-assert (db:flags
+                          (fx+ db:flag-no-lock (fx+ db:flag-writer
+                                                    (fx+ db:flag-reader db:flag-create)))))
+            (test-assert (db:connect)))
 
 (test-group "basics"
             (test 'not-found (db:read "a" "b" "c"))
@@ -44,7 +48,8 @@
             (test-assert "remove from empty list" (db:remove-from-list 'a "an-index"))
             (test '() (db:list "an-index")))
 
-(db:disconnect)
+(test-group "disconnect"
+            (test-assert (db:disconnect)))
 
 (test-group "different sep"
             (when (file-exists? "test-db")

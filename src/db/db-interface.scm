@@ -34,11 +34,20 @@
    ;; procs
    db:store db:read db:list db:update-list db:remove-from-list db:delete
    db:pause db:connect db:disconnect
+
+   ;; constants
+   db:flag-no-lock db:flag-writer db:flag-reader db:flag-create
    )
 
 (import scheme chicken ports srfi-13 data-structures)
 (use tokyocabinet srfi-1 srfi-13 srfi-18)
 (load "src/utils/macs") (import macs)
+
+;;; constants
+(define db:flag-no-lock TC_HDBONOLCK)
+(define db:flag-writer TC_HDBOWRITER)
+(define db:flag-reader TC_HDBOREADER)
+(define db:flag-create TC_HDBOCREAT)
 
 ;;; params
 (define db:sep (make-global-parameter "/"))

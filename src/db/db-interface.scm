@@ -82,25 +82,50 @@
         ""
         list))
 
-(define *active-db-queries* 0)
-(define *active-db-queries-mutex* (make-mutex))
-(define *paused* #f)
-(define *paused-mutex* (make-mutex))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Copyright (c) 2007-2012, Peter Bex
+; Copyright (c) 2000-2005, Felix L. Winkelmann
+; All rights reserved.
+; from spiffy web server
+; three clause bsd license
+(define (mutex-update! m op)
+  (dynamic-wind
+      (lambda () (mutex-lock! m))
+      (lambda () (mutex-specific-set! m (op (mutex-specific m))))
+      (lambda () (mutex-unlock! m))))
+
+(define (make-mutex/value name value)
+  (let ((m (make-mutex name)))
+    (mutex-specific-set! m value)
+    m))
+
+;; Check whether the mutex has the correct state. If not, wait for a
+;; condition
+;; and try again
+(define (mutex-wait! m ok? condition)
+  (let retry ()
+    (mutex-lock! m)
+    (if (ok? (mutex-specific m))
+        (mutex-unlock! m)
+        (begin (mutex-unlock! m condition) (retry)))))
+
+; end code from spiffy
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define *active-db-queries* (make-mutex/value 'active-db-queries 0))
+(define *paused* (make-mutex/value 'paused #f))
+(define *resume* (make-condition-variable 'resume))
+(define *query-finished* (make-condition-variable 'query-finished))
 
 (define-syntax with-db
   (syntax-rules ()
     ((_ f ...)
      (begin
-       (if *paused*
-           (mutex-lock! *paused-mutex*)
-           (mutex-unlock! *paused-mutex*))
-       (mutex-lock! *active-db-queries-mutex*)
-       (set! *active-db-queries* (+ *active-db-queries* 1))
-       (mutex-unlock! *active-db-queries-mutex*)
+       (mutex-wait! *paused* (lambda (paused) (eq? paused #f)) *resume*)
+       (mutex-update! *active-db-queries* add1)
        (let ((r (begin f ...)))
-         (mutex-lock! *active-db-queries-mutex*)
-         (set! *active-db-queries* (- *active-db-queries* 1))
-         (mutex-unlock! *active-db-queries-mutex*)
+         (mutex-update! *active-db-queries* sub1)
+         (condition-variable-signal! *query-finished*)
          r)))))
 
 ;;; db funcs
@@ -149,19 +174,24 @@
      (tc-hdb-delete! (db) k))))
 
 (define (db:pause)
-  (mutex-lock *paused-mutex*)
-  (set! *paused* #t)
-  (let loop ()
-    (when (> *active-db-queries* 0)
-          (loop)))
-  (db:disconnect)
-  #t)
+  (if (equal? (mutex-specific *paused*) #f)
+      (begin
+        (mutex-update! *paused* #t)
+        (mutex-wait! *active-db-queries*
+                     (lambda (num-queries) (= num-queries 0))
+                     *query-finished*)
+        (db:disconnect)
+        #t)
+      'already-paused!))
 
 (define (db:resume)
-  (db:connect)
-  (set! *paused* #f)
-  (mutex-unlock *paused-mutex*)
-  #t)
+  (if (equal? (mutex-specific *paused*) #t)
+      (begin
+        (db:connect)
+        (mutex-update! *paused* #f)
+        (condition-variable-signal! *resume*)
+        #t)
+      'not-paused!))
 
 (define (db:connect)
   (db (tc-hdb-open (db:path) flags: (db:flags))))

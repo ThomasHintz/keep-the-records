@@ -153,22 +153,22 @@
 (define (db:pause)
   (if (equal? (mutex-specific *paused*) #f)
       (begin
-        (mutex-update! *paused* #t)
+        (mutex-update! *paused* (lambda (v) #t))
         (mutex-wait! *active-db-queries*
                      (lambda (num-queries) (= num-queries 0))
                      *query-finished*)
         (db:disconnect)
         #t)
-      'already-paused!))
+      (error 'already-paused!)))
 
 (define (db:resume)
   (if (equal? (mutex-specific *paused*) #t)
       (begin
         (db:connect)
-        (mutex-update! *paused* #f)
-        (condition-variable-signal! *resume*)
+        (mutex-update! *paused* (lambda (v) #f))
+        (condition-variable-broadcast! *resume*)
         #t)
-      'not-paused!))
+      (error 'not-paused!)))
 
 (define (db:connect)
   (db (tc-hdb-open (db:path) flags: (db:flags))))

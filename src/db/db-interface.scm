@@ -56,7 +56,7 @@
 (define db:flags (make-global-parameter
                   (fx+ TC_HDBONOLCK (fx+ TC_HDBOWRITER (fx+ TC_HDBOREADER TC_HDBOCREAT)))))
 
-(define db (make-parameter 'undefined))
+(define db (make-global-parameter 'undefined))
 
 ; all keys that start with this are for indexes
 ; to keep indexes from clashing with db data

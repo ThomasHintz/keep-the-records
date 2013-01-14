@@ -69,6 +69,10 @@
             (test-assert (db:delete "x" "y" "z"))
             (test 'not-found (db:read "x" "y" "z")))
 
+(test-group "pause/resume"
+            (test-assert (db:pause))
+            (test-assert (db:resume)))
+
 (when (file-exists? "test-db")
       (delete-file "test-db"))
 

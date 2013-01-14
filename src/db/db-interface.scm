@@ -42,6 +42,7 @@
 (import scheme chicken ports srfi-13 data-structures)
 (use tokyocabinet srfi-1 srfi-13 srfi-18)
 (load "src/utils/macs") (import macs)
+(load "src/utils/threading-extras") (import threading-extras)
 
 ;;; constants
 (define db:flag-no-lock TC_HDBONOLCK)
@@ -81,36 +82,6 @@
           (string-append o (db:sep) e))
         ""
         list))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Copyright (c) 2007-2012, Peter Bex
-; Copyright (c) 2000-2005, Felix L. Winkelmann
-; All rights reserved.
-; from spiffy web server
-; three clause bsd license
-(define (mutex-update! m op)
-  (dynamic-wind
-      (lambda () (mutex-lock! m))
-      (lambda () (mutex-specific-set! m (op (mutex-specific m))))
-      (lambda () (mutex-unlock! m))))
-
-(define (make-mutex/value name value)
-  (let ((m (make-mutex name)))
-    (mutex-specific-set! m value)
-    m))
-
-;; Check whether the mutex has the correct state. If not, wait for a
-;; condition
-;; and try again
-(define (mutex-wait! m ok? condition)
-  (let retry ()
-    (mutex-lock! m)
-    (if (ok? (mutex-specific m))
-        (mutex-unlock! m)
-        (begin (mutex-unlock! m condition) (retry)))))
-
-; end code from spiffy
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define *active-db-queries* (make-mutex/value 'active-db-queries 0))
 (define *paused* (make-mutex/value 'paused #f))

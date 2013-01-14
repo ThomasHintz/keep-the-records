@@ -10,14 +10,16 @@
                         path: "src/utils/date-time-utils.scm")
   (compiled-scheme-file "misc-utils" options: cflags
                         path: "src/utils/misc-utils.scm")
+  (compiled-scheme-file "src/utils/threading-extras" options: cflags)
   (compiled-scheme-file "production" options: cflags)
-  (compiled-scheme-file "src/db/db-interface" options: cflags)
+  (compiled-scheme-file "src/db/db-interface" options: cflags
+                        depends: '("src/utils/macs" "src/utils/threading-extras"))
   (compiled-scheme-file "storage-funcs" options: cflags
-                        depends: "src/db/db-interface" "src/utils/macs")
+                        depends: '("src/db/db-interface" "src/utils/macs"))
   (compiled-scheme-file "pdf" options: cflags)
   (compiled-scheme-file "handlers" options: cflags)
   (compiled-scheme-file "rest" depends: '("misc-utils") options: cflags)
-  (compiled-scheme-file "demo-data" options: cflags depends: "src/db/db-interface")
+  (compiled-scheme-file "demo-data" options: cflags depends: '("src/db/db-interface"))
   (compiled-scheme-file "src/sections/awana-structure-dsl" options: cflags)
   (compiled-scheme-file "src/sections/sections" depends: '("misc-utils"
                                               "src/sections/awana-structure-dsl")

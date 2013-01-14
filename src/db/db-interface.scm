@@ -94,7 +94,13 @@
      (begin
        (mutex-wait! *paused* (lambda (paused) (eq? paused #f)) *resume*)
        (mutex-update! *active-db-queries* add1)
-       (let ((r (begin f ...)))
+       (let ((r
+              (handle-exceptions
+               e
+               (begin (mutex-update! *active-db-queries* sub1)
+                      (condition-variable-signal! *query-finished*)
+                      (error e))
+               (begin f ...))))
          (mutex-update! *active-db-queries* sub1)
          (condition-variable-signal! *query-finished*)
          r)))))

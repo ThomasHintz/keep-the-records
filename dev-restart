@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source /etc/profile
+source ~/.bashrc
+
+killall -s 9 ktr-awful
+~/keep-the-records/dev-start

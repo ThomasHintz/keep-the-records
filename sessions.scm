@@ -1,4 +1,5 @@
-(use http-session mda-client)
+(use http-session)
+(load "src/db/db-interface") (import db-interface)
 
 (define (session-item->list session-item)
   (list (session-item-expiration session-item)

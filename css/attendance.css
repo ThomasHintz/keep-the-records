@@ -104,23 +104,26 @@
 
 /* line 35, ../scss/attendance.scss */
 .attendance-container {
-  font-size: 9px;
+  font-size: 10px;
   font-family: "Verdana", arial, sans;
   float: left;
   display: inline;
-  width: 460px;
+  width: 440px;
   margin-top: 15px;
 }
 
 /* line 43, ../scss/attendance.scss */
 .attendance-button {
+  margin-bottom: 4px;
+  padding-top: 2px;
+  position: relative;
   margin-right: 5px;
   text-align: center;
   width: 72px;
   float: left;
 }
 
-/* line 49, ../scss/attendance.scss */
+/* line 52, ../scss/attendance.scss */
 .attendance-button input {
   background-color: white;
   height: 60px;
@@ -137,7 +140,7 @@
   box-shadow: grey 3px 3px p3x;
 }
 
-/* line 60, ../scss/attendance.scss */
+/* line 63, ../scss/attendance.scss */
 .attendance-button input:hover {
   -webkit-box-shadow: grey 0px 0px 10px;
   -moz-box-shadow: grey 0px 0px 10px;
@@ -145,7 +148,7 @@
   cursor: pointer;
 }
 
-/* line 64, ../scss/attendance.scss */
+/* line 67, ../scss/attendance.scss */
 .selected {
   font-weight: bold;
   -webkit-border-radius: 6px 6px;
@@ -154,72 +157,88 @@
   background-color: #0c6;
 }
 
-/* line 69, ../scss/attendance.scss */
+/* line 72, ../scss/attendance.scss */
+.attendance-saving-notifier {
+  position: absolute;
+  bottom: 8px;
+  left: 18px;
+  background-color: #aaa;
+  color: blue;
+  font-weight: normal;
+  padding: 2px;
+  -webkit-border-radius: 2px 2px;
+  -moz-border-radius: 2px / 2px;
+  border-radius: 2px / 2px;
+  display: none;
+  opacity: 0.95;
+}
+
+/* line 84, ../scss/attendance.scss */
 .present {
   background-image: url("/images/present.png");
 }
 
-/* line 72, ../scss/attendance.scss */
+/* line 87, ../scss/attendance.scss */
 .bible {
   background-image: url("/images/bible.png");
 }
 
-/* line 75, ../scss/attendance.scss */
+/* line 90, ../scss/attendance.scss */
 .handbook {
   background-image: url("/images/handbook.png");
 }
 
-/* line 78, ../scss/attendance.scss */
+/* line 93, ../scss/attendance.scss */
 .uniform {
   background-image: url("/images/uniform.png");
 }
 
-/* line 81, ../scss/attendance.scss */
+/* line 96, ../scss/attendance.scss */
 .friend {
   background-image: url("/images/friend.png");
 }
 
-/* line 84, ../scss/attendance.scss */
+/* line 99, ../scss/attendance.scss */
 .extra {
   background-image: url("/images/extra.png");
 }
 
-/* line 87, ../scss/attendance.scss */
+/* line 102, ../scss/attendance.scss */
 .sunday-school {
   background-image: url("/images/sunday-school.png");
 }
 
-/* line 90, ../scss/attendance.scss */
+/* line 105, ../scss/attendance.scss */
 .dues {
   background-image: url("/images/dues-attendance.png");
 }
 
-/* line 93, ../scss/attendance.scss */
+/* line 108, ../scss/attendance.scss */
 .on-time {
   background-image: url("/images/on-time.png");
 }
 
-/* line 96, ../scss/attendance.scss */
+/* line 111, ../scss/attendance.scss */
 .cubbies {
   background-color: #99CCFF;
 }
 
-/* line 99, ../scss/attendance.scss */
+/* line 114, ../scss/attendance.scss */
 .sparks {
   background-color: red;
 }
 
-/* line 102, ../scss/attendance.scss */
+/* line 117, ../scss/attendance.scss */
 .tnt {
   background-color: green;
 }
 
-/* line 105, ../scss/attendance.scss */
+/* line 120, ../scss/attendance.scss */
 .trek {
   background-color: #00ff66;
 }
 
-/* line 108, ../scss/attendance.scss */
+/* line 123, ../scss/attendance.scss */
 .allergy-info {
   padding: 10px;
   font-family: "Verdana", sans;
@@ -231,28 +250,28 @@
   background-color: red;
 }
 
-/* line 118, ../scss/attendance.scss */
+/* line 133, ../scss/attendance.scss */
 .allergic-to-item {
   font-size: 30px;
 }
 
-/* line 121, ../scss/attendance.scss */
+/* line 136, ../scss/attendance.scss */
 .attendees {
   line-height: 24px;
   font-size: 14px;
 }
 
-/* line 125, ../scss/attendance.scss */
+/* line 140, ../scss/attendance.scss */
 .attendees a {
   color: black;
 }
 
-/* line 128, ../scss/attendance.scss */
+/* line 143, ../scss/attendance.scss */
 .gone {
   display: none;
 }
 
-/* line 131, ../scss/attendance.scss */
+/* line 146, ../scss/attendance.scss */
 .points-container {
   margin-top: 5px;
   margin-bottom: 5px;
@@ -260,14 +279,14 @@
   float: left;
 }
 
-/* line 137, ../scss/attendance.scss */
+/* line 152, ../scss/attendance.scss */
 .points {
   display: inline;
   float: left;
   font-size: 24px;
 }
 
-/* line 142, ../scss/attendance.scss */
+/* line 157, ../scss/attendance.scss */
 .points-label {
   margin-left: 5px;
   display: inline;
@@ -275,7 +294,7 @@
   font-size: 12px;
 }
 
-/* line 148, ../scss/attendance.scss */
+/* line 163, ../scss/attendance.scss */
 .date-input {
   text-align: center;
   border: 1px solid grey;
@@ -284,20 +303,20 @@
   width: 30px;
 }
 
-/* line 155, ../scss/attendance.scss */
+/* line 170, ../scss/attendance.scss */
 .date-label {
   color: grey;
   margin-right: 5px;
 }
 
-/* line 159, ../scss/attendance.scss */
+/* line 174, ../scss/attendance.scss */
 .preset-date {
   color: black;
   margin-right: 5px;
   margin-left: 5px;
 }
 
-/* line 164, ../scss/attendance.scss */
+/* line 179, ../scss/attendance.scss */
 .change-date {
   -webkit-border-radius: 4px 4px;
   -moz-border-radius: 4px / 4px;
@@ -310,7 +329,7 @@
   margin-left: 10px;
 }
 
-/* line 171, ../scss/attendance.scss */
+/* line 186, ../scss/attendance.scss */
 .change-date:hover {
   -webkit-box-shadow: black 0px 0px 1px;
   -moz-box-shadow: black 0px 0px 1px;
@@ -319,25 +338,25 @@
   background-color: white;
 }
 
-/* line 176, ../scss/attendance.scss */
+/* line 191, ../scss/attendance.scss */
 .change-date:focus {
   -webkit-box-shadow: black 0px 0px 1px;
   -moz-box-shadow: black 0px 0px 1px;
   box-shadow: black 0px 0px 1px;
 }
 
-/* line 180, ../scss/attendance.scss */
+/* line 195, ../scss/attendance.scss */
 #clubber-names .ui-selecting {
   background: #FECA40;
 }
 
-/* line 183, ../scss/attendance.scss */
+/* line 198, ../scss/attendance.scss */
 #clubber-names .ui-selected {
   background: #F39814;
   color: white;
 }
 
-/* line 187, ../scss/attendance.scss */
+/* line 202, ../scss/attendance.scss */
 #clubber-names {
   overflow: auto;
   list-style-type: none;
@@ -345,18 +364,18 @@
   padding: 0;
 }
 
-/* line 193, ../scss/attendance.scss */
+/* line 208, ../scss/attendance.scss */
 #clubber-names li {
   margin: 3px;
   padding: 6px;
 }
 
-/* line 197, ../scss/attendance.scss */
+/* line 212, ../scss/attendance.scss */
 #clubber-names li:hover {
   cursor: pointer;
 }
 
-/* line 200, ../scss/attendance.scss */
+/* line 215, ../scss/attendance.scss */
 .notes {
   width: 432px;
   height: 53px;
@@ -367,7 +386,7 @@
   padding: 4px;
 }
 
-/* line 209, ../scss/attendance.scss */
+/* line 224, ../scss/attendance.scss */
 .notes-header {
   font-size: 17px;
   font-family: "Verdana", arial, serif;

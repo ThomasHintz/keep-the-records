@@ -1,10 +1,11 @@
 ;;; WARNING user/club names should be cleaned, null and / are illegal characters
 
 (use numbers) ;; !IMPORTANT! needs to come before other eggs, may segfault otherwise (020111)
-(use mda-client awful message-digest-port sha2 posix http-session
+(use awful message-digest-port sha2 posix http-session
      spiffy-cookies html-tags html-utils srfi-13 srfi-19 regex srfi-69 doctype http-session srfi-18 crypt uri-common spiffy intarweb)
 
-(include "macs.scm")
+(load "src/utils/macs") (import macs)
+(load "src/db/db-interface") (import db-interface)
 (load "src/utils/misc-utils") (import misc-utils)
 (load "storage-funcs")
 (load "demo-data")
@@ -14,6 +15,9 @@
 (load "rest")
 (load "sessions")
 (load "src/utils/date-time-utils") (import date-time-utils)
+
+(include "etc/database.scm")
+(db:connect)
 
 (define is-production? (make-parameter (file-exists? "~/keep-the-records/i-am-production")))
 
@@ -196,7 +200,7 @@
                    "https://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light"
                    "https://fonts.googleapis.com/css?family=Vollkorn&subset=latin"
                    "https://fonts.googleapis.com/css?family=Permanent+Marker"
-                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=5") css)
+                   "/css/reset.css" "/css/960.css" "/css/master.css?ver=6") css)
     title: title
     method: method
     no-session: no-session
@@ -732,10 +736,13 @@
 	(lambda (club)
 	  (proc club ($ 'name)
 		(++ (or ($ 'year) (todays-yyyy)) "/" (or ($ 'month) (todays-mm)) "/" (or ($ 'day) (todays-dd)))
-		(if (string=? ($ id) "false") #f #t)))
+		(if (string=? ($ id) "false") #f #t))
+          ($ 'requestid))
+        success: "clearSaving(response);"
 	method: 'PUT
+        prelude: (++ "setSaving('" (symbol->string id) "');")
 	arguments: `((name . "$('li.selected').attr('id')") (,id . ,(++ "stringToBoolean($('#" (symbol->string id) "').val())"))
-		      (month . "month") (day . "day") (year . "year"))))
+		      (month . "month") (day . "day") (year . "year") (requestid . ,(++ "requestId('" (symbol->string id) "')")))))
 
 (map (lambda (l) (save-clubber-attendance-info "" (car l) (cadr l)))
      `((,present present) (,bible bible) (,uniform uniform) (,friend friend) (,extra extra) (,sunday-school sunday-school)
@@ -795,25 +802,14 @@
                                       "You can also filter (sort of like search) the names by typing into the box above the clubbers")
                         (<div> class: "clubber-data" id: "clubber-data"
                                (<div> class: "attendance-container"
-                                      (<div> class: "attendance-button" id: "present" "Present"
-                                             (<input> class: "present" type: "button" id: "present" value: ""))
-                                      (<div> class: "attendance-button" id: "bible" "Bible"
-                                             (<input> class: "bible" type: "button" id: "bible" value: ""))
-                                      (<div> class: "attendance-button" id: "handbook" "Handbook"
-                                             (<input> class: "handbook" type: "button" id: "handbook" value: ""))
-                                      (<div> class: "attendance-button" id: "uniform" "Uniform"
-                                             (<input> class: "uniform" type: "button" id: "uniform" value: ""))
-                                      (<div> class: "attendance-button" id: "friend" "Friend"
-                                             (<input> class: "friend" type: "button" id: "friend" value: ""))
-                                      (<div> class: "attendance-button" id: "extra" "Extra"
-                                             (<input> class: "extra" type: "button" id: "extra" value: ""))
-				      (<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)(<br>)
-                                      (<div> class: "attendance-button" id: "sunday-school" "Sunday"
-                                             (<input> class: "sunday-school" type: "button" id: "sunday-school" value: ""))
-                                      (<div> class: "attendance-button" id: "dues" "Dues"
-                                             (<input> class: "dues" type: "button" id: "dues" value: ""))
-                                      (<div> class: "attendance-button" id: "on-time" "On Time"
-                                             (<input> class: "on-time" type: "button" id: "on-time" value: "")))
+                                      (fold (lambda (e o)
+                                              (++ o (<div> class: "attendance-button" id: (car e) (cadr e)
+                                                           (<input> class: (car e) type: "button" value: "")
+                                                           (<div> class: "attendance-saving-notifier" id: (++ "saving-notifier-" (car e))
+                                                                  "saving"))))
+                                            ""
+                                            '(("present" "Present") ("bible" "Bible") ("handbook" "Handbook") ("uniform" "Uniform")
+                                              ("friend" "Friend") ("extra" "Extra") ("sunday-school" "Sunday") ("on-time" "On Time"))))
                                (<div> class: "points-container"
                                       (<div> class: "points" id: "points-total")
                                       (<div> class: "points points-label" " points"))
@@ -829,11 +825,11 @@
                             (attendees-html club (++ (or ($ 'year) (todays-yyyy)) "/"
 						     (or ($ 'month) (todays-mm)) "/"
 						     (or ($ 'day) (todays-dd))))))))))
-  headers: (++ (include-javascript "/js/attendance.js?ver=4")
+  headers: (++ (include-javascript "/js/attendance.js?ver=5")
 	       (include-javascript "/js/jquery.watermark.min.js")
 	       (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"))
   no-ajax: #f
-  css: '("/css/attendance.css?ver=7" "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/ui-lightness/jquery-ui.css")
+  css: '("/css/attendance.css?ver=8" "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/ui-lightness/jquery-ui.css")
   tab: 'clubbers
   title: "Attendance - Club Night -KtR")
 

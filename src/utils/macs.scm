@@ -1,7 +1,22 @@
+(module macs
+  (
+   make-global-parameter fold* folds* neq?
+  )
+(import chicken scheme)
 (use srfi-1)
 
 ; fold and return as string
-; (fold* (lambda (id, group) (string-append (name group id) (<br>))) "" '(('group1 "123") ('group2 "456")))
+; (fold* (lambda (id, group) (string-append (name group id) (<br>))) ""
+; '(('group1 "123") ('group2 "456")))
+
+(define-syntax make-global-parameter
+  (syntax-rules ()
+    ((_ default)
+     (let ((internal-val default))
+       (lambda (#!rest new-val)
+         (if (null? new-val)
+             internal-val
+             (set! internal-val (car new-val))))))))
 
 (define-syntax fold*
   (syntax-rules ()
@@ -28,3 +43,5 @@
   (syntax-rules ()
     ((neq? e1 e2)
      (not (eq? e1 e2)))))
+
+)

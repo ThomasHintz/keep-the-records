@@ -24,6 +24,9 @@
 ;;; production
 (if (is-production?) (load "production") #f)
 
+;;; spiffy settings
+(index-files '())
+
 ;;; Settings
 
 (enable-ajax #t)

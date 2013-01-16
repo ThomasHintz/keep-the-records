@@ -104,4 +104,7 @@
 						(map (lambda (gold-n)
 						       `(,(string-append "Gold " (number->string gold-n)) ("1" "2")))
 						     (range 1 9)))))
-				   (range 1 5))))))
+				   (range 1 5))))
+                ("Trek" (("none" (("none" ("none"))))))
+                ("Journey" (("none" (("none" ("none"))))))
+                 ))

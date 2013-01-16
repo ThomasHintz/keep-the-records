@@ -5,8 +5,8 @@
 (test-group
  "ad"
  (test '("Hopper" "Jumper") (ad "Cubbies" 'book))
- (test '("Cubbies" "Sparks" "TnT") (ad 'asdf))
- (test '("Cubbies" "Sparks" "TnT") (ad 'club))
+ (test '("Cubbies" "Sparks" "TnT" "Trek" "Journey") (ad 'asdf))
+ (test '("Cubbies" "Sparks" "TnT" "Trek" "Journey") (ad 'club))
  (test-error (ad "eat" 'book))
  (test-error (ad "eat"))
  (test-error (ad 'a 'b 'c 'd 'e 'f)))

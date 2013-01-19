@@ -1535,7 +1535,11 @@
                  (<div> class: "padding column-body"
 			(fold (lambda (cl o) (++ o (<input> type: "checkbox" checked: #t id: cl class: "club-filter")
 						 (<label> for: cl cl))) ""
-				(ad 'club-level))
+				(filter (lambda (club-name)
+                                          (or (equal? club-name "Cubbies")
+                                              (equal? club-name "Sparks")
+                                              (equal? club-name "TnT")))
+                                        (ad 'club-level)))
                         (<br>)
                         (<input> type: "text" class: "filter" id: "filter")
                         (<br>)

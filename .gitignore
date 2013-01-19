@@ -8,7 +8,7 @@ send-grid-key
 send-grid-user
 stripe-username.scm
 *.so
-config
+/config
 i-am-production
 *.pdf
 query-log

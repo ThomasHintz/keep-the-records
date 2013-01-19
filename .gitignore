@@ -19,3 +19,5 @@ query-log
 /logs/debug.log
 *.o
 *.import.scm
+/etc/*
+!/etc/defaults

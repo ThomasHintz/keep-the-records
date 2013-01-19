@@ -44,6 +44,6 @@
   (read-config-file "~/keep-the-records/etc/general.scm"))
 
 (define (read-general-config-value key #!key (test equal?) (default ""))
-  (read-config-value key (read-general-config-file test default)))
+  (read-config-value key (read-general-config-file) test: test default: default))
 
 )

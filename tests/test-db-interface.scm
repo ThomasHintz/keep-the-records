@@ -70,8 +70,11 @@
             (test 'not-found (db:read "x" "y" "z")))
 
 (test-group "pause/resume"
+            (test #f (db:paused?))
             (test-assert (db:pause))
-            (test-assert (db:resume)))
+            (test #t (db:paused?))
+            (test-assert (db:resume))
+            (test #f (db:paused?)))
 
 (when (file-exists? "test-db")
       (delete-file "test-db"))

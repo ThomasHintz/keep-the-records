@@ -1,5 +1,8 @@
-(use srfi-19 posix http-client)
 (load "~/keep-the-records/src/config/config-manager") (import config-manager)
+(if (read-general-config-value 'enable-backups #f)
+(begin
+
+(use srfi-19 posix http-client)
 
 (change-directory "~/keep-the-records")
 (define keyfile (read-general-config-value 'tarsnap-keyfile))
@@ -17,3 +20,7 @@
   (print "done backing up")
   (print "cleaning up")
   (process-wait (process-run (string-append "rm " name))))
+
+)
+(print "backups are disabled")
+)

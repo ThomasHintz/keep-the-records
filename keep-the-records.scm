@@ -1158,12 +1158,15 @@
 (define (string->date> sd1 sd2)
   (date>? (string->date sd1 "~Y/~m/~d") (string->date sd2 "~Y/~m/~d")))
 
-(define (last-club-meetings club num)
+(define (club-meeting-date club-meeting)
+  (car club-meeting))
+
+(define (last-club-meetings club num-meetings-to-include)
   (let ((cm (club-meetings club)))
-    (take (sort (map (lambda (m) (car m)) (club-meetings club)) string->date>)
-          (if (< (length cm) num)
+    (take (sort (map (lambda (m) (club-meeting-date m)) cm) string->date>)
+          (if (< (length cm) num-meetings-to-include)
               (length cm)
-              num))))
+              num-meetings-to-include))))
 
 (define (missed-clubs? club clubber club-meetings)
   (fold (lambda (meeting missed)

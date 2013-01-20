@@ -3,13 +3,14 @@
 source /etc/profile
 cd $(dirname $0)
 
-rm nohup.out
-touch nohup.out
+rm ~/keep-the-records/nohup.out
+touch ~/keep-the-records/nohup.out
 
-nohup  ktr-awful --port=12000 -:s1m ~/keep-the-records/keep-the-records &
+cd ~/keep-the-records
+nohup ktr-awful --port=12000 -:s1m ~/keep-the-records/keep-the-records &
 #nohup ktr-awful --port=12001 ~/keep-the-records/keep-the-records &
 #nohup ktr-awful --port=12002 ~/keep-the-records/keep-the-records &
 #nohup ktr-awful --port=12003 ~/keep-the-records/keep-the-records &
 
-sleep 1
-tail -n 30 nohup.out
+sleep 2
+tail -n 30 ~/keep-the-records/nohup.out

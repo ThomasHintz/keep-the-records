@@ -3,8 +3,5 @@
 source /etc/profile
 source ~/.bashrc
 
-# drain db connections and disconnect db
-curl -s -S -m 1 -f -o --url http://localhost:12000/site/admin/db/pause > /dev/null
-
-killall -s 9 ktr-awful
+~/keep-the-records/stop
 ~/keep-the-records/start

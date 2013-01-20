@@ -2,6 +2,7 @@
 (load "~/keep-the-records/src/config/config-manager") (import config-manager)
 
 (change-directory "~/keep-the-records")
+(define keyfile (read-general-config-value 'tarsnap-keyfile))
 
 (let ((name (string-append "ktr-db-backup-" (date->string (current-date) "~m~d~y-~H~M-~S-") (read-general-config-value 'server-id))))
   (print "pausing db")
@@ -10,9 +11,9 @@
   (print "resumeing db")
   (with-input-from-request "http://localhost:12000/site/admin/db/resume" #f read-string)
   (print "backing up " name)
-  (process-wait (process-run (string-append "/usr/local/bin/tarsnap -c -f " name " "  name)))
+  (process-wait (process-run (string-append "/usr/local/bin/tarsnap -c -f " name " --keyfile " keyfile " "  name)))
   (print "backing up last-backup")
-  (process-wait (process-run (string-append "/usr/local/bin/tarsnap -c -f " name " "  "last-backup")))
+  (process-wait (process-run (string-append "/usr/local/bin/tarsnap -c -f " name " --keyfile " keyfile " "  "last-backup")))
   (print "done backing up")
   (print "cleaning up")
   (process-wait (process-run (string-append "rm " name))))

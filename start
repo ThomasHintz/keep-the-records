@@ -6,7 +6,7 @@ cd $(dirname $0)
 rm nohup.out
 touch nohup.out
 
-nohup ktr-awful --port=12000 ~/keep-the-records/keep-the-records &
+nohup  ktr-awful --port=12000 -:s1m ~/keep-the-records/keep-the-records &
 #nohup ktr-awful --port=12001 ~/keep-the-records/keep-the-records &
 #nohup ktr-awful --port=12002 ~/keep-the-records/keep-the-records &
 #nohup ktr-awful --port=12003 ~/keep-the-records/keep-the-records &

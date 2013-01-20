@@ -24,6 +24,9 @@
 ;;; production
 (if (is-production?) (load "production") #f)
 
+;;; spiffy settings
+(index-files '())
+
 ;;; Settings
 
 (enable-ajax #t)
@@ -1963,6 +1966,19 @@
       (load "storage-funcs.scm")
       (redirect-to "/reload/index")))
   title: "Reloaded storage-funcs.scm"
+  no-session: #t)
+
+;;; database pause/resume
+(define-page "/site/admin/db/is-paused"
+  (lambda () (->string (db:paused?)))
+  no-session: #t)
+
+(define-page "/site/admin/db/pause"
+  (lambda () (db:pause) "paused")
+  no-session: #t)
+
+(define-page "/site/admin/db/resume"
+  (lambda () (db:resume) "resumed")
   no-session: #t)
 
 ;;; includes

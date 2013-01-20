@@ -33,7 +33,7 @@
 
    ;; procs
    db:store db:read db:list db:update-list db:remove-from-list db:delete
-   db:pause db:resume db:connect db:disconnect
+   db:pause db:resume db:paused? db:connect db:disconnect
 
    ;; constants
    db:flag-no-lock db:flag-writer db:flag-reader db:flag-create
@@ -150,8 +150,11 @@
    (let ((k (name->id (list->path path-list))))
      (tc-hdb-delete! (db) k))))
 
+(define (db:paused?)
+  (equal? (mutex-specific *paused*) #t))
+
 (define (db:pause)
-  (if (equal? (mutex-specific *paused*) #f)
+  (if (not (db:paused?))
       (begin
         (mutex-update! *paused* (lambda (v) #t))
         (mutex-wait! *active-db-queries*
@@ -162,7 +165,7 @@
       (error 'already-paused!)))
 
 (define (db:resume)
-  (if (equal? (mutex-specific *paused*) #t)
+  (if (db:paused?)
       (begin
         (db:connect)
         (mutex-update! *paused* (lambda (v) #f))

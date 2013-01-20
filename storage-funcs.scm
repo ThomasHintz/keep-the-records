@@ -106,6 +106,11 @@
       (db:store (car parent) "clubs" club "parents" (primary-parent club name) "spouse-name")
       (with-default (db:read "clubs" club "parents" (primary-parent club name) "spouse-name") "")))
 
+; club-meetings looks like this
+; (("2013/01/17" . 0)
+;  ("2013/01/16" . 100)
+;  ("2013/01/09" . 90)
+;  ("2012/12/12" . 67))
 (define (update-meeting-date club date change)
   (let* ((c-meetings (club-meetings club))
          (meeting (assoc date c-meetings)))

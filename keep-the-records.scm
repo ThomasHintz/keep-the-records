@@ -1161,8 +1161,13 @@
 (define (club-meeting-date club-meeting)
   (car club-meeting))
 
+(define (club-meeting-in-attendance club-meeting)
+  (cdr club-meeting))
+
 (define (last-club-meetings club num-meetings-to-include)
-  (let ((cm (club-meetings club)))
+  (let ((cm (filter (lambda (meeting)
+                      (> (club-meeting-in-attendance meeting) 0))
+                    (club-meetings club))))
     (take (sort (map (lambda (m) (club-meeting-date m)) cm) string->date>)
           (if (< (length cm) num-meetings-to-include)
               (length cm)

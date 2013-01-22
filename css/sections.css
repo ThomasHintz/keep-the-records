@@ -54,18 +54,25 @@
 
 /* line 43, ../scss/sections.scss */
 .mark-section {
+  height: 34px;
+  vertical-align: middle;
   width: 70px;
   border: 1px solid black;
   border-radius: 4px;
   background-color: #ffecd9;
 }
 
-/* line 49, ../scss/sections.scss */
+/* line 51, ../scss/sections.scss */
 .mark-section:hover {
   cursor: pointer;
 }
 
-/* line 52, ../scss/sections.scss */
+/* line 54, ../scss/sections.scss */
 .done {
   background-color: #736b62;
+}
+
+/* line 57, ../scss/sections.scss */
+.chapter {
+  line-height: 44px;
 }

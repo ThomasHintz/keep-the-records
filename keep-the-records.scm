@@ -1471,11 +1471,11 @@
 								   class: (++ "mark-section" (if (string=? c-section "") "" " done"))
 								   value: (++ (->string s) "|" (first chapter/sections))
 								   id: (->html-id (++ (first chapter/sections) "-" s))
-					; no dates for now
-					;(if (string=? c-section "")
-					;    (->string s)
-					;    c-section)
-								   s
+                                                                   (->string s)
+                                                                   (<br>)
+                                                                   (if (string=? c-section "")
+                                                                       ""
+                                                                       c-section)
 								   (hidden-input 'chapter (first chapter/sections)))
 						       " ")))
 					       "" (second chapter/sections))
@@ -1503,14 +1503,20 @@
 		(clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
 				 ($ 'book) ($ 'chapter) ($ 'section) (if (string=? c-section "") (date->db (current-date)) ""))
 		(last-section club ($ 'clubber) (list (club-level club ($ 'clubber)) ($ 'book) ($ 'chapter) ($ 'section)))
-		`((text . ,($ 'section)) ;,(if (string=? c-section "") (date->db (current-date)) ($ 'section))) - no date for now
+		`((text . ,($ 'section)) ;,(if (string=? c-section "")
+                                        ;(date->db (current-date)) ($
+                                        ;'section))) - no date for now
+                  (text . ,(++ ($ 'section)
+                               (if (string=? c-section "")
+                                   (++ (<br>) (date->db (current-date)))
+                                   "")))
 		  (next-id . ,(if (> (length next) 2) (->html-id (++ (third next) "-" (fourth next))) ""))
 		  (next-title . ,(if (> (length next) 2) (++ (third next) " - " (fourth next)) "")))))
 	    update-targets: #t
 	    method: 'PUT
 	    live: #t
 	    prelude: "var ele = this;;"
-	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).text(response['text']).append(book);
+	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).html(response['text']).append(book);
                       $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['next-id']).click(); }).text(response['next-title']);"
 	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
 			 (chapter . "$(this).val().split('|')[1]") (section . "$(this).val().split('|')[0]"))))
@@ -1573,7 +1579,7 @@
 				      "Mark section "
 				      (<button> type: "button" id: "easy-mark" class: "easy-mark-button"))
 			       (<div> id: "sections-container")))))))
-  css: '("/css/sections.css?ver=0")
+  css: '("/css/sections.css?ver=1")
   no-ajax: #f
   headers: (include-javascript "/js/sections.js?ver=1")
   tab: 'clubbers)

@@ -41,6 +41,8 @@
     padding: 10px; }
 
 .mark-section {
+    height: 34px;
+    vertical-align: middle;
     width: 70px;
     border: 1px solid black;
     border-radius: 4px;
@@ -51,3 +53,6 @@
 
 .done {
     background-color: #736b62; }
+
+.chapter {
+    line-height: 44px; }

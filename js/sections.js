@@ -15,7 +15,7 @@ MyUtil.selectFilter = function(selectId, filter) {
 
 $(document).ready(function() {
     $.ajaxSetup({ cache: false });
-    $.ajaxSetup({ timeout: 4000, error: function (jqxhr, msg, err) {
+    $.ajaxSetup({ timeout: 60000, error: function (jqxhr, msg, err) {
 	if (msg == 'timeout') {
 	    alert('The server could not be reached, check your network connection. If this message persists, and' +
 		  ' the rest of the site functions correctly, please let me know at t@keeptherecords.com'); }

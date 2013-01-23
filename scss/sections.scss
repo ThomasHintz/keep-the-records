@@ -22,6 +22,7 @@
 .change-book {
     border: 0px solid grey;
     color: white;
+    width: 200px;
     background-color: grey;
     font-family: "Verdana", arial, sans;
     font-size: 20px; }
@@ -56,3 +57,13 @@
 
 .chapter {
     line-height: 44px; }
+
+.date-mode-c {
+    display: inline-block;
+    text-align: right;
+    width: 478px; }
+
+.date-mode-button {
+    font-family: "Verdana", arial, sans;
+    font-size: 14px;
+    padding: 6px; }

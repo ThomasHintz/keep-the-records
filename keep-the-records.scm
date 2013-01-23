@@ -1439,9 +1439,11 @@
                     (book club ($ 'clubber) (car (ad (club-level club ($ 'clubber)) 'book)))
                     (last-section club ($ 'clubber) #f))
               (book club ($ 'clubber))
-	      (combo-box "change-book" (ad (club-level club ($ 'clubber)) 'book)
-			 selectedindex: (book-index club ($ 'clubber)) class: "change-book"
-			 default: (book club ($ 'clubber))))
+	      (++ (combo-box "change-book" (ad (club-level club ($ 'clubber)) 'book)
+                             selectedindex: (book-index club ($ 'clubber)) class: "change-book"
+                             default: (book club ($ 'clubber)))
+                  (<div> class: "date-mode-c"
+                         (<button> class: "date-mode-button" "edit dates mode"))))
 	    success: "$('#info-header').html(response); $('#change-book').attr('selectedIndex', $('#change-book').attr('selectedindex'));"
 	    arguments: '((clubber . "$('#clubbers').val()[0]"))
 	    live: #t
@@ -1579,7 +1581,7 @@
 				      "Mark section "
 				      (<button> type: "button" id: "easy-mark" class: "easy-mark-button"))
 			       (<div> id: "sections-container")))))))
-  css: '("/css/sections.css?ver=1")
+  css: '("/css/sections.css?ver=2")
   no-ajax: #f
   headers: (include-javascript "/js/sections.js?ver=1")
   tab: 'clubbers)

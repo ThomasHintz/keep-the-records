@@ -27,24 +27,25 @@
 .change-book {
   border: 0px solid grey;
   color: white;
+  width: 200px;
   background-color: grey;
   font-family: "Verdana", arial, sans;
   font-size: 20px;
 }
 
-/* line 29, ../scss/sections.scss */
+/* line 30, ../scss/sections.scss */
 .easy-mark {
   margin-bottom: 10px;
   font-size: 18px;
 }
 
-/* line 33, ../scss/sections.scss */
+/* line 34, ../scss/sections.scss */
 .easy-mark-button {
   width: 320px;
   font-size: 20px;
 }
 
-/* line 37, ../scss/sections.scss */
+/* line 38, ../scss/sections.scss */
 .section-focus-c {
   font-family: "Verdana", sans-serif;
   line-height: 34px;
@@ -52,7 +53,7 @@
   padding: 10px;
 }
 
-/* line 43, ../scss/sections.scss */
+/* line 44, ../scss/sections.scss */
 .mark-section {
   height: 34px;
   vertical-align: middle;
@@ -62,17 +63,31 @@
   background-color: #ffecd9;
 }
 
-/* line 51, ../scss/sections.scss */
+/* line 52, ../scss/sections.scss */
 .mark-section:hover {
   cursor: pointer;
 }
 
-/* line 54, ../scss/sections.scss */
+/* line 55, ../scss/sections.scss */
 .done {
   background-color: #736b62;
 }
 
-/* line 57, ../scss/sections.scss */
+/* line 58, ../scss/sections.scss */
 .chapter {
   line-height: 44px;
+}
+
+/* line 61, ../scss/sections.scss */
+.date-mode-c {
+  display: inline-block;
+  text-align: right;
+  width: 478px;
+}
+
+/* line 66, ../scss/sections.scss */
+.date-mode-button {
+  font-family: "Verdana", arial, sans;
+  font-size: 14px;
+  padding: 6px;
 }

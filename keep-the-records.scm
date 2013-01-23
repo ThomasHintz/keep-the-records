@@ -1478,7 +1478,10 @@
                                                                    (if (string=? c-section "")
                                                                        ""
                                                                        c-section)
-								   (hidden-input 'chapter (first chapter/sections)))
+								   (hidden-input 'chapter (first chapter/sections))
+                                                                   (<div> class: "change-date-c"
+                                                                          (<input> type: "date")
+                                                                          (<input> type: "button" class: "update-date-button" value: "update")))
 						       " ")))
 					       "" (second chapter/sections))
 					 (<br>)))

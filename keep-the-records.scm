@@ -1508,10 +1508,7 @@
 		(clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
 				 ($ 'book) ($ 'chapter) ($ 'section) (if (string=? c-section "") (date->db (current-date)) ""))
 		(last-section club ($ 'clubber) (list (club-level club ($ 'clubber)) ($ 'book) ($ 'chapter) ($ 'section)))
-		`((text . ,($ 'section)) ;,(if (string=? c-section "")
-                                        ;(date->db (current-date)) ($
-                                        ;'section))) - no date for now
-                  (text . ,(++ ($ 'section)
+		`((text . ,(++ ($ 'section)
                                (if (string=? c-section "")
                                    (++ (<br>) (date->db (current-date)))
                                    "")))

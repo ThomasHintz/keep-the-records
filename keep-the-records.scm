@@ -1520,7 +1520,7 @@
 		  (next-id . ,(if (> (length next) 2) (->html-id (++ (third next) "-" (fourth next))) ""))
 		  (next-title . ,(if (> (length next) 2) (++ (third next) " - " (fourth next)) "")))))
 	    update-targets: #t
-	    method: 'PUT
+	    method: 'POST
 	    live: #t
 	    prelude: "var ele = this;;"
 	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).html(response['text']).append(book);

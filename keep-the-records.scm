@@ -1427,6 +1427,11 @@
 	       (#t (->string c)))))
    "" s))
 
+(define (edit-dates-mode-ajax club)
+  (ktr-ajax club "edit-date-mode" 'edit-date-mode 'click
+            (lambda (club)
+              
+
 (define (clubber-books-ajax club)
   (ktr-ajax club "clubber-books" 'clubbers '(change keypress)
 	    (lambda (club)
@@ -1443,7 +1448,7 @@
                              selectedindex: (book-index club ($ 'clubber)) class: "change-book"
                              default: (book club ($ 'clubber)))
                   (<div> class: "date-mode-c"
-                         (<button> class: "date-mode-button" "edit dates mode"))))
+                         (<button> class: "date-mode-button" id: "date-mode-button" "edit dates mode"))))
 	    success: "$('#info-header').html(response); $('#change-book').attr('selectedIndex', $('#change-book').attr('selectedindex'));"
 	    arguments: '((clubber . "$('#clubbers').val()[0]"))
 	    live: #t
@@ -1527,16 +1532,12 @@
 (define (combo-clubbers-ajax club)
   (ktr-ajax club "combo-clubbers" ".club-filter" 'change
   	    (lambda (club)
-              (handle-exceptions
-               exn
-               (print "error")
-               (print "hi")
   	      (let ((c-out (remove (lambda (e)
   				     (not (any (lambda (e2) (string=? (club-level club e) e2)) (string-split ($ 'clubs) ","))))
   				   (db:list "clubs" club "clubbers"))))
   		(combo-box "clubbers"
   			   (zip c-out (clubbers->names club c-out))
-  			   class: "clubbers" multiple: #t))))
+  			   class: "clubbers" multiple: #t)))
   	    success: "$('#clubbers-c').html(response); MyUtil.selectFilterData = new Object();"
   	    live: #t
   	    arguments: '((clubs . "(function () { var chked = ''; $('.club-filter:checked').each(function(i,v) { chked += ',' + v.id; }); return chked; })()"))))

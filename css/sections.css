@@ -27,25 +27,24 @@
 .change-book {
   border: 0px solid grey;
   color: white;
-  width: 200px;
   background-color: grey;
   font-family: "Verdana", arial, sans;
   font-size: 20px;
 }
 
-/* line 30, ../scss/sections.scss */
+/* line 29, ../scss/sections.scss */
 .easy-mark {
   margin-bottom: 10px;
   font-size: 18px;
 }
 
-/* line 34, ../scss/sections.scss */
+/* line 33, ../scss/sections.scss */
 .easy-mark-button {
   width: 320px;
   font-size: 20px;
 }
 
-/* line 38, ../scss/sections.scss */
+/* line 37, ../scss/sections.scss */
 .section-focus-c {
   font-family: "Verdana", sans-serif;
   line-height: 34px;
@@ -53,7 +52,7 @@
   padding: 10px;
 }
 
-/* line 44, ../scss/sections.scss */
+/* line 43, ../scss/sections.scss */
 .mark-section {
   position: relative;
   height: 34px;
@@ -64,50 +63,22 @@
   background-color: #ffecd9;
 }
 
-/* line 53, ../scss/sections.scss */
+/* line 52, ../scss/sections.scss */
 .mark-section:hover {
   cursor: pointer;
 }
 
-/* line 56, ../scss/sections.scss */
+/* line 55, ../scss/sections.scss */
 .done {
   background-color: #736b62;
 }
 
-/* line 59, ../scss/sections.scss */
+/* line 58, ../scss/sections.scss */
 .edit-dates-mode-button {
   border: 2px solid blue;
 }
 
-/* line 62, ../scss/sections.scss */
+/* line 61, ../scss/sections.scss */
 .chapter {
   line-height: 44px;
-}
-
-/* line 65, ../scss/sections.scss */
-.date-mode-c {
-  display: inline-block;
-  text-align: right;
-  width: 478px;
-}
-
-/* line 70, ../scss/sections.scss */
-.date-mode-button {
-  font-family: "Verdana", arial, sans;
-  font-size: 14px;
-  padding: 6px;
-}
-
-/* line 75, ../scss/sections.scss */
-.change-date-c {
-  z-index: 1;
-  position: absolute;
-  padding: 5px;
-  border: 2px solid blue;
-  border-top: 2px solid #736B62;
-  background-color: #736B62;
-  bottom: -57px;
-  left: -35px;
-  display: none;
-  border-radius: 3px;
 }

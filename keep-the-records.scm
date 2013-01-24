@@ -1427,11 +1427,6 @@
 	       (#t (->string c)))))
    "" s))
 
-(define (edit-dates-mode-ajax club)
-  (ktr-ajax club "edit-date-mode" 'edit-date-mode 'click
-            (lambda (club)
-              
-
 (define (clubber-books-ajax club)
   (ktr-ajax club "clubber-books" 'clubbers '(change keypress)
 	    (lambda (club)
@@ -1444,11 +1439,9 @@
                     (book club ($ 'clubber) (car (ad (club-level club ($ 'clubber)) 'book)))
                     (last-section club ($ 'clubber) #f))
               (book club ($ 'clubber))
-	      (++ (combo-box "change-book" (ad (club-level club ($ 'clubber)) 'book)
-                             selectedindex: (book-index club ($ 'clubber)) class: "change-book"
-                             default: (book club ($ 'clubber)))
-                  (<div> class: "date-mode-c"
-                         (<button> class: "date-mode-button" id: "date-mode-button" "edit dates mode"))))
+	      (combo-box "change-book" (ad (club-level club ($ 'clubber)) 'book)
+			 selectedindex: (book-index club ($ 'clubber)) class: "change-book"
+			 default: (book club ($ 'clubber))))
 	    success: "$('#info-header').html(response); $('#change-book').attr('selectedIndex', $('#change-book').attr('selectedindex'));"
 	    arguments: '((clubber . "$('#clubbers').val()[0]"))
 	    live: #t
@@ -1582,7 +1575,7 @@
 				      "Mark section "
 				      (<button> type: "button" id: "easy-mark" class: "easy-mark-button"))
 			       (<div> id: "sections-container")))))))
-  css: '("/css/sections.css?ver=2")
+  css: '("/css/sections.css?ver=1")
   no-ajax: #f
   headers: (include-javascript "/js/sections.js?ver=1")
   tab: 'clubbers)

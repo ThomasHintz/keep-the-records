@@ -54,7 +54,6 @@
 
 /* line 43, ../scss/sections.scss */
 .mark-section {
-  position: relative;
   height: 34px;
   vertical-align: middle;
   width: 70px;
@@ -63,22 +62,17 @@
   background-color: #ffecd9;
 }
 
-/* line 52, ../scss/sections.scss */
+/* line 51, ../scss/sections.scss */
 .mark-section:hover {
   cursor: pointer;
 }
 
-/* line 55, ../scss/sections.scss */
+/* line 54, ../scss/sections.scss */
 .done {
   background-color: #736b62;
 }
 
-/* line 58, ../scss/sections.scss */
-.edit-dates-mode-button {
-  border: 2px solid blue;
-}
-
-/* line 61, ../scss/sections.scss */
+/* line 57, ../scss/sections.scss */
 .chapter {
   line-height: 44px;
 }

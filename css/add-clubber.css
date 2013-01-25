@@ -58,6 +58,57 @@
   background-color: grey;
 }
 
+/* line 35, ../scss/_common.scss */
+.date-input {
+  text-align: center;
+  border: 1px solid grey;
+  margin-right: 3px;
+  margin-left: 3px;
+  width: 30px;
+}
+
+/* line 42, ../scss/_common.scss */
+.date-label {
+  color: grey;
+  margin-right: 5px;
+}
+
+/* line 46, ../scss/_common.scss */
+.preset-date {
+  color: black;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+/* line 51, ../scss/_common.scss */
+.change-date {
+  -webkit-border-radius: 4px 4px;
+  -moz-border-radius: 4px / 4px;
+  border-radius: 4px / 4px;
+  -webkit-box-shadow: black 1px 1px 1px;
+  -moz-box-shadow: black 1px 1px 1px;
+  box-shadow: black 1px 1px 1px;
+  border: 1px solid grey;
+  background-color: #eeeeee;
+  margin-left: 10px;
+}
+
+/* line 58, ../scss/_common.scss */
+.change-date:hover {
+  -webkit-box-shadow: black 0px 0px 1px;
+  -moz-box-shadow: black 0px 0px 1px;
+  box-shadow: black 0px 0px 1px;
+  cursor: pointer;
+  background-color: white;
+}
+
+/* line 63, ../scss/_common.scss */
+.change-date:focus {
+  -webkit-box-shadow: black 0px 0px 1px;
+  -moz-box-shadow: black 0px 0px 1px;
+  box-shadow: black 0px 0px 1px;
+}
+
 /* line 3, ../scss/add-clubber.scss */
 td {
   margin-top: 4px;

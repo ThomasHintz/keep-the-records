@@ -160,37 +160,6 @@
     float: left;
     font-size: 12px; }
 
-.date-input {
-    text-align: center;
-    border: 1px solid grey;
-    margin-right: 3px;
-    margin-left: 3px;
-    width: 30px; }
-
-.date-label {
-    color: grey;
-    margin-right: 5px; }
-
-.preset-date {
-    color: black;
-    margin-right: 5px;
-    margin-left: 5px; }
-
-.change-date {
-    @include border-radius(4px, 4px);
-    @include box-shadow(black 1px 1px 1px);
-    border: 1px solid grey;
-    background-color: #eeeeee;
-    margin-left: 10px; }
-
-.change-date:hover {
-    @include box-shadow(black 0px 0px 1px);
-    cursor: pointer;
-    background-color: white; }
-
-.change-date:focus {
-    @include box-shadow(black 0px 0px 1px); }
-
 
 #clubber-names .ui-selecting {
     background: #FECA40; }

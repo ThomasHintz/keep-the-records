@@ -1,4 +1,120 @@
-/* line 1, ../scss/sections.scss */
+/* line 3, ../scss/_common.scss */
+.button {
+  border: 1px solid grey;
+  margin-left: 20px;
+  width: 304px;
+  color: white;
+  line-height: 14px;
+  font-size: 14px;
+  height: 44px;
+  -webkit-font-smoothing: antialiased;
+  font-weight: bold;
+  font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+  cursor: pointer;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.53);
+  -webkit-border-radius: 4px 4px;
+  -moz-border-radius: 4px / 4px;
+  border-radius: 4px / 4px;
+}
+
+/* line 18, ../scss/_common.scss */
+.button-blue {
+  background: #77B7FF;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #77b7ff), color-stop(100%, #017aff));
+  background-image: -webkit-linear-gradient(#77b7ff, #017aff);
+  background-image: -moz-linear-gradient(#77b7ff, #017aff);
+  background-image: -o-linear-gradient(#77b7ff, #017aff);
+  background-image: linear-gradient(#77b7ff, #017aff);
+}
+/* line 21, ../scss/_common.scss */
+.button-blue:active {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #017aff), color-stop(100%, #77b7ff));
+  background-image: -webkit-linear-gradient(#017aff, #77b7ff);
+  background-image: -moz-linear-gradient(#017aff, #77b7ff);
+  background-image: -o-linear-gradient(#017aff, #77b7ff);
+  background-image: linear-gradient(#017aff, #77b7ff);
+}
+
+/* line 24, ../scss/_common.scss */
+.button-green {
+  background: #9FC164;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #9fc164), color-stop(100%, #146600));
+  background-image: -webkit-linear-gradient(#9fc164, #146600);
+  background-image: -moz-linear-gradient(#9fc164, #146600);
+  background-image: -o-linear-gradient(#9fc164, #146600);
+  background-image: linear-gradient(#9fc164, #146600);
+}
+/* line 27, ../scss/_common.scss */
+.button-green:active {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #146600), color-stop(100%, #9fc164));
+  background-image: -webkit-linear-gradient(#146600, #9fc164);
+  background-image: -moz-linear-gradient(#146600, #9fc164);
+  background-image: -o-linear-gradient(#146600, #9fc164);
+  background-image: linear-gradient(#146600, #9fc164);
+}
+
+/* line 30, ../scss/_common.scss */
+.column-header-grey {
+  background-color: grey;
+}
+
+/* line 35, ../scss/_common.scss */
+.date-input {
+  text-align: center;
+  border: 1px solid grey;
+  margin-right: 3px;
+  margin-left: 3px;
+  width: 30px;
+}
+
+/* line 42, ../scss/_common.scss */
+.date-label {
+  color: grey;
+  margin-right: 5px;
+}
+
+/* line 46, ../scss/_common.scss */
+.preset-date {
+  color: black;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+/* line 51, ../scss/_common.scss */
+.change-date {
+  -webkit-border-radius: 4px 4px;
+  -moz-border-radius: 4px / 4px;
+  border-radius: 4px / 4px;
+  -webkit-box-shadow: black 1px 1px 1px;
+  -moz-box-shadow: black 1px 1px 1px;
+  box-shadow: black 1px 1px 1px;
+  border: 1px solid grey;
+  background-color: #eeeeee;
+  margin-left: 10px;
+}
+
+/* line 58, ../scss/_common.scss */
+.change-date:hover {
+  -webkit-box-shadow: black 0px 0px 1px;
+  -moz-box-shadow: black 0px 0px 1px;
+  box-shadow: black 0px 0px 1px;
+  cursor: pointer;
+  background-color: white;
+}
+
+/* line 63, ../scss/_common.scss */
+.change-date:focus {
+  -webkit-box-shadow: black 0px 0px 1px;
+  -moz-box-shadow: black 0px 0px 1px;
+  box-shadow: black 0px 0px 1px;
+}
+
+/* line 3, ../scss/sections.scss */
+.date-label {
+  color: black;
+}
+
+/* line 6, ../scss/sections.scss */
 .filter {
   font-size: 20px;
   border-top: 2px solid grey;
@@ -10,7 +126,7 @@
   width: 196px;
 }
 
-/* line 11, ../scss/sections.scss */
+/* line 16, ../scss/sections.scss */
 .clubbers {
   font-size: 20px;
   margin-top: 0px;
@@ -23,7 +139,7 @@
   width: 200px;
 }
 
-/* line 22, ../scss/sections.scss */
+/* line 27, ../scss/sections.scss */
 .change-book {
   border: 0px solid grey;
   color: white;
@@ -32,19 +148,19 @@
   font-size: 20px;
 }
 
-/* line 29, ../scss/sections.scss */
+/* line 34, ../scss/sections.scss */
 .easy-mark {
   margin-bottom: 10px;
   font-size: 18px;
 }
 
-/* line 33, ../scss/sections.scss */
+/* line 38, ../scss/sections.scss */
 .easy-mark-button {
   width: 320px;
   font-size: 20px;
 }
 
-/* line 37, ../scss/sections.scss */
+/* line 42, ../scss/sections.scss */
 .section-focus-c {
   font-family: "Verdana", sans-serif;
   line-height: 34px;
@@ -52,7 +168,7 @@
   padding: 10px;
 }
 
-/* line 43, ../scss/sections.scss */
+/* line 48, ../scss/sections.scss */
 .mark-section {
   height: 34px;
   vertical-align: middle;
@@ -62,17 +178,17 @@
   background-color: #ffecd9;
 }
 
-/* line 51, ../scss/sections.scss */
+/* line 56, ../scss/sections.scss */
 .mark-section:hover {
   cursor: pointer;
 }
 
-/* line 54, ../scss/sections.scss */
+/* line 59, ../scss/sections.scss */
 .done {
   background-color: #736b62;
 }
 
-/* line 57, ../scss/sections.scss */
+/* line 62, ../scss/sections.scss */
 .chapter {
   line-height: 44px;
 }

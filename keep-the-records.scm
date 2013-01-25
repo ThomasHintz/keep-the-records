@@ -1499,24 +1499,26 @@
 	    (lambda (club)
 	      (let ((c-section (clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
 						($ 'book) ($ 'chapter) ($ 'section)))
-		    (next (next-section club ($ 'clubber) (club-level club ($ 'clubber)) ($ 'book) ($ 'chapter) ($ 'section))))
+		    (next (next-section club ($ 'clubber) (club-level club ($ 'clubber)) ($ 'book) ($ 'chapter) ($ 'section)))
+                    (date (date->db (handle-exceptions exn (current-date) (string->date ($ 'date)  "~m/~d/~Y")))))
 		(clubber-section club ($ 'clubber) (club-level club ($ 'clubber))
-				 ($ 'book) ($ 'chapter) ($ 'section) (if (string=? c-section "") (date->db (current-date)) ""))
+				 ($ 'book) ($ 'chapter) ($ 'section) (if (string=? c-section "") date ""))
 		(last-section club ($ 'clubber) (list (club-level club ($ 'clubber)) ($ 'book) ($ 'chapter) ($ 'section)))
 		`((text . ,(++ ($ 'section)
                                (if (string=? c-section "")
-                                   (++ (<br>) (date->db (current-date)))
+                                   (++ (<br>) date)
                                    "")))
 		  (next-id . ,(if (> (length next) 2) (->html-id (++ (third next) "-" (fourth next))) ""))
 		  (next-title . ,(if (> (length next) 2) (++ (third next) " - " (fourth next)) "")))))
 	    update-targets: #t
-	    method: 'POST
+	    method: 'PUT
 	    live: #t
-	    prelude: "var ele = this;;"
+	    prelude: "var ele = this;"
 	    success: "$(ele).toggleClass('done'); var book = $(ele).children().eq(0); $(ele).html(response['text']).append(book);
                       $('#easy-mark').unbind('click').bind('click', function () { $('#' + response['next-id']).click(); }).text(response['next-title']);"
 	    arguments: '((clubber . "$('#clubbers').val()[0]") (book . "$('#change-book').val()")
-			 (chapter . "$(this).val().split('|')[1]") (section . "$(this).val().split('|')[0]"))))
+			 (chapter . "$(this).val().split('|')[1]") (section . "$(this).val().split('|')[0]")
+                         (date . "$('#section-date').val()"))))
 (mark-section-ajax "")
 
 (define (combo-clubbers-ajax club)
@@ -1540,7 +1542,19 @@
       (add-javascript (clubber-sections-ajax club))
       (add-javascript (mark-section-ajax club))
       (add-javascript (combo-clubbers-ajax club))
-      (++ (<div> class: "grid_3"
+      (add-javascript "$('#section-date').datepicker();")
+      (++ (<div> class: "grid_12 column-body"
+                 (<div> class: "padding"
+                        (<form> action: path  method: "GET"
+                                (<span> class: "date-label" "Mark section with date:")
+                                (<input> id: "section-date" class: "dt hasDatePicker"
+                                         name: "date" value: (or ($ 'date) (date->db (current-date))))
+                                (<a> href: (++ path "?date=" (uri-encode-string (date->db (current-date))))
+                                     class: "preset-date" "Today")
+                                ;(<a> href: "#" class: "preset-date" "Last Club Meeting")
+                                (<input> class: "change-date" type: "submit" value: "Use selected date"))))
+          (<div> class: "clear")
+          (<div> class: "grid_3"
                  (<div> class: "column-header padding" "Find Clubber")
                  (<div> class: "padding column-body"
 			(fold (lambda (cl o) (++ o (<input> type: "checkbox" checked: #t id: cl class: "club-filter")
@@ -1572,9 +1586,12 @@
 				      "Mark section "
 				      (<button> type: "button" id: "easy-mark" class: "easy-mark-button"))
 			       (<div> id: "sections-container")))))))
-  css: '("/css/sections.css?ver=1")
+  css: '("/css/sections.css?ver=1"
+         "/css/dashboard.css?ver=0" "/css/ui-lightness/jquery-ui-1.8.11.custom.css")
   no-ajax: #f
-  headers: (include-javascript "/js/sections.js?ver=1")
+  headers: (++ (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js")
+               (include-javascript "/js/jquery-ui-1.8.11.custom.min.js")
+               (include-javascript "/js/sections.js?ver=1"))
   tab: 'clubbers)
 
 ;;; stats

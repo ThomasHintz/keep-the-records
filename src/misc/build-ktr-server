@@ -1,0 +1,2 @@
+#!/bin/sh
+csc -S -O3 -d1 src/misc/ktr-server.scm -o ktr

@@ -1350,16 +1350,23 @@
           (insert-file (++ club "-awana-release-form.pdf"))))
       (redirect-to (++ "/" club "/clubbers/release/awana-release-form-" club "-"
                        (date->string (current-date) "~m~d~y") ".pdf")))))
-
+;;; here (present-clubbers club date)
 (define-awana-app-page (regexp "/[^/]*/clubbers/release")
   (lambda (path)
     (let ((club (get-club path)))
-      (++ (<div> class: "grid_12 column-body" (<div> class: "padding"
-                                                     (<a> href: (++ "/" club "/clubbers/release/awana-release-form")
-                                                          class: "sig-link"
-                                                          "Print Signature Release Form")
-                                                     (<span> class: "sig-info"
-                                                             "Used if you need parent signatures to release children (generated based on today's attendance)")))
+      (++ (<div> class: "grid_12 column-body"
+                 (<div> class: "padding"
+                        (if (null? (present-clubbers
+                                                   club
+                                                   (++ (or ($ 'year) (todays-yyyy)) "/"
+                                                       (or ($ 'month) (todays-mm)) "/"
+                                                       (or ($ 'day) (todays-dd)))))
+                            "At least one clubber must be marked present for this date to print a release form."
+                            (++ (<a> href: (++ "/" club "/clubbers/release/awana-release-form")
+                                     class: "sig-link"
+                                     "Print Signature Release Form")
+                                (<span> class: "sig-info"
+                                        "Used if you need parent signatures to release children (generated based on today's attendance)")))))
           (<div> class: "clear")
           (<div> class: "grid_6 column-header" (<div> class: "padding" "By Child"))
           (<div> class: "grid_6 column-header" (<div> class: "padding" "By Guardian"))
@@ -1993,17 +2000,28 @@
   no-session: #t)
 
 ;;; database pause/resume
-(define-page "/site/admin/db/is-paused"
-  (lambda () (->string (db:paused?)))
-  no-session: #t)
+(define (define-local-admin-page url page-thunk)
+  (define-page url
+    (lambda ()
+      (if (string=? (remote-address) "127.0.0.1")
+          (page-thunk)
+          (begin (send-status 'forbidden "no") "")))
+    no-session: #t))
 
-(define-page "/site/admin/db/pause"
-  (lambda () (db:pause) "paused")
-  no-session: #t)
+(define-local-admin-page "/site/admin/db/is-paused"
+  (lambda () (->string (db:paused?))))
 
-(define-page "/site/admin/db/resume"
-  (lambda () (db:resume) "resumed")
-  no-session: #t)
+(define-local-admin-page "/site/admin/db/pause"
+  (lambda () (db:pause) "paused"))
+
+(define-local-admin-page "/site/admin/db/resume"
+  (lambda () (db:resume) "resumed"))
+
+(define-local-admin-page "/site/admin/exit"
+  (lambda ()
+    (when (not (db:paused?))
+          (db:pause))
+    (exit)))
 
 ;;; includes
 

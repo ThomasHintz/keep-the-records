@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 
-source /etc/profile
 cd $(dirname $0)
 
 rm ~/keep-the-records/nohup.out

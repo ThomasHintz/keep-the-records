@@ -4,4 +4,4 @@
 curl -s -S -m 1 -f -o --url http://localhost:12000/site/admin/exit > /dev/null
 
 # kill just in case exit failed
-killall -s 9 ktr
+killall ktr

@@ -2,7 +2,8 @@
 ;; -*- scheme -*-
 
 (declare (uses chicken-syntax))
-(use awful)
+(use awful spiffy)
+(trusted-proxies '("127.0.0.1"))
 
 (awful-start
  (lambda ()

@@ -2000,17 +2000,28 @@
   no-session: #t)
 
 ;;; database pause/resume
-(define-page "/site/admin/db/is-paused"
-  (lambda () (->string (db:paused?)))
-  no-session: #t)
+(define (define-local-admin-page url page-thunk)
+  (define-page url
+    (lambda ()
+      (if (string=? (remote-address) "127.0.0.1")
+          (page-thunk)
+          (begin (send-status 'forbidden "no") "")))
+    no-session: #t))
 
-(define-page "/site/admin/db/pause"
-  (lambda () (db:pause) "paused")
-  no-session: #t)
+(define-local-admin-page "/site/admin/db/is-paused"
+  (lambda () (->string (db:paused?))))
 
-(define-page "/site/admin/db/resume"
-  (lambda () (db:resume) "resumed")
-  no-session: #t)
+(define-local-admin-page "/site/admin/db/pause"
+  (lambda () (db:pause) "paused"))
+
+(define-local-admin-page "/site/admin/db/resume"
+  (lambda () (db:resume) "resumed"))
+
+(define-local-admin-page "/site/admin/exit"
+  (lambda ()
+    (when (not (db:paused?))
+          (db:pause))
+    (exit)))
 
 ;;; includes
 

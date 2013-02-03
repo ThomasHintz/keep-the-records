@@ -1,0 +1,10 @@
+#!/usr/local/bin/csi -script
+;; -*- scheme -*-
+
+(declare (uses chicken-syntax))
+(use awful)
+
+(awful-start
+ (lambda ()
+   (load-apps '("keep-the-records")))
+ port: 12000)

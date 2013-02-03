@@ -1350,19 +1350,25 @@
           (insert-file (++ club "-awana-release-form.pdf"))))
       (redirect-to (++ "/" club "/clubbers/release/awana-release-form-" club "-"
                        (date->string (current-date) "~m~d~y") ".pdf")))))
-;;; here (present-clubbers club date)
+
 (define-awana-app-page (regexp "/[^/]*/clubbers/release")
   (lambda (path)
-    (let ((club (get-club path)))
+    (add-javascript "$('#date').datepicker();")
+    (let ((club (get-club path))
+          (date (date->string (handle-exceptions exn (current-date) (string->date ($ 'date)  "~m/~d/~y")) "~Y/~m/~d")))
       (++ (<div> class: "grid_12 column-body"
                  (<div> class: "padding"
-                        (if (null? (present-clubbers
-                                                   club
-                                                   (++ (or ($ 'year) (todays-yyyy)) "/"
-                                                       (or ($ 'month) (todays-mm)) "/"
-                                                       (or ($ 'day) (todays-dd)))))
-                            "At least one clubber must be marked present for this date to print a release form."
-                            (++ (<a> href: (++ "/" club "/clubbers/release/awana-release-form")
+                        (<div> (<form> action: path  method: "GET"
+                                       (<span> class: "date-label" "Print release form for date:")
+                                       (<input> id: "date" class: "dt hasDatePicker"
+                                                name: "date" value: (or ($ 'date) (date->db (current-date))))
+                                       (<a> href: (++ path "?date=" (uri-encode-string (date->db (current-date))))
+                                            class: "preset-date" "Today")
+                                       (<input> class: "change-date" type: "submit" value: "Use selected date")))
+                        (<br>)
+                        (if (null? (present-clubbers club date))
+                            (++ date "At least one clubber must be marked present for this date to print a release form.")
+                            (++ (<a> href: (++ "/" club "/clubbers/release/awana-release-form?date=" (uri-encode-string date))
                                      class: "sig-link"
                                      "Print Signature Release Form")
                                 (<span> class: "sig-info"
@@ -1387,8 +1393,11 @@
                                     (lambda (e1 e2)
                                       (string< (first e1) (first e2)))))))
           (<div> class: "grid_6 column-body" (<div> class: "padding" "Coming soon!")))))
-  css: '("/css/release.css")
+  css: '("/css/release.css" "/css/ui-lightness/jquery-ui-1.8.11.custom.css")
   tab: 'clubbers
+  no-ajax: #f
+  headers: (++ (include-javascript "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js")
+               (include-javascript "/js/jquery-ui-1.8.11.custom.min.js"))
   title: "Release - Club Night - KtR")
 
 ;;; sections

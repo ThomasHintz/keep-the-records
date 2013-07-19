@@ -1,5 +1,4 @@
-`("Awana Data" (("Puggles" (("none" (("none" ("none"))))))
-                ("Cubbies" (("Hopper" (("Bear Hug Brochure" ("1" "2"))
+`("Awana Data" (("Cubbies" (("Hopper" (("Bear Hug Brochure" ("1" "2"))
 				       ("Hopper Trail" ("1" "2"))
 				       ("Lamb Path 1" ("1" "2"))
 				       ("Elephant Walk 1" ("1" "2"))
@@ -106,6 +105,4 @@
 						       `(,(string-append "Gold " (number->string gold-n)) ("1" "2")))
 						     (range 1 9)))))
 				   (range 1 5))))
-                ("Trek" (("none" (("none" ("none"))))))
-                ("Journey" (("none" (("none" ("none"))))))
                  ))
